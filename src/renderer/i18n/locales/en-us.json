@@ -410,6 +410,15 @@
           "title": "No messages"
         }
       },
+      "info": {
+        "artifacts": "Deliverables",
+        "context_usage": "Context usage",
+        "label": "Session information",
+        "more": "+{{count}} more",
+        "no_artifacts": "No declared deliverables",
+        "no_subagents": "No sub-agents",
+        "subagents": "Sub-agents"
+      },
       "status": {
         "activity": "Activity",
         "agent": "Agent",
@@ -843,9 +852,6 @@
           "writePages": "Write pages"
         },
         "title": "Tasks"
-      },
-      "panel": {
-        "title": "{{completed}}/{{total}} tasks completed"
       },
       "status": {
         "completed": "Completed",

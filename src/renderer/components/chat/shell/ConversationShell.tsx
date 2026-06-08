@@ -18,6 +18,7 @@ export interface ConversationShellProps {
   panePosition?: ChatPanePosition
   topBar?: ReactNode
   topRightTool?: ReactNode
+  topRightToolReserve?: 'single' | 'double'
   center: ReactNode
   sidePanel?: ReactNode
   centerOverlay?: ReactNode
@@ -39,6 +40,7 @@ export default function ConversationShell({
   panePosition,
   topBar,
   topRightTool,
+  topRightToolReserve = 'single',
   center,
   sidePanel,
   centerOverlay,
@@ -58,7 +60,11 @@ export default function ConversationShell({
   // right tool to pick up the drag region, traffic-light inset, and title-leading slot.
   const resolvedTopBar =
     topRightTool || isWindow ? (
-      <ConversationShellTopBar isWindow={isWindow} leftPaneOpen={leftPaneOpen} leading={chrome?.titleLeading}>
+      <ConversationShellTopBar
+        isWindow={isWindow}
+        leftPaneOpen={leftPaneOpen}
+        leading={chrome?.titleLeading}
+        topRightToolReserve={topRightToolReserve}>
         {topBar}
       </ConversationShellTopBar>
     ) : (
@@ -101,9 +107,15 @@ export default function ConversationShell({
   )
 }
 
-type TopBarProps = { isWindow: boolean; leftPaneOpen: boolean; leading?: ReactNode; children?: ReactNode }
+type TopBarProps = {
+  isWindow: boolean
+  leftPaneOpen: boolean
+  leading?: ReactNode
+  topRightToolReserve: 'single' | 'double'
+  children?: ReactNode
+}
 
-const ConversationShellTopBar = ({ isWindow, leftPaneOpen, leading, children }: TopBarProps) => {
+const ConversationShellTopBar = ({ isWindow, leftPaneOpen, leading, topRightToolReserve, children }: TopBarProps) => {
   const shellState = useOptionalShellState()
   const maximized = shellState?.maximized ?? false
   const windowNavbarHeightStyle = isWindow ? ({ '--navbar-height': TITLE_BAR_HEIGHT_PX } as CSSProperties) : undefined
@@ -122,7 +134,7 @@ const ConversationShellTopBar = ({ isWindow, leftPaneOpen, leading, children }: 
           shouldReserveTrafficLightInset ? 'pl-[env(titlebar-area-x)]' : 'pl-2'
         ],
         // Reserve room for the floating right group: wider in window mode (pin + back + tool).
-        !maximized && (isWindow ? 'pr-28' : 'pr-11')
+        !maximized && (isWindow ? 'pr-28' : topRightToolReserve === 'double' ? 'pr-[76px]' : 'pr-11')
       )}>
       {leading}
       {children}
@@ -142,10 +154,10 @@ const ConversationShellTopRightTool = ({ isWindow, trailing, children }: TopRigh
     <div
       data-navbar-right-occupant
       className={cn(
-        'absolute top-0 right-2 z-20 flex items-center [-webkit-app-region:no-drag]',
+        'absolute top-0 right-2 z-20 flex items-center gap-0.5 [-webkit-app-region:no-drag]',
         // Window mode: shorter bar (lines up with the traffic lights) + injected controls
         // (pin / back-to-main) to the left of the page's own tool.
-        isWindow ? [TITLE_BAR_HEIGHT_CLASS, 'gap-0.5'] : 'h-(--navbar-height) w-7.5 justify-center'
+        isWindow ? TITLE_BAR_HEIGHT_CLASS : 'h-(--navbar-height)'
       )}>
       {trailing}
       {children}

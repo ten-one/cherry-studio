@@ -410,6 +410,15 @@
           "title": "[to be translated]:No messages"
         }
       },
+      "info": {
+        "artifacts": "產物",
+        "context_usage": "上下文用量",
+        "label": "任務資訊",
+        "more": "還有 {{count}} 項",
+        "no_artifacts": "暫無宣告產物",
+        "no_subagents": "暫無子智能體",
+        "subagents": "子智能體"
+      },
       "status": {
         "activity": "[to be translated]:Activity",
         "agent": "[to be translated]:Agent",
@@ -843,9 +852,6 @@
           "writePages": "編寫頁面"
         },
         "title": "任務"
-      },
-      "panel": {
-        "title": "已完成 {{completed}}/{{total}} 個任務"
       },
       "status": {
         "completed": "已完成",

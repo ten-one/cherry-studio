@@ -328,11 +328,15 @@ vi.mock('@renderer/components/NavbarIcon', () => ({
 
 vi.mock('@renderer/data/hooks/useCache', () => ({
   useCache: () => [false],
+  useSharedCache: () => [null, vi.fn()],
   usePersistCache: () => [undefined, vi.fn()]
 }))
 
 vi.mock('@renderer/data/hooks/usePreference', () => ({
-  usePreference: (key: string) => [key === 'chat.narrow_mode' ? false : 'none', vi.fn()]
+  usePreference: (key: string) => {
+    if (key === 'app.developer_mode.enabled') return [true, vi.fn()]
+    return [key === 'chat.narrow_mode' ? false : 'none', vi.fn()]
+  }
 }))
 
 vi.mock('@renderer/hooks/agents/useAgent', () => ({
@@ -352,13 +356,15 @@ vi.mock('@renderer/hooks/agents/useAgent', () => ({
 const activeSessionMocks = vi.hoisted(() => ({
   result: {
     activeSessionId: 'session-1',
-    session: { id: 'session-1', agentId: 'agent-1', workspace: { path: '/tmp/workspace' } },
+    session: { id: 'session-1', agentId: 'agent-1', traceId: 'trace-a', workspace: { path: '/tmp/workspace' } },
     isLoading: false,
     sessionSource: 'query',
     setActiveSessionId: vi.fn()
   } as {
     activeSessionId: string | null
-    session: { id: string; agentId: string | null; workspace: { path: string } | null } | undefined
+    session:
+      | { id: string; agentId: string | null; traceId?: string | null; workspace: { path: string } | null }
+      | undefined
     isLoading: boolean
     sessionSource?: 'query' | 'pending' | 'none'
     setActiveSessionId: ReturnType<typeof vi.fn>
@@ -403,7 +409,8 @@ vi.mock('@renderer/hooks/useSettings', () => ({
 }))
 
 vi.mock('@renderer/hooks/useTopicStreamStatus', () => ({
-  useTopicStreamStatus: () => ({ isPending: false })
+  useTopicStreamStatus: () => ({ isPending: false }),
+  useTopicOverlayHandoffOnTerminal: () => {}
 }))
 
 vi.mock('@renderer/utils/agentSession', () => ({
@@ -443,13 +450,11 @@ vi.mock('../components/AgentSessionMessages', () => ({
   default: ({
     sessionId,
     openAgentToolFlow,
-    openArtifactFile,
-    openTrace
+    openArtifactFile
   }: {
     sessionId: string
     openAgentToolFlow?: (input: any) => void
     openArtifactFile?: (path: string) => void
-    openTrace?: (message: any) => void
   }) => (
     <div data-testid="agent-messages" data-session-id={sessionId}>
       <button
@@ -474,9 +479,6 @@ vi.mock('../components/AgentSessionMessages', () => ({
         }>
         open flow b
       </button>
-      <button type="button" onClick={() => openTrace?.({ topicId: 'agent-session:session-1', traceId: 'trace-a' })}>
-        open trace
-      </button>
       <button type="button" onClick={() => openArtifactFile?.('/tmp/workspace/src/index.ts')}>
         open artifact file
       </button>
@@ -492,10 +494,6 @@ vi.mock('../components/AgentSessionMessages', () => ({
 
 vi.mock('@renderer/components/chat/citations/CitationsPanel', () => ({
   default: ({ open }: { open: boolean }) => <div data-testid="citations-panel" data-open={String(open)} />
-}))
-
-vi.mock('../../home/Inputbar/components/PinnedTodoPanel', () => ({
-  PinnedTodoPanel: () => <div data-testid="pinned-todo-panel" />
 }))
 
 describe('AgentChat artifact pane', () => {
@@ -524,7 +522,7 @@ describe('AgentChat artifact pane', () => {
     })
     activeSessionMocks.result = {
       activeSessionId: 'session-1',
-      session: { id: 'session-1', agentId: 'agent-1', workspace: { path: '/tmp/workspace' } },
+      session: { id: 'session-1', agentId: 'agent-1', traceId: 'trace-a', workspace: { path: '/tmp/workspace' } },
       isLoading: false,
       setActiveSessionId: vi.fn()
     }
@@ -537,7 +535,8 @@ describe('AgentChat artifact pane', () => {
           }
         },
         file: {
-          isTextFile: vi.fn().mockResolvedValue(true)
+          isTextFile: vi.fn().mockResolvedValue(true),
+          getMetadata: vi.fn().mockResolvedValue({ kind: 'file', size: 1024 })
         }
       }
     })
@@ -891,15 +890,14 @@ describe('AgentChat artifact pane', () => {
     expect(screen.queryByText('Agent')).not.toBeInTheDocument()
   })
 
-  it('opens the trace tab in the agent right pane', () => {
+  it('shows a permanent trace tab keyed on the session traceId when developer mode is on', () => {
     renderAgentChat({ pane: <aside data-testid="session-pane" />, paneOpen: true, panePosition: 'left' })
 
-    expect(screen.queryByRole('button', { name: /trace\.label/ })).toBeNull()
-
-    fireEvent.click(screen.getByRole('button', { name: 'open trace' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.open_sidebar' }))
 
     expect(screen.getByTestId('artifact-right-pane')).toHaveAttribute('data-open', 'true')
     expect(screen.getByRole('button', { name: /trace\.label/ })).toBeInTheDocument()
+    expect(screen.getByTestId('trace-pane')).toHaveAttribute('data-topic-id', 'agent-session:session-1')
     expect(screen.getByTestId('trace-pane')).toHaveAttribute('data-trace-id', 'trace-a')
   })
 
@@ -954,18 +952,6 @@ describe('AgentChat artifact pane', () => {
 
     expect(screen.queryByRole('button', { name: /记忆商人\.md/ })).toBeNull()
     expect(screen.queryByTestId('artifact-file-preview')).toBeNull()
-    expect(screen.getByTestId('artifact-pane')).toBeInTheDocument()
-  })
-
-  it('removes the trace tab when it is closed', () => {
-    renderAgentChat({ pane: <aside data-testid="session-pane" />, paneOpen: true, panePosition: 'left' })
-
-    fireEvent.click(screen.getByRole('button', { name: 'open trace' }))
-    const traceTab = screen.getByRole('button', { name: /trace\.label/ })
-    fireEvent.click(within(traceTab.parentElement as HTMLElement).getByRole('button', { name: 'common.close' }))
-
-    expect(screen.queryByRole('button', { name: /trace\.label/ })).toBeNull()
-    expect(screen.queryByTestId('trace-pane')).toBeNull()
     expect(screen.getByTestId('artifact-pane')).toBeInTheDocument()
   })
 

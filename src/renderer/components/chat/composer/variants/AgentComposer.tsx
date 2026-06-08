@@ -1,6 +1,7 @@
 import { Button, Tooltip } from '@cherrystudio/ui'
 import { loggerService } from '@logger'
 import ModelAvatar from '@renderer/components/Avatar/ModelAvatar'
+import { AgentContextUsageSummary, getAgentContextUsageColor } from '@renderer/components/chat/AgentContextUsageSummary'
 import ComposerSurface, { type ComposerSurfaceActions } from '@renderer/components/chat/composer/ComposerSurface'
 import {
   ComposerToolDerivedStateProvider,
@@ -21,11 +22,14 @@ import { useCommandHandler } from '@renderer/features/command'
 import { isSoulModeEnabled } from '@renderer/hooks/agents/agentConfiguration'
 import { useAgent, useUpdateAgent } from '@renderer/hooks/agents/useAgent'
 import { useAgentModelFilter } from '@renderer/hooks/agents/useAgentModelFilter'
+import { useAgentSessionCompaction } from '@renderer/hooks/agents/useAgentSessionCompaction'
+import { useAgentSessionContextUsage } from '@renderer/hooks/agents/useAgentSessionContextUsage'
 import { useSession, useUpdateSession } from '@renderer/hooks/agents/useSession'
 import { useModelById } from '@renderer/hooks/useModel'
 import { useProviderDisplayName } from '@renderer/hooks/useProvider'
 import { useAvailableSkills } from '@renderer/hooks/useSkills'
 import { useTimer } from '@renderer/hooks/useTimer'
+import { useTopicStreamStatus } from '@renderer/hooks/useTopicStreamStatus'
 import { AgentLabel } from '@renderer/pages/agents/components/AgentLabel'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import type { FileMetadata, LocalSkill, ThinkingOption } from '@renderer/types'
@@ -36,12 +40,14 @@ import { getSendMessageShortcutLabel } from '@renderer/utils/input'
 import type { ComposerQueuedMessagePayload } from '@shared/ai/transport'
 import type { AgentSessionEntity } from '@shared/data/api/schemas/agentSessions'
 import type { AgentEntity } from '@shared/data/types/agent'
-import type { Model, UniqueModelId } from '@shared/data/types/model'
+import { type Model, parseUniqueModelId, type UniqueModelId } from '@shared/data/types/model'
 import { Bot, ChevronDown, CircleSlash, Folder, Sparkles, TriangleAlert } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { QueuedFollowupsDock } from '../QueuedFollowupsDock'
 import type { ComposerDraftToken, ComposerSerializedDraft, ComposerSerializedToken } from '../tokens'
+import { type FollowupQueueItem, useFollowupQueue } from '../useFollowupQueue'
 import {
   type AgentComposerDraftCache,
   getAgentDraftCacheKey,
@@ -404,6 +410,50 @@ const AgentComposerWorkspaceControl = ({
   return <Tooltip content={workspaceWarning}>{selector}</Tooltip>
 }
 
+function AgentComposerContextUsage({ model, sessionId }: { model?: Model; sessionId: string }) {
+  const { t } = useTranslation()
+  const expectedModels = useMemo(() => getContextUsageModelCandidates(model), [model])
+  const { percentage, usage } = useAgentSessionContextUsage(sessionId, expectedModels)
+  const compaction = useAgentSessionCompaction(sessionId)
+  if (percentage === null || !usage) return null
+
+  const isCompacting = compaction.status === 'compacting'
+  const ringColor = getAgentContextUsageColor(percentage)
+
+  return (
+    <Tooltip
+      placement="top"
+      classNames={{
+        placeholder: 'inline-grid',
+        content: 'w-64 max-w-64 rounded-md border border-border bg-card p-3 text-card-foreground shadow-md'
+      }}
+      content={
+        <AgentContextUsageSummary usage={usage} percentage={percentage} color={ringColor} isCompacting={isCompacting} />
+      }>
+      <span
+        aria-label={`${t('agent.right_pane.info.context_usage')} ${percentage}%`}
+        aria-busy={isCompacting || undefined}
+        className={cn(
+          'relative inline-grid size-5 shrink-0 place-items-center rounded-full bg-[conic-gradient(var(--context-usage-color)_var(--context-usage-progress),var(--color-border-subtle)_0)]',
+          isCompacting && 'animate-pulse'
+        )}
+        style={
+          {
+            '--context-usage-color': ringColor,
+            '--context-usage-progress': `${percentage}%`
+          } as React.CSSProperties
+        }>
+        <span aria-hidden className="absolute inset-[2px] rounded-full bg-card" />
+      </span>
+    </Tooltip>
+  )
+}
+
+function getContextUsageModelCandidates(model: Model | undefined): string[] | undefined {
+  if (!model) return undefined
+  return [model.apiModelId, parseUniqueModelId(model.id).modelId].filter((value): value is string => Boolean(value))
+}
+
 type AgentComposerControlProps = Omit<AgentComposerContextControlsProps, 'side'> & {
   workspace?: AgentSessionEntity['workspace']
   workspaceId?: string | null
@@ -720,12 +770,36 @@ const AgentComposerInner = ({
     setTimeoutTimer('agentComposerSendMessage', () => setText(''), 500)
   }, [draftCacheKey, setFiles, setText, setTimeoutTimer])
 
+  // Queue mode (same as chat): while the session streams, follow-ups queue here and auto-drain on idle.
+  const { isFulfilled: sessionFulfilled, markSeen: markSessionSeen } = useTopicStreamStatus(sessionTopicId)
+  const {
+    items: queuedFollowups,
+    enqueue: enqueueFollowup,
+    removeId: removeFollowup,
+    reorder: reorderFollowups,
+    paused: followupPaused,
+    setPaused: setFollowupPaused
+  } = useFollowupQueue({
+    scopeKey: sessionTopicId,
+    isFulfilled: sessionFulfilled,
+    markSeen: markSessionSeen,
+    onDrain: sendQueuedPayload
+  })
+
+  // Edit a queued item = restore the draft (text + files + skills) into the live composer, then drop
+  // it from the queue. Agent editor tokens derive from `files` + `selectedSkills`, so set those.
+  const restoreFollowupDraft = useCallback(
+    (item: FollowupQueueItem) => {
+      setText(item.draft.text)
+      setFiles((item.payload.files as FileMetadata[] | undefined) ?? [])
+      setSelectedSkills(item.draft.tokens.filter((token) => token.kind === 'skill').map(getSkillFromCachedToken))
+    },
+    [setFiles, setText]
+  )
+
   const handleSendDraft = useCallback(
     (draft: ComposerSerializedDraft) => {
       if (sendDisabled) return
-      // The send queue was removed; while the session is streaming we no longer buffer
-      // messages, so block sending until it finishes instead of dispatching concurrently.
-      if (isStreaming) return
       if (!model) {
         window.toast?.error(t('code.model_required'))
         return
@@ -737,12 +811,30 @@ const AgentComposerInner = ({
       const payload = buildQueuedPayload(draft)
       if (!payload) return
 
+      // Busy (streaming) → queue the follow-up; the head auto-drains when the session goes idle and
+      // the dock lets the user steer/edit/remove items.
+      if (isStreaming) {
+        enqueueFollowup(draft, payload)
+        clearCurrentDraft()
+        return
+      }
+
       clearCurrentDraft()
       void sendQueuedPayload(payload).catch((error: unknown) => {
         logger.warn('Failed to send message:', error as Error)
       })
     },
-    [buildQueuedPayload, clearCurrentDraft, isStreaming, model, sendDisabled, sendQueuedPayload, t, workspaceWarning]
+    [
+      buildQueuedPayload,
+      clearCurrentDraft,
+      enqueueFollowup,
+      isStreaming,
+      model,
+      sendDisabled,
+      sendQueuedPayload,
+      t,
+      workspaceWarning
+    ]
   )
 
   const suggestionSources = useAgentResourceSuggestion({
@@ -784,13 +876,34 @@ const AgentComposerInner = ({
         onTokensChange={handleTokensChange}
         resolveSkillMarker={resolveSkillMarker}
         placeholder={placeholderText}
-        sendDisabled={
-          isStreaming || sendDisabled || (text.trim().length === 0 && files.length === 0 && selectedSkills.length === 0)
-        }
+        sendDisabled={sendDisabled || (text.trim().length === 0 && files.length === 0 && selectedSkills.length === 0)}
         sendBlockedReason={sendDisabled ? t('common.loading') : undefined}
         isLoading={isStreaming}
         onSendDraft={handleSendDraft}
         onPause={abortAgentSession}
+        queueContent={
+          queuedFollowups.length > 0 ? (
+            <QueuedFollowupsDock
+              items={queuedFollowups}
+              paused={followupPaused}
+              onTogglePause={() => setFollowupPaused(!followupPaused)}
+              onSteer={(id) => {
+                const item = queuedFollowups.find((entry) => entry.id === id)
+                if (!item) return
+                void sendQueuedPayload(item.payload)
+                removeFollowup(id)
+              }}
+              onEdit={(id) => {
+                const item = queuedFollowups.find((entry) => entry.id === id)
+                if (!item) return
+                restoreFollowupDraft(item)
+                removeFollowup(id)
+              }}
+              onRemove={removeFollowup}
+              onReorder={reorderFollowups}
+            />
+          ) : undefined
+        }
         supportedExts={supportedExts}
         setFiles={setFiles}
         filesCount={files.length}
@@ -807,6 +920,7 @@ const AgentComposerInner = ({
         rootPanelAdditionalItems={rootPanelSkillItems}
         onRootPanelOpen={handleRootPanelOpen}
         onToolLauncherSelect={(launcher, options) => dispatchLauncher(launcher, options)}
+        renderSendAccessory={() => <AgentComposerContextUsage model={model} sessionId={sessionId} />}
         {...controlSlots}
       />
     </ComposerToolDerivedStateProvider>

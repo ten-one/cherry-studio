@@ -75,6 +75,7 @@ vi.mock('@renderer/data/hooks/useCache', async () => {
   const React = await import('react')
 
   return {
+    useSharedCache: () => [null, vi.fn()],
     usePersistCache: (key: string) => {
       const initialValue =
         key === 'ui.agent.last_used_agent_id'

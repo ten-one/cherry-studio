@@ -166,6 +166,7 @@ vi.mock('@renderer/components/NavbarIcon', () => ({
 
 vi.mock('@renderer/data/hooks/useCache', () => ({
   useCache: () => [false],
+  useSharedCache: () => [null, vi.fn()],
   usePersistCache: () => [undefined, vi.fn()]
 }))
 
@@ -249,7 +250,8 @@ vi.mock('@renderer/hooks/useSettings', () => ({
 }))
 
 vi.mock('@renderer/hooks/useTopicStreamStatus', () => ({
-  useTopicStreamStatus: () => ({ isPending: false })
+  useTopicStreamStatus: () => ({ isPending: false }),
+  useTopicOverlayHandoffOnTerminal: () => {}
 }))
 
 vi.mock('@renderer/utils/agentSession', () => ({
@@ -275,10 +277,6 @@ vi.mock('../components/AgentSessionMessages', () => ({
 
 vi.mock('@renderer/components/chat/citations/CitationsPanel', () => ({
   default: ({ open }: { open: boolean }) => <div data-testid="citations-panel" data-open={String(open)} />
-}))
-
-vi.mock('../../home/Inputbar/components/PinnedTodoPanel', () => ({
-  PinnedTodoPanel: () => <div />
 }))
 
 describe('AgentChat locate pending message', () => {

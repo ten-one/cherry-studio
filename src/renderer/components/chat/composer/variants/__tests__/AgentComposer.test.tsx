@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => ({
   insertToken: vi.fn(),
   availableSkills: [] as LocalSkill[],
   availableSkillsRefresh: vi.fn(),
+  contextUsagePercentage: null as number | null,
   surfaceProps: undefined as ComposerSurfaceProps | undefined,
   derivedToolState: undefined as { couldAddImageFile: boolean; extensions: string[] } | undefined,
   shortcutHandlers: new Map<string, () => void>(),
@@ -115,6 +116,7 @@ vi.mock('@renderer/components/chat/composer/ComposerSurface', () => {
       <div>
         <div data-testid="composer-left-controls">{props.renderLeftControls?.(undefined)}</div>
         <div data-testid="composer-below-controls">{props.renderBelowControls?.(undefined)}</div>
+        <div data-testid="composer-send-accessory">{props.renderSendAccessory?.()}</div>
         <button
           type="button"
           onClick={() =>
@@ -221,6 +223,33 @@ vi.mock('@renderer/hooks/agents/useAgentModelFilter', () => ({
   useAgentModelFilter: () => undefined
 }))
 
+vi.mock('@renderer/hooks/agents/useAgentSessionContextUsage', () => ({
+  useAgentSessionContextUsage: () => ({
+    usage:
+      mocks.contextUsagePercentage === null
+        ? null
+        : {
+            categories: [],
+            totalTokens: 42,
+            maxTokens: 100,
+            rawMaxTokens: 100,
+            percentage: mocks.contextUsagePercentage,
+            gridRows: [],
+            model: 'agent/deepseek-v4-flash',
+            memoryFiles: [],
+            mcpTools: [],
+            agents: [],
+            isAutoCompactEnabled: false,
+            apiUsage: null
+          },
+    percentage: mocks.contextUsagePercentage
+  })
+}))
+
+vi.mock('@renderer/hooks/agents/useAgentSessionCompaction', () => ({
+  useAgentSessionCompaction: () => ({ status: 'idle' })
+}))
+
 vi.mock('@renderer/hooks/agents/useSession', () => ({
   useSession: () => ({
     session: {
@@ -260,6 +289,10 @@ vi.mock('@renderer/hooks/useSkills', () => ({
     error: null,
     refresh: mocks.availableSkillsRefresh
   })
+}))
+
+vi.mock('@renderer/hooks/useTopicStreamStatus', () => ({
+  useTopicStreamStatus: () => ({ isPending: false, isFulfilled: false, markSeen: () => {} })
 }))
 
 vi.mock('@renderer/features/command', () => ({
@@ -392,6 +425,7 @@ describe('AgentComposer', () => {
     mocks.availableSkills = []
     mocks.availableSkillsRefresh.mockReset()
     mocks.availableSkillsRefresh.mockResolvedValue(undefined)
+    mocks.contextUsagePercentage = null
     mocks.surfaceProps = undefined
     mocks.derivedToolState = undefined
     mocks.runtimeHostProps = undefined
@@ -481,6 +515,29 @@ describe('AgentComposer', () => {
       couldAddImageFile: false,
       extensions: mocks.surfaceProps?.supportedExts
     })
+  })
+
+  it('renders context usage next to the send action when cached usage exists', async () => {
+    mocks.contextUsagePercentage = 42
+
+    render(
+      <AgentComposer
+        agentId="agent-1"
+        sessionId="session-1"
+        sendMessage={mocks.sendMessage}
+        stop={mocks.stop}
+        isStreaming={false}
+      />
+    )
+
+    const indicator = screen.getByLabelText('agent.right_pane.info.context_usage 42%')
+    expect(indicator).toBeInTheDocument()
+    expect(indicator).not.toHaveTextContent('42%')
+    expect(indicator).toHaveAttribute('style', expect.stringContaining('--context-usage-progress: 42%'))
+    expect(indicator).toHaveAttribute('style', expect.stringContaining('color-mix(in oklch'))
+
+    await waitFor(() => expect(screen.getByText('42 / 100 (42%)')).toBeInTheDocument())
+    expect(screen.getByText('agent/deepseek-v4-flash')).toBeInTheDocument()
   })
 
   it('provides workspace resources through the mention suggestion source', async () => {
@@ -1035,7 +1092,7 @@ describe('AgentComposer', () => {
     expect(mocks.stop).toHaveBeenCalledTimes(1)
   })
 
-  it('does not send while the agent session is streaming', () => {
+  it('queues a follow-up while the agent session is streaming (does not send directly)', () => {
     render(
       <AgentComposer
         agentId="agent-1"
@@ -1048,7 +1105,9 @@ describe('AgentComposer', () => {
 
     fireEvent.click(screen.getByText('send'))
 
+    // Busy → the message is queued, not sent; the dock surfaces through `queueContent`.
     expect(mocks.sendMessage).not.toHaveBeenCalled()
+    expect(mocks.surfaceProps?.queueContent).toBeTruthy()
   })
 
   it('inserts quoted selected text as a quote token from the main-window quote IPC', async () => {

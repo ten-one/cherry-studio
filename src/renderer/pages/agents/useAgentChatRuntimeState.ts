@@ -13,7 +13,7 @@ import {
   useConversationTurnController
 } from '@renderer/hooks/useConversationTurnController'
 import { type ExecutionFinishEvent, useExecutionOverlay } from '@renderer/hooks/useExecutionOverlay'
-import { useTopicStreamStatus } from '@renderer/hooks/useTopicStreamStatus'
+import { useTopicOverlayHandoffOnTerminal, useTopicStreamStatus } from '@renderer/hooks/useTopicStreamStatus'
 import type { GetAgentResponse } from '@renderer/types'
 import { buildAgentSessionTopicId } from '@renderer/utils/agentSession'
 import type { AgentSessionEntity } from '@shared/data/api/schemas/agentSessions'
@@ -21,7 +21,6 @@ import type { CherryMessagePart, CherryUIMessage, ModelSnapshot } from '@shared/
 import { isUniqueModelId, parseUniqueModelId } from '@shared/data/types/model'
 import { isToolUIPart } from 'ai'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 const logger = loggerService.withContext('useAgentChatRuntimeState')
 
@@ -128,7 +127,6 @@ export function useAgentChatRuntimeState({
   sessionHistoryFetchOnMount,
   reservedMessages
 }: UseAgentChatRuntimeStateParams): AgentChatRuntimeState {
-  const { t } = useTranslation()
   const sessionId = session.id
   const sessionTopicId = useMemo(() => buildAgentSessionTopicId(sessionId), [sessionId])
   const {
@@ -199,7 +197,11 @@ export function useAgentChatRuntimeState({
   }, [uiMessages])
 
   const finishRef = useRef<((executionId: string, event: ExecutionFinishEvent) => void) | undefined>(undefined)
-  const { overlay, disposeOverlay } = useExecutionOverlay(sessionTopicId, chat.activeExecutions, uiMessages, {
+  const {
+    overlay,
+    disposeOverlay,
+    reset: resetOverlay
+  } = useExecutionOverlay(sessionTopicId, chat.activeExecutions, uiMessages, {
     onFinish: (executionId, event) => finishRef.current?.(executionId, event)
   })
   const [optimisticAskUserQuestionInputsByToolCallId, setOptimisticAskUserQuestionInputsByToolCallId] = useState<
@@ -225,6 +227,19 @@ export function useAgentChatRuntimeState({
   useEffect(() => {
     setOptimisticAskUserQuestionInputsByToolCallId({})
   }, [sessionTopicId])
+
+  // Deterministic overlay→DB handoff: the overlay's `onFinish` is suppressed when
+  // the execution leaves `activeExecutions` at terminal, so a torn-down turn's
+  // live card would otherwise override the finalized DB row. Refresh then drop the
+  // overlay off the terminal status edge (excludes awaiting-approval, which keeps
+  // its card). `refresh()` before `reset()` avoids flashing the stale base parts.
+  useTopicOverlayHandoffOnTerminal(sessionTopicId, async () => {
+    try {
+      await refresh()
+    } finally {
+      resetOverlay()
+    }
+  })
 
   const partsByMessageId = useMemo<Record<string, CherryMessagePart[]>>(() => {
     const next = { ...basePartsMap }
@@ -292,13 +307,9 @@ export function useAgentChatRuntimeState({
         if (optimisticToolCallId) removeOptimisticAskUserQuestionInput(optimisticToolCallId)
         throw new Error('Tool approval response was not accepted')
       }
-      if (result.status === 'expired') {
-        if (optimisticToolCallId) removeOptimisticAskUserQuestionInput(optimisticToolCallId)
-        window.toast.warning(t('agent.toolPermission.toast.timeout'))
-      }
       await refresh()
     },
-    [refresh, removeOptimisticAskUserQuestionInput, sessionTopicId, t]
+    [refresh, removeOptimisticAskUserQuestionInput, sessionTopicId]
   )
   const toolApprovalComposerOverrides = useToolApprovalComposerOverrides({
     partsByMessageId,

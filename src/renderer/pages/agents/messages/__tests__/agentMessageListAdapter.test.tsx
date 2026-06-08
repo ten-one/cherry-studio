@@ -161,6 +161,8 @@ describe('useAgentMessageListProviderValue', () => {
         warning: vi.fn()
       }
     })
+    window.api.file.openPath = vi.fn()
+    window.api.file.showInFolder = vi.fn()
   })
 
   it('adapts CherryUIMessage input and injects supported agent capabilities', () => {
@@ -194,7 +196,6 @@ describe('useAgentMessageListProviderValue', () => {
     const deleteMessage = vi.fn()
     const respondToolApproval = vi.fn()
     const openArtifactFile = vi.fn()
-    const openTrace = vi.fn()
     let value: MessageListProviderValue | undefined
 
     const Probe = () => {
@@ -210,10 +211,10 @@ describe('useAgentMessageListProviderValue', () => {
         },
         isLoading: false,
         openArtifactFile,
-        openTrace,
         deleteMessage,
         respondToolApproval,
-        messageNavigation: 'anchor'
+        messageNavigation: 'anchor',
+        workspacePath: '/tmp/workspace'
       })
       return null
     }
@@ -283,7 +284,6 @@ describe('useAgentMessageListProviderValue', () => {
     expect(value?.state.externalCodeEditors).toBe(leafCapabilitiesMock.externalCodeEditors)
     expect(value?.state.getFileView).toBe(leafCapabilitiesMock.getFileView)
     expect(value?.meta.userProfile).toBe(headerCapabilitiesMock.userProfile)
-    expect(value?.actions.openTrace).toBe(openTrace)
     expect(value?.actions.openArtifactFile).toBe(openArtifactFile)
     expect(value?.actions.openPath).toEqual(expect.any(Function))
     expect(value?.actions.showInFolder).toEqual(expect.any(Function))
@@ -292,6 +292,12 @@ describe('useAgentMessageListProviderValue', () => {
     expect(value?.actions.bindMessageRuntime).toEqual(expect.any(Function))
     expect(value?.actions.bindMessageGroupRuntime).toEqual(expect.any(Function))
     expect(value?.actions.locateMessage).toEqual(expect.any(Function))
+
+    void value?.actions.openPath?.('dist/report.md')
+    expect(window.api.file.openPath).toHaveBeenCalledWith('/tmp/workspace/dist/report.md')
+
+    void value?.actions.showInFolder?.('/Users/me/report.md')
+    expect(window.api.file.showInFolder).toHaveBeenCalledWith('/Users/me/report.md')
 
     void value?.actions.navigateToRoute?.({ path: '/settings/provider', query: { id: 'provider-1' } })
     expect(navigateMock).toHaveBeenCalledWith({

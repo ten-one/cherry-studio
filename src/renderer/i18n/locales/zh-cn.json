@@ -410,6 +410,15 @@
           "title": "暂无消息"
         }
       },
+      "info": {
+        "artifacts": "产物",
+        "context_usage": "上下文用量",
+        "label": "任务信息",
+        "more": "还有 {{count}} 项",
+        "no_artifacts": "暂无声明产物",
+        "no_subagents": "暂无子智能体",
+        "subagents": "子智能体"
+      },
       "status": {
         "activity": "活动",
         "agent": "智能体",
@@ -843,9 +852,6 @@
           "writePages": "编写页面"
         },
         "title": "任务"
-      },
-      "panel": {
-        "title": "已完成 {{completed}}/{{total}} 个任务"
       },
       "status": {
         "completed": "已完成",
