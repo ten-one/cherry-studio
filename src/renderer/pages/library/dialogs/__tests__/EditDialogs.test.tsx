@@ -204,7 +204,7 @@ vi.mock('react-i18next', async (importOriginal) => {
   return {
     ...actual,
     useTranslation: () => ({
-      t: (key: string) =>
+      t: (key: string, fallback?: string) =>
         ({
           'agent.cherryClaw.heartbeat.enabledHelper': 'Send heartbeat messages.',
           'agent.cherryClaw.heartbeat.intervalHelper': 'Heartbeat interval.',
@@ -354,7 +354,9 @@ vi.mock('react-i18next', async (importOriginal) => {
           'settings.mcp.runtimeStatus.connecting': 'Connecting',
           'settings.mcp.runtimeStatus.unavailable': 'Unavailable',
           'settings.title': 'Settings'
-        })[key] ?? key
+        })[key] ??
+        fallback ??
+        key
     })
   }
 })
@@ -412,7 +414,6 @@ const AGENT: AgentDetail = {
   planModel: undefined,
   smallModel: undefined,
   mcps: [],
-  allowedTools: [],
   configuration: {
     avatar: '🤖',
     soul_enabled: false,
