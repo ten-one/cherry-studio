@@ -1,5 +1,6 @@
 import { loggerService } from '@logger'
 import type { FilePath } from '@shared/file/types/common'
+import { createFilePathHandle } from '@shared/file/types/handle'
 import { useEffect, useState } from 'react'
 
 const logger = loggerService.withContext('useFileSize')
@@ -29,12 +30,12 @@ export function useFileSize(
 
     void (async () => {
       try {
-        const metadata = await window.api.file.getMetadata({ kind: 'path', path: absPath as FilePath })
+        const metadata = await window.api.file.getMetadata(createFilePathHandle(absPath as FilePath))
         if (!cancelled) setState({ status: 'ok', size: metadata.size })
       } catch (err) {
         if (cancelled) return
         const normalized = err instanceof Error ? err : new Error(String(err))
-        logger.error(`Failed to get file size: ${absPath}`, normalized)
+        logger.error(`Failed to read file metadata: ${absPath}`, normalized)
         setState({ status: 'error' })
       }
     })()

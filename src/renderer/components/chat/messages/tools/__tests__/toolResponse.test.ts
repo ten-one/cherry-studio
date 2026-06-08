@@ -35,6 +35,51 @@ describe('toolResponse adapter', () => {
     expect(response.response).toBe('ok')
   })
 
+  it('parses the cherry-tools wire name into server + tool (no metadata path)', () => {
+    // Real production shape (from the agent_session_message table): a dynamic-tool part whose
+    // toolName is the full `mcp__cherry-tools__web_search`, with NO output metadata. The single-
+    // underscore wire name splits cleanly on the last `__` into server `cherry-tools` / tool
+    // `web_search`.
+    const part = {
+      type: 'dynamic-tool',
+      toolCallId: 'call-cherry',
+      toolName: 'mcp__cherry-tools__web_search',
+      state: 'output-available',
+      input: { query: 'latest news' },
+      output: { content: '[]' }
+    } as unknown as CherryMessagePart
+
+    const response = buildToolResponseFromPart(part)
+    expect(response).toBeTruthy()
+    if (!response) throw new Error('Expected tool response')
+    expect(response.tool.type).toBe('mcp')
+    expect(response.tool.name).toBe('web_search')
+    expect((response.tool as any).serverId).toBe('cherry-tools')
+  })
+
+  it('keeps a successful tool_invoke as a meta (non-mcp) tool despite leaked inner result metadata', () => {
+    // A completed tool_invoke carries the inner tool's result metadata (`type: 'mcp'`,
+    // `serverName`). The outer meta-tool must NOT be reshaped into an MCP response.
+    const part = {
+      type: 'tool-tool_invoke',
+      toolCallId: 'call-meta',
+      state: 'output-available',
+      input: { name: 'mcp__duckduckgo__search', params: { query: 'latest tech news' } },
+      output: {
+        content: 'ok',
+        metadata: { serverName: 'duckduckgo', serverId: 'dd-server', type: 'mcp' }
+      }
+    } as unknown as CherryMessagePart
+
+    const response = buildToolResponseFromPart(part)
+    expect(response).toBeTruthy()
+    if (!response) throw new Error('Expected tool response')
+    expect(response.tool.type).not.toBe('mcp')
+    expect(response.tool.name).toBe('tool_invoke')
+    // Inner arguments stay intact for the meta renderer to unwrap.
+    expect(response.arguments).toEqual({ name: 'mcp__duckduckgo__search', params: { query: 'latest tech news' } })
+  })
+
   it('maps output-error to error status and error-shaped response', () => {
     const part = {
       type: 'dynamic-tool',
