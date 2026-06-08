@@ -12,15 +12,14 @@ import type {
   AiStreamAttachResponse,
   AiStreamDetachRequest,
   AiStreamOpenRequest,
-  AiStreamOpenResponse,
-  ApprovalDecision
+  AiStreamOpenResponse
 } from '@shared/ai/transport'
 import { DEFAULT_TIMEOUT } from '@shared/config/constant'
 import type { Message } from '@shared/data/types/message'
 import type { UniqueModelId } from '@shared/data/types/model'
 import { IpcChannel } from '@shared/IpcChannel'
 import { type SerializedError, serializeError } from '@shared/types/error'
-import { isToolUIPart, type UIMessageChunk } from 'ai'
+import { type UIMessageChunk } from 'ai'
 import * as z from 'zod'
 
 import type { AiStreamRequest, CallOverrides } from '../types/requests'
@@ -167,42 +166,6 @@ function ensureTerminalFinalMessage(exec: StreamExecution): CherryUIMessage {
   } as CherryUIMessage
   exec.finalMessage = finalMessage
   return finalMessage
-}
-
-function replayApprovalDecisionsOnSnapshot(
-  finalMessage: CherryUIMessage,
-  decisions: readonly ApprovalDecision[] | undefined
-): CherryUIMessage {
-  if (!decisions?.length || !finalMessage.parts?.length) return finalMessage
-
-  const byApprovalId = new Map<string, ApprovalDecision>()
-  for (const decision of decisions) byApprovalId.set(decision.approvalId, decision)
-
-  let changed = false
-  const parts = finalMessage.parts.map((part) => {
-    if (!isToolUIPart(part)) return part
-    const approvalId = part.approval?.id
-    const decision = approvalId ? byApprovalId.get(approvalId) : undefined
-    if (!decision) return part
-
-    changed = true
-    return {
-      ...part,
-      ...(decision.updatedInput !== undefined ? { input: decision.updatedInput } : {}),
-      ...(part.state === 'approval-requested'
-        ? {
-            state: 'approval-responded',
-            approval: {
-              id: decision.approvalId,
-              approved: decision.approved,
-              ...(decision.reason !== undefined ? { reason: decision.reason } : {})
-            }
-          }
-        : {})
-    }
-  })
-
-  return changed ? ({ ...finalMessage, parts } as CherryUIMessage) : finalMessage
 }
 
 /**
@@ -622,6 +585,15 @@ export class AiStreamManager extends BaseService {
     const exec = stream.executions.get(modelId)
     if (!exec || exec.status !== 'aborted') return
 
+    // A turn torn down while a tool is still `approval-requested` (or any
+    // in-flight tool) gets no `tool-output-*` to clear it. Clear the flag so the
+    // status resolves to plain `aborted` (not `awaiting-approval`) and the
+    // status-cache anchor drops; the dangling tool part itself is terminalized
+    // to `output-error` by `finalizeInterruptedParts` at every projection
+    // (persistence already, re-attach below). Must run before
+    // `resolveTerminalStatus`.
+    exec.awaitingApproval = false
+
     endRootSpan(exec, 'aborted')
     stream.status = this.resolveTerminalStatus(stream)
     const isTopicDone = !isLiveStatus(stream.status)
@@ -642,6 +614,10 @@ export class AiStreamManager extends BaseService {
     exec.status = 'error'
     exec.error = error
     endRootSpan(exec, 'error', error)
+
+    // Mirror of onExecutionPaused: clear the flag so the status anchor drops;
+    // the in-flight tool part is terminalized by `finalizeInterruptedParts`.
+    exec.awaitingApproval = false
 
     stream.status = this.computeTopicStatus(stream)
     const isTopicDone = !isLiveStatus(stream.status)
@@ -719,30 +695,6 @@ export class AiStreamManager extends BaseService {
       listenerIds: [...stream.listeners.keys()],
       executions
     }
-  }
-
-  applyApprovalDecision(topicId: string, decision: ApprovalDecision): boolean {
-    const stream = this.activeStreams.get(topicId)
-    if (!stream) return false
-
-    let applied = false
-    for (const exec of stream.executions.values()) {
-      exec.approvalDecisions = [
-        ...(exec.approvalDecisions?.filter((d) => d.approvalId !== decision.approvalId) ?? []),
-        decision
-      ]
-
-      const finalMessage = exec.finalMessage
-      if (!finalMessage) continue
-      const parts = finalMessage.parts
-      if (!parts?.length) continue
-      const targetPresent = parts.some((part) => isToolUIPart(part) && part.approval?.id === decision.approvalId)
-      if (!targetPresent) continue
-
-      exec.finalMessage = replayApprovalDecisionsOnSnapshot(finalMessage, [decision])
-      applied = true
-    }
-    return applied
   }
 
   // ── Public: attach / detach ──────────────────────────────────────
@@ -886,9 +838,10 @@ export class AiStreamManager extends BaseService {
     // upstream AI SDK request is already wired to. Caller override via
     // `requestOptions.timeout`; otherwise `DEFAULT_TIMEOUT`.
     const timeoutMs = request.requestOptions?.timeout ?? DEFAULT_TIMEOUT
+    const { stream: idleStream, idle } = withIdleTimeout(rawStream, exec.abortController, timeoutMs)
     // Wrap before pipeStreamLoop's tee() so broadcast + accumulator share one
     // thinkingMs measurement (see reasoningTimingTransform).
-    const stream = withReasoningTimingMetadata(withIdleTimeout(rawStream, exec.abortController, timeoutMs))
+    const stream = withReasoningTimingMetadata(idleStream)
 
     // `continue-conversation` chunks reference toolCallIds on the anchor
     // assistant message; without seeding, `readUIMessageStream`'s
@@ -898,10 +851,13 @@ export class AiStreamManager extends BaseService {
       lastIncoming?.role === 'assistant' ? (lastIncoming as CherryUIMessage) : undefined
 
     const result = await pipeStreamLoop(stream, signal, {
-      onChunk: (chunk) => this.onChunk(topicId, modelId, chunk),
+      onChunk: (chunk) => {
+        this.onChunk(topicId, modelId, chunk)
+        if (chunk.type === 'tool-approval-request') idle.cleanup()
+      },
       accumulatorSeed,
       onAccumulatedSnapshot: (msg) => {
-        exec.finalMessage = replayApprovalDecisionsOnSnapshot(msg, exec.approvalDecisions)
+        exec.finalMessage = msg
       }
     })
 
