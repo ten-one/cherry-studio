@@ -198,5 +198,6 @@ describe('buildClaudeCodeSessionSettings', () => {
 
     expect(mocks.reconcileAgentSkills).toHaveBeenCalledWith('agent-1', '/workspace/project')
     expect(settings.cwd).toBe('/workspace/project')
+    expect(settings.settings).toMatchObject({ autoCompactEnabled: true })
   })
 })
