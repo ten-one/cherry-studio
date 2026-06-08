@@ -45,7 +45,7 @@ vi.mock('@data/services/AgentService', () => ({
 vi.mock('@data/services/AgentChannelService', () => ({
   agentChannelService: {
     findBySessionId: mocks.findBySessionId,
-    listChannels: vi.fn()
+    listChannels: vi.fn(async () => [])
   }
 }))
 
