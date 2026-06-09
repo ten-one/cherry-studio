@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { SkeletonSpan } from '../MessageAgentTools/GenericTools'
+import { SkeletonSpan } from './GenericTools'
 
 /**
  * Format argument value for display in table
@@ -15,7 +15,7 @@ export const formatArgValue = (value: unknown): string => {
 
 /**
  * Shared argument table component for displaying tool parameters
- * Used by both MCP tools and Agent tools
+ * Used by tool renderers
  */
 export function ToolArgsTable({
   args,

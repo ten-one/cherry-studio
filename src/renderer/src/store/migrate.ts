@@ -55,7 +55,7 @@ import { isEmpty } from 'lodash'
 import { createMigrate } from 'redux-persist'
 
 import type { RootState } from '.'
-import { DEFAULT_TOOL_ORDER, DEFAULT_TOOL_ORDER_BY_SCOPE } from './inputTools'
+import { DEFAULT_TOOL_ORDER } from './inputTools'
 import { initialState as llmInitialState, moveProvider } from './llm'
 import { mcpSlice } from './mcp'
 import { initialState as notesInitialState } from './note'
@@ -2799,10 +2799,6 @@ const migrateConfig = {
   },
   '173': (state: RootState) => {
     try {
-      // Migrate toolOrder from global state to scope-based state
-      if (state.inputTools && !state.inputTools.sessionToolOrder) {
-        state.inputTools.sessionToolOrder = DEFAULT_TOOL_ORDER_BY_SCOPE.session
-      }
       return state
     } catch (error) {
       logger.error('migrate 173 error', error as Error)
@@ -3295,30 +3291,6 @@ const migrateConfig = {
   },
   '203': (state: RootState) => {
     try {
-      if (state.settings && state.settings.sidebarIcons) {
-        // Add 'agents' to visible icons if not already present
-        if (!state.settings.sidebarIcons.visible.includes('agents')) {
-          // Insert after 'assistants' if present, otherwise append
-          const assistantsIndex = state.settings.sidebarIcons.visible.indexOf('assistants')
-          if (assistantsIndex !== -1) {
-            state.settings.sidebarIcons.visible = [
-              ...state.settings.sidebarIcons.visible.slice(0, assistantsIndex + 1),
-              'agents',
-              ...state.settings.sidebarIcons.visible.slice(assistantsIndex + 1)
-            ]
-          } else {
-            state.settings.sidebarIcons.visible = [...state.settings.sidebarIcons.visible, 'agents']
-          }
-        }
-      }
-
-      // Add 'agents' tab if not already present
-      if (state.tabs && !state.tabs.tabs.some((tab: { id: string }) => tab.id === 'agents')) {
-        const homeIndex = state.tabs.tabs.findIndex((tab: { id: string }) => tab.id === 'home')
-        const insertIndex = homeIndex !== -1 ? homeIndex + 1 : state.tabs.tabs.length
-        state.tabs.tabs.splice(insertIndex, 0, { id: 'agents', path: '/agents' })
-      }
-
       logger.info('migrate 203 success')
       return state
     } catch (error) {
@@ -3375,20 +3347,6 @@ const migrateConfig = {
   },
   '206': (state: RootState) => {
     try {
-      const { sessionToolOrder } = state.inputTools
-      const permissionModeKey = 'permission_mode'
-      if (
-        sessionToolOrder &&
-        !sessionToolOrder?.visible?.includes(permissionModeKey) &&
-        !sessionToolOrder?.hidden?.includes(permissionModeKey)
-      ) {
-        const createSessionIndex = sessionToolOrder.visible.indexOf('create_session')
-        if (createSessionIndex !== -1) {
-          sessionToolOrder.visible.splice(createSessionIndex + 1, 0, permissionModeKey)
-        } else {
-          sessionToolOrder.visible.unshift(permissionModeKey)
-        }
-      }
       logger.info('migrate 206 success')
       return state
     } catch (error) {

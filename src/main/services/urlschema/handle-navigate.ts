@@ -8,7 +8,6 @@ const logger = loggerService.withContext('URLSchema:handleNavigateProtocolUrl')
 // Allowed route prefixes to prevent arbitrary navigation
 const ALLOWED_ROUTES = [
   '/settings/',
-  '/agents',
   '/knowledge',
   '/paintings',
   '/translate',
@@ -25,7 +24,6 @@ const ALLOWED_ROUTES = [
  *
  * Examples:
  *   cherrystudio://navigate/settings/provider
- *   cherrystudio://navigate/agents
  *   cherrystudio://navigate/knowledge
  */
 export function handleNavigateProtocolUrl(url: URL) {

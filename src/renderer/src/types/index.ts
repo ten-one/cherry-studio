@@ -17,7 +17,6 @@ import type { MCPConfigSample, MCPServerInstallSource, McpServerType } from './m
 import type { Message } from './newMessage'
 import type { BaseTool, MCPTool } from './tool'
 
-export * from './agent'
 export * from './apiModels'
 export * from './apiServer'
 export * from './knowledge'
@@ -27,7 +26,6 @@ export * from './ocr'
 export * from './plugin'
 export * from './provider'
 export * from './serialize'
-export * from './skill'
 
 export type McpMode = 'disabled' | 'auto' | 'manual'
 
@@ -263,8 +261,7 @@ export type Metrics = {
 }
 
 export enum TopicType {
-  Chat = 'chat',
-  Session = 'session'
+  Chat = 'chat'
 }
 
 export type Topic = {
@@ -683,7 +680,6 @@ export const isAutoDetectionMethod = (method: string): method is AutoDetectionMe
 
 export type SidebarIcon =
   | 'assistants'
-  | 'agents'
   | 'store'
   | 'paintings'
   | 'translate'

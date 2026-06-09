@@ -13,7 +13,6 @@ import {
   Languages,
   LayoutGrid,
   MessageSquareQuote,
-  MousePointerClick,
   NotepadText,
   Palette,
   Sparkle
@@ -124,7 +123,6 @@ const SidebarIconsManager: FC<SidebarIconsManagerProps> = ({
     () =>
       ({
         assistants: <MessageSquareQuote size={16} />,
-        agents: <MousePointerClick size={16} />,
         store: <Sparkle size={16} />,
         paintings: <Palette size={16} />,
         translate: <Languages size={16} />,

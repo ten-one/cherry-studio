@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ClickableFilePath } from '../MessageAgentTools/ClickableFilePath'
+import { ClickableFilePath } from '../shared/ClickableFilePath'
 
 const mockOpenPath = vi.fn().mockResolvedValue(undefined)
 const mockShowInFolder = vi.fn().mockResolvedValue(undefined)

@@ -45,10 +45,6 @@ export const DEFAULT_TOOL_ORDER: ToolOrder = {
 // Tools are filtered by visibleInScopes first, so this only controls order/visibility of available tools.
 export const DEFAULT_TOOL_ORDER_BY_SCOPE: Record<InputbarScope, ToolOrder> = {
   [TopicType.Chat]: DEFAULT_TOOL_ORDER,
-  [TopicType.Session]: {
-    visible: ['create_session', 'permission_mode', 'slash_commands', 'attachment'],
-    hidden: []
-  },
   'mini-window': {
     visible: ['attachment', 'mention_models', 'quick_phrases'],
     hidden: []
@@ -57,13 +53,11 @@ export const DEFAULT_TOOL_ORDER_BY_SCOPE: Record<InputbarScope, ToolOrder> = {
 
 type InputToolsState = {
   toolOrder: ToolOrder
-  sessionToolOrder: ToolOrder
   isCollapsed: boolean
 }
 
 const initialState: InputToolsState = {
   toolOrder: DEFAULT_TOOL_ORDER,
-  sessionToolOrder: DEFAULT_TOOL_ORDER_BY_SCOPE[TopicType.Session],
   isCollapsed: true
 }
 
@@ -72,11 +66,7 @@ const inputToolsSlice = createSlice({
   initialState,
   reducers: {
     setToolOrder: (state, action: PayloadAction<{ scope: InputbarScope; toolOrder: ToolOrder }>) => {
-      if (action.payload.scope === TopicType.Session) {
-        state.sessionToolOrder = action.payload.toolOrder
-      } else {
-        state.toolOrder = action.payload.toolOrder
-      }
+      state.toolOrder = action.payload.toolOrder
     },
     setIsCollapsed: (state, action: PayloadAction<boolean>) => {
       state.isCollapsed = action.payload
@@ -88,7 +78,7 @@ export const { setToolOrder, setIsCollapsed } = inputToolsSlice.actions
 
 // Selector to get tool order for a specific scope
 export const selectToolOrderForScope = (state: { inputTools: InputToolsState }, scope: InputbarScope): ToolOrder => {
-  return scope === TopicType.Session ? state.inputTools.sessionToolOrder : state.inputTools.toolOrder
+  return scope === TopicType.Chat ? state.inputTools.toolOrder : DEFAULT_TOOL_ORDER_BY_SCOPE[scope]
 }
 
 export default inputToolsSlice.reducer

@@ -114,9 +114,9 @@ export async function createOpenAICompatibleExecutor(
   return RuntimeExecutor.createOpenAICompatible(provider, options, plugins)
 }
 
-// === Agent 功能预留 ===
-// 未来将在 ../agents/ 文件夹中添加：
-// - AgentExecutor.ts
+// === 扩展执行器预留 ===
+// 未来可在独立运行时目录中添加：
+// - RuntimeExecutor.ts
 // - WorkflowManager.ts
 // - ConversationManager.ts
 // 并在此处导出相关API

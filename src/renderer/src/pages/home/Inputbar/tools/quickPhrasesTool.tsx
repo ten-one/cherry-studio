@@ -5,7 +5,7 @@ const quickPhrasesTool = defineTool({
   key: 'quick_phrases',
   label: (t) => t('settings.quickPhrase.title'),
 
-  visibleInScopes: [TopicType.Chat, TopicType.Session, 'mini-window'],
+  visibleInScopes: [TopicType.Chat, 'mini-window'],
 
   dependencies: {
     actions: ['onTextChange', 'resizeTextArea'] as const

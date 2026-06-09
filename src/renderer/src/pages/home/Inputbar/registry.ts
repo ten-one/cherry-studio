@@ -18,19 +18,6 @@ const inputbarRegistry = new Map<InputbarScope, InputbarScopeConfig>([
     }
   ],
   [
-    TopicType.Session,
-    {
-      placeholder: 'Type a message...',
-      minRows: 2,
-      maxRows: 20,
-      showTokenCount: false,
-      showTools: true,
-      toolsCollapsible: false,
-      enableQuickPanel: true,
-      enableDragDrop: true
-    }
-  ],
-  [
     'mini-window',
     {
       minRows: 1,

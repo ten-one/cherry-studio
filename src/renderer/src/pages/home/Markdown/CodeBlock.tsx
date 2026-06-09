@@ -1,7 +1,7 @@
 import { CodeBlockView, HtmlArtifactsCard } from '@renderer/components/CodeBlockView'
 import { isWin } from '@renderer/config/constant'
 import { useSettings } from '@renderer/hooks/useSettings'
-import { ClickableFilePath } from '@renderer/pages/home/Messages/Tools/MessageAgentTools/ClickableFilePath'
+import { ClickableFilePath } from '@renderer/pages/home/Messages/Tools/shared/ClickableFilePath'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import store from '@renderer/store'
 import { messageBlocksSelectors } from '@renderer/store/messageBlock'

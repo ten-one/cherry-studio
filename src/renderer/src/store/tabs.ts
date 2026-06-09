@@ -27,15 +27,16 @@ export interface TabsState {
   activeTabId: string
 }
 
+const removedTabIds = new Set(['agents'])
+const removedTabPaths = new Set([...removedTabIds].map((id) => `/${id}`))
+
+const sanitizeTabs = (tabs: Tab[]) => tabs.filter((tab) => !removedTabIds.has(tab.id) && !removedTabPaths.has(tab.path))
+
 const initialState: TabsState = {
   tabs: [
     {
       id: 'home',
       path: '/'
-    },
-    {
-      id: 'agents',
-      path: '/agents'
     }
   ],
   activeTabId: 'home'
@@ -46,9 +47,15 @@ const tabsSlice = createSlice({
   initialState,
   reducers: {
     setTabs: (state, action: PayloadAction<Tab[]>) => {
-      state.tabs = action.payload
+      state.tabs = sanitizeTabs(action.payload)
+      if (!state.tabs.some((tab) => tab.id === state.activeTabId)) {
+        state.activeTabId = state.tabs[0]?.id ?? 'home'
+      }
     },
     addTab: (state, action: PayloadAction<Tab>) => {
+      if (removedTabIds.has(action.payload.id) || removedTabPaths.has(action.payload.path)) {
+        return
+      }
       const existingTab = state.tabs.find((tab) => tab.path === action.payload.path)
       if (!existingTab) {
         state.tabs.push(action.payload)
@@ -66,12 +73,19 @@ const tabsSlice = createSlice({
       }
     },
     updateTab: (state, action: PayloadAction<{ id: string; updates: Partial<Tab> }>) => {
+      if (removedTabIds.has(action.payload.id) || removedTabPaths.has(action.payload.updates.path ?? '')) {
+        state.tabs = sanitizeTabs(state.tabs)
+        return
+      }
       const tab = state.tabs.find((tab) => tab.id === action.payload.id)
       if (tab) {
         Object.assign(tab, action.payload.updates)
       }
     },
     setActiveTab: (state, action: PayloadAction<string>) => {
+      if (removedTabIds.has(action.payload)) {
+        return
+      }
       state.activeTabId = action.payload
     }
   }

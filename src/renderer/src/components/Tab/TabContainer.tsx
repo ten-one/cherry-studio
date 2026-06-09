@@ -28,7 +28,6 @@ import {
   LayoutGrid,
   Monitor,
   Moon,
-  MousePointerClick,
   NotepadText,
   Palette,
   Settings,
@@ -51,6 +50,7 @@ interface TabsContainerProps {
 }
 
 const logger = loggerService.withContext('TabContainer')
+const removedTabIds = new Set(['agents'])
 
 const getTabIcon = (
   tabId: string,
@@ -90,8 +90,6 @@ const getTabIcon = (
   switch (tabId) {
     case 'home':
       return <Home size={14} />
-    case 'agents':
-      return <MousePointerClick size={14} />
     case 'store':
       return <Sparkle size={14} />
     case 'translate':
@@ -169,6 +167,7 @@ const TabsContainer: React.FC<TabsContainerProps> = ({ children }) => {
   const shouldCreateTab = (path: string) => {
     if (path === '/') return false
     if (path === '/settings') return false
+    if (removedTabIds.has(getTabId(path))) return false
     return !tabs.some((tab) => tab.id === getTabId(path))
   }
 
@@ -220,7 +219,10 @@ const TabsContainer: React.FC<TabsContainerProps> = ({ children }) => {
     navigate(tab.path)
   }
 
-  const visibleTabs = useMemo(() => tabs.filter((tab) => !specialTabs.includes(tab.id)), [tabs])
+  const visibleTabs = useMemo(
+    () => tabs.filter((tab) => !specialTabs.includes(tab.id) && !removedTabIds.has(tab.id)),
+    [tabs]
+  )
 
   const { onSortEnd } = useDndReorder<Tab>({
     originalList: tabs,
@@ -242,7 +244,7 @@ const TabsContainer: React.FC<TabsContainerProps> = ({ children }) => {
             onSortEnd={onSortEnd}
             className="tabs-sortable"
             renderItem={(tab) => {
-              const isClosable = tab.id !== 'home' && tab.id !== 'agents'
+              const isClosable = tab.id !== 'home'
               return (
                 <Tab
                   key={tab.id}

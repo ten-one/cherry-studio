@@ -13,7 +13,6 @@ const logger = loggerService.withContext('MCPServer:Assistant')
 // Allowed route prefixes to prevent arbitrary navigation
 const ALLOWED_ROUTES = [
   '/settings/',
-  '/agents',
   '/knowledge',
   '/paintings',
   '/translate',

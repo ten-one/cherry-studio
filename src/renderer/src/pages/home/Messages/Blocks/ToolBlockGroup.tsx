@@ -1,6 +1,4 @@
 import { ErrorBoundary } from '@renderer/components/ErrorBoundary'
-import { useAppSelector } from '@renderer/store'
-import type { ToolPermissionEntry } from '@renderer/store/toolPermissions'
 import type { MCPToolResponseStatus } from '@renderer/types'
 import type { ToolMessageBlock } from '@renderer/types/newMessage'
 import { isToolPending } from '@renderer/utils/userConfirmation'
@@ -12,8 +10,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useToolApproval } from '../Tools/hooks/useToolApproval'
-import { getEffectiveStatus, type ToolStatus } from '../Tools/MessageAgentTools/GenericTools'
 import MessageTools from '../Tools/MessageTools'
+import { getEffectiveStatus, type ToolStatus } from '../Tools/shared/GenericTools'
 import ToolApprovalActionsComponent from '../Tools/ToolApprovalActions'
 import ToolHeader from '../Tools/ToolHeader'
 import BlockErrorFallback from './BlockErrorFallback'
@@ -114,28 +112,22 @@ function isCompletedStatus(status: MCPToolResponseStatus | undefined): boolean {
 }
 
 // Calculate actual waiting state for a block (not depending on hooks)
-function getBlockIsWaiting(block: ToolMessageBlock, agentPermissions: Record<string, ToolPermissionEntry>): boolean {
+function getBlockIsWaiting(block: ToolMessageBlock): boolean {
   const toolResponse = block.metadata?.rawMcpToolResponse
   if (!toolResponse || toolResponse.status !== 'pending') return false
 
   const tool = toolResponse.tool
   if (tool?.type === 'mcp') {
-    // MCP tools: check the global confirmation queue
     return isToolPending(toolResponse.id)
-  } else {
-    // Agent tools: check Redux store for pending permission
-    const permission = Object.values(agentPermissions).find((p) => p.toolCallId === toolResponse.toolCallId)
-    return permission?.status === 'pending'
   }
+
+  return false
 }
 
 // Get effective UI status for a block
-function getBlockEffectiveStatus(
-  block: ToolMessageBlock,
-  agentPermissions: Record<string, ToolPermissionEntry>
-): ToolStatus {
+function getBlockEffectiveStatus(block: ToolMessageBlock): ToolStatus {
   const toolResponse = block.metadata?.rawMcpToolResponse
-  const isWaiting = getBlockIsWaiting(block, agentPermissions)
+  const isWaiting = getBlockIsWaiting(block)
   return getEffectiveStatus(toolResponse?.status, isWaiting)
 }
 
@@ -174,7 +166,6 @@ interface GroupHeaderContentProps {
 
 const GroupHeaderContent = React.memo(({ blocks, allCompleted }: GroupHeaderContentProps) => {
   const { t } = useTranslation()
-  const agentPermissions = useAppSelector((state) => state.toolPermissions.requests)
 
   if (allCompleted) {
     return (
@@ -186,7 +177,7 @@ const GroupHeaderContent = React.memo(({ blocks, allCompleted }: GroupHeaderCont
   }
 
   // Find blocks actually waiting for approval (using effective status)
-  const waitingBlocks = blocks.filter((block) => getBlockEffectiveStatus(block, agentPermissions) === 'waiting')
+  const waitingBlocks = blocks.filter((block) => getBlockEffectiveStatus(block) === 'waiting')
 
   // Prioritize showing waiting blocks that need approval
   const lastWaitingBlock = waitingBlocks[waitingBlocks.length - 1]
@@ -207,7 +198,7 @@ const GroupHeaderContent = React.memo(({ blocks, allCompleted }: GroupHeaderCont
 
   // Find running blocks (invoking or streaming)
   const runningBlocks = blocks.filter((block) => {
-    const status = getBlockEffectiveStatus(block, agentPermissions)
+    const status = getBlockEffectiveStatus(block)
     return status === 'invoking' || status === 'streaming'
   })
 

@@ -1,7 +1,6 @@
 // TODO(v2): All Redux store reads in this file (state.knowledge.bases, state.llm.providers)
-//           should migrate to the V2 SQLite/Drizzle data layer (src/main/services/agents/).
+//           should migrate to a V2 SQLite/Drizzle data layer.
 //           Redux is blocked for new data-model features until v2.0.0.
-//           See: src/main/services/agents/database/schema/index.ts
 
 import { loggerService } from '@logger'
 import KnowledgeService from '@main/services/KnowledgeService'
@@ -10,13 +9,15 @@ import type { KnowledgeBase, KnowledgeBaseParams, Provider } from '@types'
 import type { Response } from 'express'
 import type * as z from 'zod'
 
-import type { ValidationRequest } from '../agents/validators/zodValidator'
-import type { KnowledgeSearchSchema } from './validators/zodSchemas'
+import type { ValidationRequest } from '../../validators/zodValidator'
+import type { KnowledgeBaseIdParamSchema, KnowledgeSearchSchema, PaginationQuerySchema } from './validators/zodSchemas'
 
 const logger = loggerService.withContext('KnowledgeHandlers')
 
 // Infer types from Zod schemas to avoid duplication
 type ValidatedSearchBody = z.infer<typeof KnowledgeSearchSchema>
+type ValidatedPaginationQuery = z.infer<typeof PaginationQuerySchema>
+type ValidatedKnowledgeBaseParams = z.infer<typeof KnowledgeBaseIdParamSchema>
 
 /**
  * Helper to detect Redux unavailability errors
@@ -32,7 +33,7 @@ function isReduxUnavailableError(error: unknown): boolean {
 export const listKnowledgeBases = async (req: ValidationRequest, res: Response): Promise<Response> => {
   try {
     // Use Zod-validated values (defaults already applied by validator)
-    const { limit = 20, offset = 0 } = req.validatedQuery ?? {}
+    const { limit = 20, offset = 0 } = (req.validatedQuery ?? {}) as ValidatedPaginationQuery
 
     logger.debug('Listing knowledge bases', { limit, offset })
 
@@ -80,7 +81,7 @@ export const listKnowledgeBases = async (req: ValidationRequest, res: Response):
 export const getKnowledgeBase = async (req: ValidationRequest, res: Response): Promise<Response> => {
   try {
     // Zod already validated id exists and is non-empty
-    const { id } = req.validatedParams ?? {}
+    const { id } = (req.validatedParams ?? {}) as ValidatedKnowledgeBaseParams
 
     logger.debug(`Getting knowledge base: ${id}`)
 
