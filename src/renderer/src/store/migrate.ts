@@ -2215,14 +2215,6 @@ const migrateConfig = {
   },
   '133': (state: RootState) => {
     try {
-      state.settings.sidebarIcons.visible.push('code_tools')
-      if (state.codeTools) {
-        state.codeTools.environmentVariables = {
-          'qwen-code': '',
-          'claude-code': '',
-          'gemini-cli': ''
-        }
-      }
       return state
     } catch (error) {
       logger.error('migrate 133 error', error as Error)
@@ -3373,7 +3365,7 @@ const migrateConfig = {
     try {
       localStorage.setItem('onboarding-completed', 'true')
 
-      // Add anthropicApiHost to lmstudio and ollama providers for CodeTools compatibility
+      // Add anthropicApiHost to lmstudio and ollama providers for Anthropic-compatible integrations.
       state.llm.providers.forEach((provider) => {
         if (provider.id === 'lmstudio' && !provider.anthropicApiHost) {
           provider.anthropicApiHost = 'http://localhost:1234'

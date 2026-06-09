@@ -180,7 +180,6 @@ export const getThemeModeLabel = (key: string): string => {
 //   minapp: t('minapp.title'),
 //   knowledge: t('knowledge.title'),
 //   files: t('files.title'),
-//   code_tools: t('code.title'),
 //   notes: t('notes.title')
 // } as const
 
@@ -193,7 +192,6 @@ const sidebarIconKeyMap = {
   minapp: 'minapp.title',
   knowledge: 'knowledge.title',
   files: 'files.title',
-  code_tools: 'code.title',
   notes: 'notes.title',
   openclaw: 'openclaw.title'
 } as const

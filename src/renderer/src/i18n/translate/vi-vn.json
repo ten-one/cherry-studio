@@ -1497,41 +1497,6 @@
       }
     }
   },
-  "code": {
-    "auto_update_to_latest": "Tự động cập nhật lên phiên bản mới nhất",
-    "bun_required_message": "Môi trường Bun là bắt buộc để chạy các công cụ CLI",
-    "cli_tool": "Công cụ CLI",
-    "cli_tool_placeholder": "Chọn công cụ CLI để sử dụng",
-    "custom_path": "Đường dẫn tùy chỉnh",
-    "custom_path_error": "Falha ao definir caminho personalizado do terminal",
-    "custom_path_required": "Chemin personnalisé requis pour ce terminal",
-    "custom_path_set": "Đường dẫn terminal tùy chỉnh đã được đặt thành công",
-    "description": "Khởi chạy nhanh nhiều công cụ CLI mã để nâng cao hiệu suất phát triển",
-    "env_vars_help": "Nhập các biến môi trường tùy chỉnh (mỗi dòng một biến, định dạng: KEY=value)",
-    "environment_variables": "Biến Môi trường",
-    "folder_placeholder": "Chọn thư mục làm việc",
-    "install_bun": "Cài đặt Bun",
-    "installing_bun": "Đang cài đặt...",
-    "launch": {
-      "bun_required": "Vui lòng cài đặt môi trường Bun trước khi khởi chạy các công cụ CLI",
-      "error": "Lancement échoué, veuillez réessayer",
-      "label": "Lanzamiento",
-      "success": "Khởi chạy thành công",
-      "validation_error": "Vui lòng hoàn thành tất cả các trường bắt buộc: công cụ CLI, mô hình và thư mục làm việc"
-    },
-    "launching": "Lanzando...",
-    "model": "Modelo",
-    "model_placeholder": "Chọn mô hình cần sử dụng",
-    "model_required": "Vui lòng chọn một mô hình",
-    "select_folder": "Pilih Folder",
-    "set_custom_path": "Đặt đường dẫn terminal tùy chỉnh",
-    "supported_providers": "Nhà cung cấp được hỗ trợ",
-    "terminal": "Thiết bị đầu cuối",
-    "terminal_placeholder": "Chọn ứng dụng thiết bị đầu cuối",
-    "title": "Công cụ mã",
-    "update_options": "Tùy chọn Cập nhật",
-    "working_directory": "Thư mục làm việc"
-  },
   "code_block": {
     "collapse": "Colapso",
     "copy": {

@@ -1497,41 +1497,6 @@
       }
     }
   },
-  "code": {
-    "auto_update_to_latest": "Updates prüfen und neueste Version installieren",
-    "bun_required_message": "Bun-Umgebung erforderlich zum Ausführen von CLI-Tools",
-    "cli_tool": "CLI-Tool",
-    "cli_tool_placeholder": "CLI-Tool auswählen",
-    "custom_path": "Benutzerdefinierter Pfad",
-    "custom_path_error": "Benutzerdefinierten Terminalpfad festlegen fehlgeschlagen",
-    "custom_path_required": "Dieses Terminal erfordert einen benutzerdefinierten Pfad",
-    "custom_path_set": "Benutzerdefinierter Terminalpfad erfolgreich festgelegt",
-    "description": "Starten Sie schnell mehrere Code-CLI-Tools, um die Entwicklungseffizienz zu steigern",
-    "env_vars_help": "Benutzerdefinierte Umgebungsvariablen eingeben (eine pro Zeile, Format: KEY=value)",
-    "environment_variables": "Umgebungsvariablen",
-    "folder_placeholder": "Arbeitsverzeichnis auswählen",
-    "install_bun": "Bun installieren",
-    "installing_bun": "Wird installiert...",
-    "launch": {
-      "bun_required": "Bitte installieren Sie zuerst die Bun-Umgebung, bevor Sie CLI-Tools starten",
-      "error": "Start fehlgeschlagen, bitte versuchen Sie es erneut",
-      "label": "Starten",
-      "success": "Erfolgreich gestartet",
-      "validation_error": "Bitte füllen Sie alle Pflichtfelder aus: CLI-Tool, Modell und Arbeitsverzeichnis"
-    },
-    "launching": "Wird gestartet...",
-    "model": "Modell",
-    "model_placeholder": "Zu verwendendes Modell auswählen",
-    "model_required": "Bitte Modell auswählen",
-    "select_folder": "Ordner auswählen",
-    "set_custom_path": "Benutzerdefinierten Terminalpfad festlegen",
-    "supported_providers": "Unterstützte Anbieter",
-    "terminal": "Terminal",
-    "terminal_placeholder": "Terminal-Anwendung auswählen",
-    "title": "Code-Tools",
-    "update_options": "Update-Optionen",
-    "working_directory": "Arbeitsverzeichnis"
-  },
   "code_block": {
     "collapse": "Einklappen",
     "copy": {

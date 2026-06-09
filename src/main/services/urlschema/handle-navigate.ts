@@ -16,7 +16,6 @@ const ALLOWED_ROUTES = [
   '/files',
   '/notes',
   '/apps',
-  '/code',
   '/store',
   '/launchpad',
   '/'
