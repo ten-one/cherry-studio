@@ -691,7 +691,6 @@ export type SidebarIcon =
   | 'knowledge'
   | 'files'
   | 'notes'
-  | 'openclaw'
 
 export type ExternalToolResult = {
   mcpTools?: MCPTool[]

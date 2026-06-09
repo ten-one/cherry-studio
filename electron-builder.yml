@@ -155,7 +155,6 @@ releaseInfo:
     - [OpenCode] Fixed launch failures after CLI updates by using package-local executable
     - [Agents] Fixed Agent mode not forwarding custom provider headers to Claude Code
     - [Models] Fixed Grok 4.3 reasoning effort support in xAI responses
-    - [OpenClaw] Improved migration message clarity when external PATH installation is detected
     - [Models] Fixed Gemini 3.x models using wrong UI and sending deprecated sampling parameters
     - [Models] Fixed Qwen max series models incorrectly showing vision capability
     - [Providers] Fixed AIHubMix reasoning effort configuration not working properly
@@ -174,7 +173,6 @@ releaseInfo:
     - [OpenCode] 修复 CLI 更新后启动失败的问题，现在使用包本地可执行文件
     - [智能体] 修复智能体模式未将自定义提供商标头转发给 Claude Code 的问题
     - [模型] 修复 xAI 响应中 Grok 4.3 推理强度支持问题
-    - [OpenClaw] 改进检测到外部 PATH 安装时的迁移消息清晰度
     - [模型] 修复 Gemini 3.x 模型使用错误 UI 并发送已弃用采样参数的问题
     - [模型] 修复 Qwen max 系列模型错误显示视觉能力的问题
     - [提供商] 修复 AIHubMix 推理强度配置无法正常工作的问题

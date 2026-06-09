@@ -1,6 +1,7 @@
 import EmojiAvatar from '@renderer/components/Avatar/EmojiAvatar'
 import { isMac } from '@renderer/config/constant'
 import { UserAvatar } from '@renderer/config/env'
+import { filterValidSidebarIcons } from '@renderer/config/sidebar'
 import { useTheme } from '@renderer/context/ThemeProvider'
 import useAvatar from '@renderer/hooks/useAvatar'
 import { useFullscreen } from '@renderer/hooks/useFullscreen'
@@ -33,7 +34,6 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { OpenClawSidebarIcon } from '../Icons/SVGIcon'
 import UserPopup from '../Popups/UserPopup'
 import { SidebarOpenedMinappTabs, SidebarPinnedApps } from './PinnedMinapps'
 
@@ -137,8 +137,7 @@ const MainMenus: FC = () => {
     minapp: <LayoutGrid size={18} className="icon" />,
     knowledge: <FileSearch size={18} className="icon" />,
     files: <Folder size={18} className="icon" />,
-    notes: <NotepadText size={18} className="icon" />,
-    openclaw: <OpenClawSidebarIcon style={{ width: 18, height: 18 }} className="icon" />
+    notes: <NotepadText size={18} className="icon" />
   }
 
   const pathMap = {
@@ -150,11 +149,10 @@ const MainMenus: FC = () => {
     minapp: '/apps',
     knowledge: '/knowledge',
     files: '/files',
-    notes: '/notes',
-    openclaw: '/openclaw'
+    notes: '/notes'
   }
 
-  return sidebarIcons.visible.map((icon) => {
+  return filterValidSidebarIcons(sidebarIcons.visible).map((icon) => {
     const path = pathMap[icon]
     const isActive = path === '/' ? isRoute(path) : isRoutes(path)
 

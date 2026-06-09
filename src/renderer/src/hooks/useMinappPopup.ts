@@ -87,8 +87,8 @@ export const useMinappPopup = () => {
   const openMinapp = useCallback(
     (app: MinAppType, keepAlive: boolean = false) => {
       if (keepAlive) {
-        // Always refresh the cached config. Some apps, such as OpenClaw, use
-        // short-lived URLs with auth tokens and must not reuse a stale entry.
+        // Always refresh the cached config. Some apps use short-lived URLs with
+        // auth tokens and must not reuse a stale entry.
         minAppsCache.set(app.id, app)
 
         // 如果小程序已经打开，只切换显示
@@ -173,8 +173,8 @@ export const useMinappPopup = () => {
   const openSmartMinapp = useCallback(
     (config: MinAppType, keepAlive: boolean = false) => {
       if (isTopNavbar) {
-        // Refresh temporary app config so dynamic URLs such as OpenClaw's
-        // dashboard token are propagated when the tab already exists.
+        // Refresh temporary app config so dynamic URL tokens are propagated
+        // when the tab already exists.
         minAppsCache.set(config.id, config)
 
         // Set current minapp and show state

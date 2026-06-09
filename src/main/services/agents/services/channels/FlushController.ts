@@ -5,7 +5,7 @@
  * mutex-guarded flushing, and reflush-on-conflict. Contains no
  * business logic — the actual flush work is provided via a callback.
  *
- * Inspired by openclaw-lark's FlushController.
+ * Shared by channel adapters that need throttled streaming updates.
  */
 
 /** Default minimum interval between flushes (ms). */

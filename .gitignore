@@ -62,6 +62,7 @@ local
 .zed/*
 !.zed/settings.json.example
 CLAUDE.local.md
+PERSONAL_BRANCH_AI_NOTES.md
 
 # vitest
 coverage

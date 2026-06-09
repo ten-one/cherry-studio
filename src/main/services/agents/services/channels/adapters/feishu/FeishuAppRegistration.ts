@@ -1,8 +1,8 @@
 /**
  * Feishu App Registration via Device Flow.
  *
- * Implements the `/oauth/v1/app/registration` endpoint used by openclaw-lark
- * to create a PersonalAgent self-built app by scanning a QR code.
+ * Implements the `/oauth/v1/app/registration` endpoint used to create a
+ * PersonalAgent self-built app by scanning a QR code.
  *
  * Flow: init -> begin (returns QR URL) -> poll (returns client_id + client_secret)
  */
@@ -35,8 +35,7 @@ type PollStatus = 'authorization_pending' | 'slow_down' | 'access_denied' | 'exp
 
 async function postRegistration(baseUrl: string, params: Record<string, string>): Promise<Record<string, unknown>> {
   const url = `${baseUrl}/oauth/v1/app/registration`
-  // The Feishu registration API requires application/x-www-form-urlencoded,
-  // matching the format used by @larksuiteoapi/openclaw-lark-tools.
+  // The Feishu registration API requires application/x-www-form-urlencoded.
   const body = new URLSearchParams(params).toString()
   const res = await net.fetch(url, {
     method: 'POST',

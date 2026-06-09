@@ -13,8 +13,7 @@ export const DEFAULT_SIDEBAR_ICONS: SidebarIcon[] = [
   'minapp',
   'knowledge',
   'files',
-  'notes',
-  'openclaw'
+  'notes'
 ]
 
 /**
@@ -23,3 +22,13 @@ export const DEFAULT_SIDEBAR_ICONS: SidebarIcon[] = [
  * 抽取为参数方便未来扩展
  */
 export const REQUIRED_SIDEBAR_ICONS: SidebarIcon[] = ['assistants']
+
+const SIDEBAR_ICON_SET = new Set<string>(DEFAULT_SIDEBAR_ICONS)
+
+export function isValidSidebarIcon(icon: string): icon is SidebarIcon {
+  return SIDEBAR_ICON_SET.has(icon)
+}
+
+export function filterValidSidebarIcons(icons: readonly string[] | undefined): SidebarIcon[] {
+  return [...new Set(icons ?? [])].filter(isValidSidebarIcon)
+}
