@@ -114,7 +114,6 @@ Node.js backend services. Key services:
 | `LoggerService` | Winston-based structured logging (daily rotate) |
 | `StoreSyncService` | Syncs Redux state to/from main process |
 | `BackupManager` | Data backup/restore (WebDAV, S3, Nutstore) |
-| `ApiServerService` | Express HTTP API server (Swagger docs at `/api-docs`) |
 | `AppUpdater` | electron-updater auto-update |
 | `ShortcutService` | Global keyboard shortcuts |
 | `ThemeService` | System theme detection/application |
@@ -324,5 +323,3 @@ Do not introduce new features to these files. Bug fixes only.
 - Never expose Node.js APIs directly to renderer; use `contextBridge` in preload
 - Validate all IPC inputs in main process handlers
 - URL sanitization via `strict-url-sanitise`
-- IP validation via `ipaddr.js` (API server)
-- `express-validator` for API server request validation

@@ -16,7 +16,6 @@ import process from 'node:process'
 
 import { registerIpc } from './ipc'
 import { analyticsService } from './services/AnalyticsService'
-import { apiServerService } from './services/ApiServerService'
 import { appMenuService } from './services/AppMenuService'
 import { configManager } from './services/ConfigManager'
 import { lanTransferClientService } from './services/lanTransfer'
@@ -36,7 +35,6 @@ import { TrayService } from './services/TrayService'
 import { versionService } from './services/VersionService'
 import { windowService } from './services/WindowService'
 import { initWebviewHotkeys } from './services/WebviewService'
-import { runAsyncFunction } from './utils'
 import { isOvmsSupported } from './services/OvmsManager'
 import { extractRtkBinaries } from './utils/rtk'
 
@@ -197,20 +195,6 @@ if (!app.requestSingleInstanceLock()) {
 
     //start selection assistant service
     initSelectionService()
-
-    void runAsyncFunction(async () => {
-      // Start API server when explicitly enabled.
-      try {
-        const config = await apiServerService.getCurrentConfig()
-        logger.info('API server config:', config)
-
-        if (config.enabled) {
-          await apiServerService.start()
-        }
-      } catch (error: any) {
-        logger.error('Failed to check/start API server:', error)
-      }
-    })
   })
 
   registerProtocolClient(app)
@@ -269,7 +253,6 @@ if (!app.requestSingleInstanceLock()) {
     try {
       await analyticsService.destroy()
       await mcpService.cleanup()
-      await apiServerService.stop()
     } catch (error) {
       logger.warn('Error cleaning up services:', error as Error)
     }

@@ -20,7 +20,6 @@ import { DEFAULT_STREAM_OPTIONS_INCLUDE_USAGE, isMac } from '@renderer/config/co
 import { TRANSLATE_PROMPT } from '@renderer/config/prompts'
 import { DEFAULT_SIDEBAR_ICONS, filterValidSidebarIcons } from '@renderer/config/sidebar'
 import type {
-  ApiServerConfig,
   AssistantsSortType,
   CodeStyleVarious,
   LanguageVarious,
@@ -38,7 +37,7 @@ import type {
   OpenAIReasoningSummary,
   OpenAIVerbosity
 } from '@renderer/types/aiCoreTypes'
-import { API_SERVER_DEFAULTS, UpgradeChannel } from '@shared/config/constant'
+import { UpgradeChannel } from '@shared/config/constant'
 import { v4 as uuid } from 'uuid'
 
 import type { RemoteSyncState } from './backup'
@@ -245,8 +244,6 @@ export interface SettingsState {
   enableDeveloperMode: boolean
   // UI
   navbarPosition: 'left' | 'top'
-  // API Server
-  apiServer: ApiServerConfig
   showMessageOutline: boolean
 }
 
@@ -442,13 +439,6 @@ export const initialState: SettingsState = {
   enableDeveloperMode: false,
   // UI
   navbarPosition: 'top',
-  // API Server
-  apiServer: {
-    enabled: false,
-    host: API_SERVER_DEFAULTS.HOST,
-    port: API_SERVER_DEFAULTS.PORT,
-    apiKey: `cs-sk-${uuid()}`
-  },
   showMessageOutline: false
 }
 
@@ -878,25 +868,6 @@ const settingsSlice = createSlice({
     setNavbarPosition: (state, action: PayloadAction<'left' | 'top'>) => {
       state.navbarPosition = action.payload
     },
-    // API Server actions
-    setApiServerEnabled: (state, action: PayloadAction<boolean>) => {
-      state.apiServer = {
-        ...state.apiServer,
-        enabled: action.payload
-      }
-    },
-    setApiServerPort: (state, action: PayloadAction<number>) => {
-      state.apiServer = {
-        ...state.apiServer,
-        port: action.payload
-      }
-    },
-    setApiServerApiKey: (state, action: PayloadAction<string>) => {
-      state.apiServer = {
-        ...state.apiServer,
-        apiKey: action.payload
-      }
-    },
     setShowMessageOutline: (state, action: PayloadAction<boolean>) => {
       state.showMessageOutline = action.payload
     }
@@ -1029,11 +1000,7 @@ export const {
   setS3Partial,
   setEnableDeveloperMode,
   setNavbarPosition,
-  setShowMessageOutline,
-  // API Server actions
-  setApiServerEnabled,
-  setApiServerPort,
-  setApiServerApiKey
+  setShowMessageOutline
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

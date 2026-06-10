@@ -1,7 +1,7 @@
 import type { MCPServer, MCPTool } from '@types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('@main/apiServer/utils/mcp', () => ({
+vi.mock('@main/services/mcp/getMCPServersFromRedux', () => ({
   getMCPServersFromRedux: vi.fn()
 }))
 
@@ -11,7 +11,7 @@ vi.mock('@main/services/WindowService', () => ({
   }
 }))
 
-import { getMCPServersFromRedux } from '@main/apiServer/utils/mcp'
+import { getMCPServersFromRedux } from '@main/services/mcp/getMCPServersFromRedux'
 import mcpService from '@main/services/MCPService'
 
 const baseInputSchema: { type: 'object'; properties: Record<string, unknown>; required: string[] } = {
