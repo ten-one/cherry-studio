@@ -349,6 +349,18 @@ const GridContainer = styled(Scrollbar)<{ $count: number; $gridColumns: number }
     grid-template-columns: repeat(${({ $count }) => $count}, minmax(420px, 1fr));
     overflow-x: auto;
     overflow-y: hidden;
+
+    &::-webkit-scrollbar:horizontal {
+      height: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal {
+      background: var(--color-scrollbar-thumb);
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal:hover {
+      background: color-mix(in srgb, var(--color-scrollbar-thumb) 50%, var(--color-scrollbar-thumb-hover));
+    }
   }
   &.fold,
   &.vertical {

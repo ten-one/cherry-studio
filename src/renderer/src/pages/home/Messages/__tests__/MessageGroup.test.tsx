@@ -228,6 +228,19 @@ describe('MessageGroup', () => {
     const horizontalGroup = outerWrapper!.parentElement as HTMLElement
     expect(getComputedStyle(horizontalGroup).overflowX).toBe('auto')
     expect(getComputedStyle(horizontalGroup).overflowY).toBe('hidden')
+
+    const styleText = Array.from(document.head.querySelectorAll('style'))
+      .map((style) => style.textContent ?? '')
+      .join('\n')
+    expect(styleText).toMatch(/\.horizontal::-webkit-scrollbar:horizontal\{[^}]*height:\s*5px/)
+    expect(styleText).toMatch(
+      /\.horizontal::-webkit-scrollbar-thumb:horizontal\{[^}]*background:\s*var\(--color-scrollbar-thumb\)/
+    )
+    expect(styleText).toMatch(
+      /\.horizontal::-webkit-scrollbar-thumb:horizontal:hover\{[^}]*background:\s*color-mix\(in srgb,\s*var\(--color-scrollbar-thumb\)\s*50%,\s*var\(--color-scrollbar-thumb-hover\)\)/
+    )
+    expect(styleText).not.toMatch(/--scrollbar-height:\s*4px/)
+    expect(styleText).not.toMatch(/--color-scrollbar-thumb-hover:\s*var\(--color-scrollbar-thumb\)/)
   })
 
   it('prevents vertical wheel on non-content areas from bubbling to the outer chat scroll in horizontal layout', () => {
