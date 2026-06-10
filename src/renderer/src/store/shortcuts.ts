@@ -41,13 +41,6 @@ const initialState: ShortcutsState = {
       system: true
     },
     {
-      key: 'mini_window',
-      shortcut: ['CommandOrControl', 'E'],
-      editable: true,
-      enabled: false,
-      system: true
-    },
-    {
       //enable/disable selection assistant
       key: 'selection_assistant_toggle',
       shortcut: [],
@@ -151,8 +144,14 @@ const initialState: ShortcutsState = {
   ]
 }
 
+const supportedShortcutKeys = new Set(initialState.shortcuts.map((shortcut) => shortcut.key))
+
+export const getSupportedShortcuts = (shortcuts: Shortcut[]) => {
+  return shortcuts.filter((shortcut) => supportedShortcutKeys.has(shortcut.key))
+}
+
 const getSerializableShortcuts = (shortcuts: Shortcut[]) => {
-  return shortcuts.map((shortcut) => ({
+  return getSupportedShortcuts(shortcuts).map((shortcut) => ({
     key: shortcut.key,
     shortcut: [...shortcut.shortcut],
     enabled: shortcut.enabled,
@@ -166,11 +165,15 @@ const shortcutsSlice = createSlice({
   initialState,
   reducers: {
     updateShortcut: (state, action: PayloadAction<Shortcut>) => {
-      state.shortcuts = state.shortcuts.map((s) => (s.key === action.payload.key ? action.payload : s))
+      state.shortcuts = getSupportedShortcuts(state.shortcuts).map((s) =>
+        s.key === action.payload.key ? action.payload : s
+      )
       void window.api.shortcuts.update(getSerializableShortcuts(state.shortcuts))
     },
     toggleShortcut: (state, action: PayloadAction<string>) => {
-      state.shortcuts = state.shortcuts.map((s) => (s.key === action.payload ? { ...s, enabled: !s.enabled } : s))
+      state.shortcuts = getSupportedShortcuts(state.shortcuts).map((s) =>
+        s.key === action.payload ? { ...s, enabled: !s.enabled } : s
+      )
       void window.api.shortcuts.update(getSerializableShortcuts(state.shortcuts))
     },
     resetShortcuts: (state) => {

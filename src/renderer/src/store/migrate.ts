@@ -884,25 +884,12 @@ const migrateConfig = {
   },
   '57': (state: RootState) => {
     try {
-      if (state.shortcuts) {
-        state.shortcuts.shortcuts.push({
-          key: 'mini_window',
-          shortcut: [isMac ? 'Command' : 'Ctrl', 'E'],
-          editable: true,
-          enabled: false,
-          system: true
-        })
-      }
-
       state.llm.providers.forEach((provider) => {
         if (provider.id === 'qwenlm') {
           // @ts-ignore eslint-disable-next-line
           provider.type = 'qwenlm'
         }
       })
-
-      state.settings.enableQuickAssistant = false
-      state.settings.clickTrayToShowQuickAssistant = true
 
       return state
     } catch (error) {
@@ -1685,8 +1672,8 @@ const migrateConfig = {
         state.llm.translateModel = SYSTEM_MODELS.defaultModel[2]
       }
 
-      // add selection_assistant_toggle and selection_assistant_select_text shortcuts after mini_window
-      addShortcuts(state, ['selection_assistant_toggle', 'selection_assistant_select_text'], 'mini_window')
+      // add selection_assistant_toggle and selection_assistant_select_text shortcuts near universal shortcuts
+      addShortcuts(state, ['selection_assistant_toggle', 'selection_assistant_select_text'], 'show_app')
 
       return state
     } catch (error) {
@@ -3111,7 +3098,6 @@ const migrateConfig = {
           provider.anthropicApiHost = 'https://api.302.ai'
         }
       })
-      state.settings.readClipboardAtStartup = false
       logger.info('migrate 192 success')
       return state
     } catch (error) {

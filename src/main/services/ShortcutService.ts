@@ -27,7 +27,6 @@ import { windowService } from './WindowService'
 const logger = loggerService.withContext('ShortcutService')
 
 let showAppAccelerator: string | null = null
-let showMiniWindowAccelerator: string | null = null
 let selectionAssistantToggleAccelerator: string | null = null
 let selectionAssistantSelectTextAccelerator: string | null = null
 
@@ -48,19 +47,6 @@ function getShortcutHandler(shortcut: Shortcut) {
     case 'show_app':
       return () => {
         windowService.toggleMainWindow()
-      }
-    case 'mini_window':
-      return () => {
-        // 在处理器内部检查QuickAssistant状态，而不是在注册时检查
-        const quickAssistantEnabled = configManager.getEnableQuickAssistant()
-        logger.info(`mini_window shortcut triggered, QuickAssistant enabled: ${quickAssistantEnabled}`)
-
-        if (!quickAssistantEnabled) {
-          logger.warn('QuickAssistant is disabled, ignoring mini_window shortcut trigger')
-          return
-        }
-
-        windowService.toggleMiniWindow()
       }
     case 'selection_assistant_toggle':
       return () => {
@@ -175,7 +161,7 @@ export function registerShortcuts(window: BrowserWindow) {
     register(true)
   }
 
-  //onlyUniversalShortcuts is used to register shortcuts that are not window specific, like show_app & mini_window
+  //onlyUniversalShortcuts is used to register shortcuts that are not window specific, like show_app
   //onlyUniversalShortcuts is needed when we launch to tray
   const register = (onlyUniversalShortcuts: boolean = false) => {
     if (window.isDestroyed()) return
@@ -197,9 +183,7 @@ export function registerShortcuts(window: BrowserWindow) {
         // only register universal shortcuts when needed
         if (
           onlyUniversalShortcuts &&
-          !['show_app', 'mini_window', 'selection_assistant_toggle', 'selection_assistant_select_text'].includes(
-            shortcut.key
-          )
+          !['show_app', 'selection_assistant_toggle', 'selection_assistant_select_text'].includes(shortcut.key)
         ) {
           return
         }
@@ -212,13 +196,6 @@ export function registerShortcuts(window: BrowserWindow) {
         switch (shortcut.key) {
           case 'show_app':
             showAppAccelerator = formatShortcutKey(shortcut.shortcut)
-            break
-
-          case 'mini_window':
-            // 移除注册时的条件检查，在处理器内部进行检查
-            logger.info(`Processing mini_window shortcut, enabled: ${shortcut.enabled}`)
-            showMiniWindowAccelerator = formatShortcutKey(shortcut.shortcut)
-            logger.debug(`Mini window accelerator set to: ${showMiniWindowAccelerator}`)
             break
 
           case 'selection_assistant_toggle':
@@ -266,12 +243,6 @@ export function registerShortcuts(window: BrowserWindow) {
         handler && globalShortcut.register(accelerator, () => handler(window))
       }
 
-      if (showMiniWindowAccelerator) {
-        const handler = getShortcutHandler({ key: 'mini_window' } as Shortcut)
-        const accelerator = convertShortcutFormat(showMiniWindowAccelerator)
-        handler && globalShortcut.register(accelerator, () => handler(window))
-      }
-
       if (selectionAssistantToggleAccelerator) {
         const handler = getShortcutHandler({ key: 'selection_assistant_toggle' } as Shortcut)
         const accelerator = convertShortcutFormat(selectionAssistantToggleAccelerator)
@@ -307,7 +278,6 @@ export function registerShortcuts(window: BrowserWindow) {
 export function unregisterAllShortcuts() {
   try {
     showAppAccelerator = null
-    showMiniWindowAccelerator = null
     selectionAssistantToggleAccelerator = null
     selectionAssistantSelectTextAccelerator = null
     windowOnHandlers.forEach((handlers, window) => {

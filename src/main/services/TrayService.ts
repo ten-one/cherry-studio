@@ -61,11 +61,7 @@ export class TrayService {
     })
 
     this.tray.on('click', () => {
-      if (configManager.getEnableQuickAssistant() && configManager.getClickTrayToShowQuickAssistant()) {
-        windowService.showMiniWindow()
-      } else {
-        windowService.showMainWindow()
-      }
+      windowService.showMainWindow()
     })
   }
 
@@ -73,17 +69,12 @@ export class TrayService {
     const locale = locales[configManager.getLanguage()]
     const { tray: trayLocale, selection: selectionLocale } = locale.translation
 
-    const quickAssistantEnabled = configManager.getEnableQuickAssistant()
     const selectionAssistantEnabled = configManager.getSelectionAssistantEnabled()
 
     const template = [
       {
         label: trayLocale.show_window,
         click: () => windowService.showMainWindow()
-      },
-      quickAssistantEnabled && {
-        label: trayLocale.show_mini_window,
-        click: () => windowService.showMiniWindow()
       },
       (isWin || isMac) && {
         label: selectionLocale.name + (selectionAssistantEnabled ? ' - On' : ' - Off'),
@@ -124,10 +115,6 @@ export class TrayService {
     configManager.subscribe(ConfigKeys.Tray, () => this.updateTray())
 
     configManager.subscribe(ConfigKeys.Language, () => {
-      this.updateContextMenu()
-    })
-
-    configManager.subscribe(ConfigKeys.EnableQuickAssistant, () => {
       this.updateContextMenu()
     })
 

@@ -16,6 +16,7 @@
  */
 import { isMac, isWin } from '@renderer/config/constant'
 import { useAppSelector } from '@renderer/store'
+import { getSupportedShortcuts } from '@renderer/store/shortcuts'
 import { orderBy } from 'lodash'
 import { useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -77,7 +78,7 @@ export const useShortcut = (
 
 export function useShortcuts() {
   const shortcuts = useAppSelector((state) => state.shortcuts.shortcuts)
-  return { shortcuts: orderBy(shortcuts, 'system', 'desc') }
+  return { shortcuts: orderBy(getSupportedShortcuts(shortcuts), 'system', 'desc') }
 }
 
 export function useShortcutDisplay(key: string) {
