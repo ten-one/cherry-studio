@@ -10,7 +10,7 @@ export type MessageMenubarButtonId =
   | 'assistant-mention-model'
   | 'translate'
   | 'useful'
-  | 'notes'
+  | 'assistant-edit'
   | 'delete'
   | 'trace'
   | 'more-menu'
@@ -32,7 +32,7 @@ export const DEFAULT_MESSAGE_MENUBAR_BUTTON_IDS: MessageMenubarButtonId[] = [
   'assistant-mention-model',
   'translate',
   'useful',
-  'notes',
+  'assistant-edit',
   'delete',
   'trace',
   'inspect-data',

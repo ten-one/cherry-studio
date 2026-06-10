@@ -56,11 +56,9 @@ import {
   Bug,
   Check,
   CirclePause,
-  FilePenLine,
   Languages,
   ListChecks,
   Menu,
-  NotebookPen,
   Save,
   Split,
   ThumbsUp,
@@ -117,8 +115,8 @@ type MessageMenubarButtonContext = {
   isLastMessage: boolean
   isTranslating: boolean
   isUserMessage: boolean
+  isEditable: boolean
   message: Message
-  notesPath: string
   onCopy: (e: React.MouseEvent) => void
   onEdit: () => void | Promise<void>
   onMentionModel: (e: React.MouseEvent) => void | Promise<void>
@@ -299,16 +297,6 @@ const MessageMenubar: FC<Props> = (props) => {
 
   const dropdownItems = useMemo(() => {
     const items: MenuProps['items'] = [
-      ...(isEditable
-        ? [
-            {
-              label: t('common.edit'),
-              key: 'edit',
-              icon: <FilePenLine size={15} />,
-              onClick: onEdit
-            }
-          ]
-        : []),
       {
         label: t('chat.message.new.branch.label'),
         key: 'new-branch',
@@ -328,6 +316,15 @@ const MessageMenubar: FC<Props> = (props) => {
         key: 'save',
         icon: <Save size={15} />,
         children: [
+          {
+            label: t('notes.save'),
+            key: 'notes',
+            onClick: async () => {
+              const title = await getMessageTitle(message)
+              const markdown = messageToMarkdown(message)
+              void exportMessageToNotes(title, markdown, notesPath)
+            }
+          },
           {
             label: t('chat.save.file.title'),
             key: 'file',
@@ -473,12 +470,11 @@ const MessageMenubar: FC<Props> = (props) => {
     exportMenuOptions.plain_text,
     exportMenuOptions.siyuan,
     exportMenuOptions.yuque,
-    isEditable,
     mainTextContent,
     message,
     messageContainerRef,
-    onEdit,
     onNewBranch,
+    notesPath,
     t,
     toggleMultiSelectMode,
     topic.name
@@ -574,8 +570,8 @@ const MessageMenubar: FC<Props> = (props) => {
     isLastMessage,
     isTranslating,
     isUserMessage,
+    isEditable,
     message,
-    notesPath,
     onCopy,
     onEdit,
     onMentionModel,
@@ -898,23 +894,15 @@ const buttonRenderers: Record<MessageMenubarButtonId, MessageMenubarButtonRender
       </Tooltip>
     )
   },
-  notes: ({ isAssistantMessage, softHoverBg, message, notesPath, t }) => {
-    if (!isAssistantMessage) {
+  'assistant-edit': ({ isAssistantMessage, isEditable, onEdit, softHoverBg, t }) => {
+    if (!isAssistantMessage || !isEditable) {
       return null
     }
 
     return (
-      <Tooltip title={t('notes.save')} mouseEnterDelay={0.8}>
-        <ActionButton
-          className="message-action-button"
-          onClick={async (e) => {
-            e.stopPropagation()
-            const title = await getMessageTitle(message)
-            const markdown = messageToMarkdown(message)
-            void exportMessageToNotes(title, markdown, notesPath)
-          }}
-          $softHoverBg={softHoverBg}>
-          <NotebookPen size={15} />
+      <Tooltip title={t('common.edit')} mouseEnterDelay={0.8}>
+        <ActionButton className="message-action-button" onClick={onEdit} $softHoverBg={softHoverBg}>
+          <EditIcon size={15} />
         </ActionButton>
       </Tooltip>
     )
