@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "筛选支持 Agent 的服务商",
       "get_api_key": "点击这里获取密钥",
+      "hidden": {
+        "hide": "隐藏",
+        "title": "隐藏的服务商",
+        "unhide": "恢复显示"
+      },
       "misc": "其他",
       "no_models_for_check": "没有可以被检测的模型（例如对话模型）",
       "not_checked": "未检测",
-      "notes": {
-        "markdown_editor_default_value": "预览区域",
-        "placeholder": "请输入 Markdown 格式内容...",
-        "title": "模型备注"
-      },
       "oauth": {
         "balance": "余额",
         "button": "使用 {{provider}} 账号登录",

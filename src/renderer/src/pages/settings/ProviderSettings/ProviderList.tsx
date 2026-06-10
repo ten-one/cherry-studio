@@ -16,16 +16,15 @@ import { getFancyProviderName, matchKeywordsInModel, matchKeywordsInProvider, uu
 import { isAnthropicSupportedProvider } from '@renderer/utils/provider'
 import type { MenuProps } from 'antd'
 import { Button, Dropdown, Input, Tag } from 'antd'
-import { Check, Filter, GripVertical, PlusIcon, Search, UserPen } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, Eye, EyeOff, Filter, GripVertical, PlusIcon, Search } from 'lucide-react'
 import type { FC } from 'react'
-import { startTransition, useCallback, useEffect, useRef, useState } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import useSWRImmutable from 'swr/immutable'
 
 import AddProviderPopup from './AddProviderPopup'
-import ModelNotesPopup from './ModelNotesPopup'
 import ProviderSetting from './ProviderSetting'
 import UrlSchemaInfoPopup from './UrlSchemaInfoPopup'
 
@@ -51,21 +50,57 @@ interface ProviderListProps {
 const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const providers = useAllProviders()
-  const { updateProviders, addProvider, removeProvider, updateProvider } = useProviders()
+  const {
+    updateProviders,
+    addProvider,
+    removeProvider,
+    updateProvider,
+    hiddenProviderIds,
+    hideProvider,
+    unhideProvider
+  } = useProviders()
   const { setTimeoutTimer } = useTimer()
   const [selectedProvider, _setSelectedProvider] = useState<Provider>(providers[0])
   const { t } = useTranslation()
   const [searchText, setSearchText] = useState<string>('')
   const [dragging, setDragging] = useState(false)
   const [agentFilterEnabled, setAgentFilterEnabled] = useState(false)
+  const [hiddenProvidersExpanded, setHiddenProvidersExpanded] = useState(false)
   const [providerLogos, setProviderLogos] = useState<Record<string, string>>({})
   const listRef = useRef<DraggableVirtualListRef>(null)
 
   const { data: isOvmsSupported } = useSWRImmutable('ovms/isSupported', getIsOvmsSupported)
+  const hiddenProviderIdSet = useMemo(() => new Set(hiddenProviderIds), [hiddenProviderIds])
+  const visibleProviders = useMemo(
+    () => providers.filter((provider) => !hiddenProviderIdSet.has(provider.id)),
+    [hiddenProviderIdSet, providers]
+  )
+  const hiddenProviders = useMemo(
+    () => providers.filter((provider) => hiddenProviderIdSet.has(provider.id)),
+    [hiddenProviderIdSet, providers]
+  )
 
   const setSelectedProvider = useCallback((provider: Provider) => {
     startTransition(() => _setSelectedProvider(provider))
   }, [])
+
+  useEffect(() => {
+    if (hiddenProviders.length === 0) {
+      setHiddenProvidersExpanded(false)
+    }
+  }, [hiddenProviders.length])
+
+  useEffect(() => {
+    const selectedProviderExists = providers.some((provider) => provider.id === selectedProvider?.id)
+    const selectedProviderHidden = selectedProvider?.id ? hiddenProviderIdSet.has(selectedProvider.id) : false
+
+    if (!selectedProviderExists || selectedProviderHidden) {
+      const fallbackProvider = visibleProviders[0]
+      if (fallbackProvider) {
+        setSelectedProvider(fallbackProvider)
+      }
+    }
+  }, [hiddenProviderIdSet, providers, selectedProvider?.id, setSelectedProvider, visibleProviders])
 
   useEffect(() => {
     const loadAllLogos = async () => {
@@ -100,11 +135,11 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
       shouldUpdate = true
     } else if (searchParams.get('id')) {
       const providerId = searchParams.get('id')
-      const provider = providers.find((p) => p.id === providerId)
+      const provider = visibleProviders.find((p) => p.id === providerId)
       if (provider) {
         setSelectedProvider(provider)
         // 滚动到选中的 provider
-        const index = providers.findIndex((p) => p.id === providerId)
+        const index = visibleProviders.findIndex((p) => p.id === providerId)
         if (index >= 0) {
           setTimeoutTimer(
             'scroll-to-selected-provider',
@@ -113,7 +148,10 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
           )
         }
       } else {
-        setSelectedProvider(providers[0])
+        const fallbackProvider = visibleProviders[0]
+        if (fallbackProvider) {
+          setSelectedProvider(fallbackProvider)
+        }
       }
       searchParams.delete('id')
       shouldUpdate = true
@@ -122,7 +160,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     if (shouldUpdate) {
       setSearchParams(searchParams)
     }
-  }, [providers, searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer])
+  }, [searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer, visibleProviders])
 
   // Handle provider add key from URL schema
   useEffect(() => {
@@ -212,11 +250,20 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
   }
 
   const getDropdownMenus = (provider: Provider): MenuProps['items'] => {
-    const noteMenu = {
-      label: t('settings.provider.notes.title'),
-      key: 'notes',
-      icon: <UserPen size={14} />,
-      onClick: () => ModelNotesPopup.show({ provider })
+    const hideMenu = {
+      label: t('settings.provider.hidden.hide'),
+      key: 'hide',
+      icon: <EyeOff size={14} />,
+      onClick: () => {
+        hideProvider(provider.id)
+
+        if (selectedProvider?.id === provider.id) {
+          const fallbackProvider = visibleProviders.find((p) => p.id !== provider.id)
+          if (fallbackProvider) {
+            setSelectedProvider(fallbackProvider)
+          }
+        }
+      }
     }
 
     const editMenu = {
@@ -291,24 +338,24 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
       }
     }
 
-    const menus = [editMenu, noteMenu, deleteMenu]
+    const menus = [editMenu, hideMenu, deleteMenu]
 
     if (providers.filter((p) => p.id === provider.id).length > 1) {
       return menus
     }
 
     if (isSystemProvider(provider)) {
-      return [noteMenu]
+      return [hideMenu]
     } else if (provider.isSystem) {
       // 这里是处理数据中存在新版本删掉的系统提供商的情况
       // 未来期望能重构一下，不要依赖isSystem字段
-      return [noteMenu, deleteMenu]
+      return [hideMenu, deleteMenu]
     } else {
       return menus
     }
   }
 
-  const filteredProviders = providers.filter((provider) => {
+  const filteredProviders = visibleProviders.filter((provider) => {
     // don't show it when isOvmsSupported is loading
     if (provider.id === 'ovms' && !isOvmsSupported) {
       return false
@@ -331,6 +378,26 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     onUpdate: updateProviders,
     itemKey: 'id'
   })
+
+  const handleUnhideProvider = useCallback(
+    (provider: Provider) => {
+      unhideProvider(provider.id)
+      setSearchText('')
+      setAgentFilterEnabled(false)
+      setSelectedProvider(provider)
+
+      const restoredProviders = providers.filter((p) => p.id === provider.id || !hiddenProviderIdSet.has(p.id))
+      const restoredProviderIndex = restoredProviders.findIndex((p) => p.id === provider.id)
+      if (restoredProviderIndex >= 0) {
+        setTimeoutTimer(
+          'scroll-to-unhidden-provider',
+          () => listRef.current?.scrollToIndex(restoredProviderIndex, { align: 'center' }),
+          100
+        )
+      }
+    },
+    [hiddenProviderIdSet, providers, setSelectedProvider, setTimeoutTimer, unhideProvider]
+  )
 
   const handleDragStart = useCallback(() => {
     setDragging(true)
@@ -392,49 +459,85 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
             disabled={dragging}
           />
         </AddButtonWrapper>
-        <DraggableVirtualList
-          ref={listRef}
-          list={filteredProviders}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          estimateSize={useCallback(() => 40, [])}
-          itemKey={itemKey}
-          overscan={3}
-          style={{
-            height: `calc(100% - 2 * ${BUTTON_WRAPPER_HEIGHT}px)`
-          }}
-          scrollerStyle={{
-            padding: 8,
-            paddingRight: 5
-          }}
-          itemContainerStyle={{ paddingBottom: 5 }}>
-          {(provider) => (
-            <Dropdown menu={{ items: getDropdownMenus(provider) }} trigger={['contextMenu']}>
-              <ProviderListItem
-                key={provider.id}
-                className={provider.id === selectedProvider?.id ? 'active' : ''}
-                onClick={() => setSelectedProvider(provider)}>
-                <DragHandle>
-                  <GripVertical size={12} />
-                </DragHandle>
-                <ProviderAvatar
-                  style={{
-                    width: 24,
-                    height: 24
-                  }}
-                  provider={provider}
-                  customLogos={providerLogos}
-                />
-                <ProviderItemName className="text-nowrap">{getFancyProviderName(provider)}</ProviderItemName>
-                {provider.enabled && (
-                  <Tag color="green" style={{ marginLeft: 'auto', marginRight: 0, borderRadius: 16 }}>
-                    ON
-                  </Tag>
-                )}
-              </ProviderListItem>
-            </Dropdown>
-          )}
-        </DraggableVirtualList>
+        <ProviderListArea>
+          <DraggableVirtualList
+            ref={listRef}
+            list={filteredProviders}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            estimateSize={useCallback(() => 40, [])}
+            itemKey={itemKey}
+            overscan={3}
+            style={{
+              height: '100%'
+            }}
+            scrollerStyle={{
+              padding: 8,
+              paddingRight: 5
+            }}
+            itemContainerStyle={{ paddingBottom: 5 }}>
+            {(provider) => (
+              <Dropdown menu={{ items: getDropdownMenus(provider) }} trigger={['contextMenu']}>
+                <ProviderListItem
+                  key={provider.id}
+                  className={provider.id === selectedProvider?.id ? 'active' : ''}
+                  onClick={() => setSelectedProvider(provider)}>
+                  <DragHandle>
+                    <GripVertical size={12} />
+                  </DragHandle>
+                  <ProviderAvatar
+                    style={{
+                      width: 24,
+                      height: 24
+                    }}
+                    provider={provider}
+                    customLogos={providerLogos}
+                  />
+                  <ProviderItemName className="text-nowrap">{getFancyProviderName(provider)}</ProviderItemName>
+                  {provider.enabled && (
+                    <Tag color="green" style={{ marginLeft: 'auto', marginRight: 0, borderRadius: 16 }}>
+                      ON
+                    </Tag>
+                  )}
+                </ProviderListItem>
+              </Dropdown>
+            )}
+          </DraggableVirtualList>
+        </ProviderListArea>
+        {hiddenProviders.length > 0 && (
+          <HiddenProvidersSection>
+            <HiddenProvidersHeader onClick={() => setHiddenProvidersExpanded((expanded) => !expanded)}>
+              {hiddenProvidersExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              <HiddenProvidersTitle>
+                {t('settings.provider.hidden.title')} ({hiddenProviders.length})
+              </HiddenProvidersTitle>
+            </HiddenProvidersHeader>
+            {hiddenProvidersExpanded && (
+              <HiddenProvidersList>
+                {hiddenProviders.map((provider) => (
+                  <HiddenProviderItem key={provider.id}>
+                    <ProviderAvatar
+                      style={{
+                        width: 24,
+                        height: 24
+                      }}
+                      provider={provider}
+                      customLogos={providerLogos}
+                    />
+                    <ProviderItemName className="text-nowrap">{getFancyProviderName(provider)}</ProviderItemName>
+                    <Button
+                      size="small"
+                      type="text"
+                      icon={<Eye size={14} />}
+                      onClick={() => handleUnhideProvider(provider)}>
+                      {t('settings.provider.hidden.unhide')}
+                    </Button>
+                  </HiddenProviderItem>
+                ))}
+              </HiddenProvidersList>
+            )}
+          </HiddenProvidersSection>
+        )}
         <AddButtonWrapper>
           <Button
             style={{ width: '100%', borderRadius: 'var(--list-item-border-radius)' }}
@@ -451,18 +554,27 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
 }
 
 const Container = styled.div`
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  min-height: 0;
 `
 
 const ProviderListContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
   min-width: calc(var(--settings-width) + 10px);
   padding-bottom: 5px;
   border-right: 0.5px solid var(--color-border);
+`
+
+const ProviderListArea = styled.div`
+  flex: 1;
+  min-height: 0;
 `
 
 const ProviderListItem = styled.div`
@@ -510,14 +622,63 @@ const DragHandle = styled.div`
 const ProviderItemName = styled.div`
   margin-left: 10px;
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const AddButtonWrapper = styled.div`
+  display: flex;
   height: ${BUTTON_WRAPPER_HEIGHT}px;
+  flex-shrink: 0;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 10px 8px;
+`
+
+const HiddenProvidersSection = styled.div`
+  flex-shrink: 0;
+  margin: 0 8px 4px;
+  border-top: 0.5px solid var(--color-border);
+`
+
+const HiddenProvidersHeader = styled.button`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+  padding: 8px 2px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-2);
+  cursor: pointer;
+`
+
+const HiddenProvidersTitle = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+`
+
+const HiddenProvidersList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+`
+
+const HiddenProviderItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 36px;
+  padding: 4px 2px;
+
+  ${ProviderItemName} {
+    flex: 1;
+    min-width: 0;
+  }
 `
 
 const FilterButton = styled.div`

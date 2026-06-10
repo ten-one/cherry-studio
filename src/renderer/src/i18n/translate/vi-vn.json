@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Các nhà cung cấp được Hỗ trợ bởi Agent Lọc",
       "get_api_key": "Lấy Khóa API",
+      "hidden": {
+        "hide": "Ẩn",
+        "title": "Nhà cung cấp đã ẩn",
+        "unhide": "Hiện lại"
+      },
       "misc": "Khác",
       "no_models_for_check": "Không có mô hình nào khả dụng để kiểm tra (ví dụ: mô hình chat)",
       "not_checked": "Chưa kiểm tra",
-      "notes": {
-        "markdown_editor_default_value": "Bereichsvorschau",
-        "placeholder": "Nhập nội dung Markdown...",
-        "title": "Ghi chú mô hình"
-      },
       "oauth": {
         "balance": "Cân bằng",
         "button": "Iniciar sesión con {{provider}}",

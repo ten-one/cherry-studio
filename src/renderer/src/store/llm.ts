@@ -55,6 +55,7 @@ type LlmSettings = {
 
 export interface LlmState {
   providers: Provider[]
+  hiddenProviderIds: string[]
   defaultModel: Model
   /** @deprecated */
   topicNamingModel: Model
@@ -69,6 +70,7 @@ export const initialState: LlmState = {
   quickModel: SYSTEM_MODELS.defaultModel[1],
   translateModel: SYSTEM_MODELS.defaultModel[2],
   providers: SYSTEM_PROVIDERS,
+  hiddenProviderIds: [],
   settings: {
     ollama: {
       keepAliveTime: 0
@@ -108,11 +110,13 @@ const getIntegratedInitialState = () => {
 
   return {
     defaultModel: model,
+    topicNamingModel: model,
     quickModel: model,
     translateModel: model,
     providers: [
       {
         id: 'ollama',
+        type: 'ollama',
         name: 'Ollama',
         apiKey: 'ollama',
         apiHost: 'http://localhost:15537/v1/',
@@ -121,7 +125,9 @@ const getIntegratedInitialState = () => {
         enabled: true
       }
     ],
+    hiddenProviderIds: [],
     settings: {
+      ...initialState.settings,
       ollama: {
         keepAliveTime: 3600
       },
@@ -167,6 +173,21 @@ const llmSlice = createSlice({
       if (providerIndex !== -1) {
         state.providers.splice(providerIndex, 1)
       }
+      state.hiddenProviderIds = (state.hiddenProviderIds || []).filter((id) => id !== action.payload.id)
+    },
+    hideProvider: (state, action: PayloadAction<string>) => {
+      state.hiddenProviderIds ||= []
+      if (!state.hiddenProviderIds.includes(action.payload)) {
+        state.hiddenProviderIds.push(action.payload)
+      }
+
+      const provider = state.providers.find((p) => p.id === action.payload)
+      if (provider) {
+        provider.enabled = false
+      }
+    },
+    unhideProvider: (state, action: PayloadAction<string>) => {
+      state.hiddenProviderIds = (state.hiddenProviderIds || []).filter((id) => id !== action.payload)
     },
     addModel: (state, action: PayloadAction<{ providerId: string; model: Model }>) => {
       state.providers = state.providers.map((p) =>
@@ -276,6 +297,8 @@ export const {
   updateProviders,
   addProvider,
   removeProvider,
+  hideProvider,
+  unhideProvider,
   addModel,
   removeModel,
   setDefaultModel,

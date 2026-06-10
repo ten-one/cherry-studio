@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "フィルターエージェント対応プロバイダー",
       "get_api_key": "APIキーを取得",
+      "hidden": {
+        "hide": "非表示",
+        "title": "非表示のプロバイダー",
+        "unhide": "再表示"
+      },
       "misc": "その他",
       "no_models_for_check": "チェックするモデルがありません（例：会話モデル）",
       "not_checked": "未チェック",
-      "notes": {
-        "markdown_editor_default_value": "プレビュー領域",
-        "placeholder": "Markdown形式の内容を入力してください...",
-        "title": "モデルノート"
-      },
       "oauth": {
         "balance": "残高",
         "button": "{{provider}} アカウントでログイン",

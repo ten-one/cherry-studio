@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Von Filter-Agent unterstützte Anbieter",
       "get_api_key": "Hier klicken um Schlüssel zu erhalten",
+      "hidden": {
+        "hide": "Ausblenden",
+        "title": "Ausgeblendete Anbieter",
+        "unhide": "Einblenden"
+      },
       "misc": "Sonstige",
       "no_models_for_check": "Keine testbaren Modelle (z.B. Chat-Modelle)",
       "not_checked": "Nicht getestet",
-      "notes": {
-        "markdown_editor_default_value": "Vorschau-Bereich",
-        "placeholder": "Bitte Markdown-Format-Inhalt eingeben...",
-        "title": "Modellnotizen"
-      },
       "oauth": {
         "balance": "Guthaben",
         "button": "Mit {{provider}}-Konto anmelden",

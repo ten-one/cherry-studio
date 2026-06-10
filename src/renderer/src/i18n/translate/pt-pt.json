@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Agente de Filtro - Provedores Suportados",
       "get_api_key": "Clique aqui para obter a chave",
+      "hidden": {
+        "hide": "Ocultar",
+        "title": "Provedores ocultos",
+        "unhide": "Mostrar"
+      },
       "misc": "outro",
       "no_models_for_check": "Não há modelos disponíveis para verificação (por exemplo, modelos de conversa)",
       "not_checked": "Não verificado",
-      "notes": {
-        "markdown_editor_default_value": "Área de Visualização",
-        "placeholder": "Por favor, insira o conteúdo no formato Markdown...",
-        "title": "Observação do Modelo"
-      },
       "oauth": {
         "balance": "Saldo",
         "button": "Entrar com a conta {{provider}}",

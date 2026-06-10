@@ -6,8 +6,10 @@ import { type RootState, useAppDispatch, useAppSelector } from '@renderer/store'
 import {
   addModel,
   addProvider,
+  hideProvider,
   removeModel,
   removeProvider,
+  unhideProvider,
   updateModel,
   updateProvider,
   updateProviders
@@ -32,6 +34,7 @@ function normalizeProvider<T extends Provider>(provider: T): T {
 }
 
 const selectProviders = (state: RootState) => state.llm.providers
+const selectHiddenProviderIds = (state: RootState) => state.llm.hiddenProviderIds || []
 
 const selectEnabledProviders = createSelector(selectProviders, (providers) =>
   providers
@@ -56,12 +59,16 @@ const selectAllProvidersWithCherryAI = createSelector(selectProviders, (provider
 
 export function useProviders() {
   const providers: Provider[] = useAppSelector(selectEnabledProviders)
+  const hiddenProviderIds = useAppSelector(selectHiddenProviderIds)
   const dispatch = useAppDispatch()
 
   return {
     providers: providers || [],
+    hiddenProviderIds,
     addProvider: (provider: Provider) => dispatch(addProvider(provider)),
     removeProvider: (provider: Provider) => dispatch(removeProvider(provider)),
+    hideProvider: (id: string) => dispatch(hideProvider(id)),
+    unhideProvider: (id: string) => dispatch(unhideProvider(id)),
     updateProvider: (updates: Partial<Provider> & { id: string }) => dispatch(updateProvider(updates)),
     updateProviders: (providers: Provider[]) => dispatch(updateProviders(providers))
   }

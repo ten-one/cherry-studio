@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Furnizori acceptați de agentul de filtrare",
       "get_api_key": "Obține cheie API",
+      "hidden": {
+        "hide": "Ascunde",
+        "title": "Furnizori ascunși",
+        "unhide": "Afișează"
+      },
       "misc": "Altele",
       "no_models_for_check": "Nu există modele disponibile pentru verificare (de ex. modele chat)",
       "not_checked": "Neverificat",
-      "notes": {
-        "markdown_editor_default_value": "Zonă previzualizare",
-        "placeholder": "Introdu conținut Markdown...",
-        "title": "Note model"
-      },
       "oauth": {
         "balance": "Sold",
         "button": "Conectare cu {{provider}}",

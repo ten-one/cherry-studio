@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "篩選支援 Agent 的服務商",
       "get_api_key": "點選這裡取得金鑰",
+      "hidden": {
+        "hide": "隱藏",
+        "title": "隱藏的服務商",
+        "unhide": "恢復顯示"
+      },
       "misc": "其他",
       "no_models_for_check": "沒有可以被檢查的模型（例如對話模型）",
       "not_checked": "未檢查",
-      "notes": {
-        "markdown_editor_default_value": "預覽區域",
-        "placeholder": "輸入 Markdown 格式內容...",
-        "title": "模型備註"
-      },
       "oauth": {
         "balance": "餘額",
         "button": "使用 {{provider}} 帳號登入",

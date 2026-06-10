@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Filter Agent Supported Providers",
       "get_api_key": "Get API Key",
+      "hidden": {
+        "hide": "Hide",
+        "title": "Hidden Providers",
+        "unhide": "Unhide"
+      },
       "misc": "Other",
       "no_models_for_check": "No models available for checking (e.g. chat models)",
       "not_checked": "Not Checked",
-      "notes": {
-        "markdown_editor_default_value": "Preview area",
-        "placeholder": "Enter Markdown content...",
-        "title": "Model Notes"
-      },
       "oauth": {
         "balance": "Balance",
         "button": "Login with {{provider}}",

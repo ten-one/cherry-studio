@@ -4501,14 +4501,14 @@
       },
       "filter_agent": "Fournisseurs pris en charge par l'agent de filtrage",
       "get_api_key": "Cliquez ici pour obtenir une clé",
+      "hidden": {
+        "hide": "Masquer",
+        "title": "Fournisseurs masqués",
+        "unhide": "Afficher"
+      },
       "misc": "autre",
       "no_models_for_check": "Aucun modèle détectable (par exemple, modèle de chat)",
       "not_checked": "Non vérifié",
-      "notes": {
-        "markdown_editor_default_value": "Область предварительного просмотра",
-        "placeholder": "Введите содержимое в формате Markdown...",
-        "title": "Примечание к модели"
-      },
       "oauth": {
         "balance": "Solde",
         "button": "Войти через аккаунт {{provider}}",
