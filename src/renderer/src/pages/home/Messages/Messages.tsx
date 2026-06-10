@@ -42,6 +42,7 @@ import MessageGroup from './MessageGroup'
 import NarrowLayout from './NarrowLayout'
 import Prompt from './Prompt'
 import { MessagesContainer, ScrollContainer } from './shared'
+import { getResetTopicAfterClear } from './utils'
 
 interface MessagesProps {
   assistant: Assistant
@@ -62,7 +63,7 @@ const Messages: React.FC<MessagesProps> = ({ assistant, topic, setActiveTopic, o
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [isProcessingContext, setIsProcessingContext] = useState(false)
 
-  const { addTopic } = useAssistant(assistant.id)
+  const { addTopic, updateTopic } = useAssistant(assistant.id)
   const { showPrompt, messageNavigation } = useSettings()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -106,15 +107,22 @@ const Messages: React.FC<MessagesProps> = ({ assistant, topic, setActiveTopic, o
 
   const clearTopic = useCallback(
     async (data: Topic) => {
-      if (data && data.id !== topic.id) {
-        await clearTopicMessages(data.id)
+      const targetTopicId = data?.id ?? topic.id
+      const targetTopic = assistant.topics.find((item) => item.id === targetTopicId) ?? data ?? topic
+      const resetTopic = getResetTopicAfterClear(targetTopic, t('chat.default.topic.name'))
+
+      if (targetTopicId !== topic.id) {
+        await clearTopicMessages(targetTopicId)
+        updateTopic(resetTopic)
         return
       }
 
       await clearTopicMessages()
+      updateTopic(resetTopic)
+      setActiveTopic(resetTopic)
       setDisplayMessages([])
     },
-    [clearTopicMessages, topic.id]
+    [assistant.topics, clearTopicMessages, setActiveTopic, t, topic, updateTopic]
   )
 
   useEffect(() => {
