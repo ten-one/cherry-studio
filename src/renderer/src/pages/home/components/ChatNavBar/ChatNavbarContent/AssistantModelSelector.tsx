@@ -13,9 +13,10 @@ import SelectModelButton from '../../SelectModelButton'
 type AssistantModelSelectorProps = {
   assistant: Assistant
   className?: string
+  modelButtonMaxWidth?: string
 }
 
-const AssistantModelSelector = ({ assistant, className }: AssistantModelSelectorProps) => {
+const AssistantModelSelector = ({ assistant, className, modelButtonMaxWidth }: AssistantModelSelectorProps) => {
   const { t } = useTranslation()
   const assistantName = useMemo(() => assistant.name || t('chat.default.name'), [assistant.name, t])
 
@@ -27,7 +28,7 @@ const AssistantModelSelector = ({ assistant, className }: AssistantModelSelector
           <AssistantName>{assistantName}</AssistantName>
         </AssistantLabel>
         <ChevronRight className="h-4 w-4 text-gray-400" />
-        <ModelButtonWrapper>
+        <ModelButtonWrapper $modelButtonMaxWidth={modelButtonMaxWidth}>
           <SelectModelButton assistant={assistant} />
         </ModelButtonWrapper>
       </SelectorContent>
@@ -68,9 +69,9 @@ const AssistantName = styled.span`
   white-space: nowrap;
 `
 
-const ModelButtonWrapper = styled.div`
+const ModelButtonWrapper = styled.div<{ $modelButtonMaxWidth?: string }>`
   min-width: 0;
-  max-width: 260px;
+  max-width: ${({ $modelButtonMaxWidth }) => $modelButtonMaxWidth || '260px'};
   -webkit-app-region: no-drag;
 `
 

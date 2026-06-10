@@ -105,7 +105,7 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant, setActiveAssistant, activeTo
       )}
       <TopNavbarCenter $showAssistants={showAssistants}>
         <TopModelSelectorSlot>
-          <AssistantModelSelector assistant={assistant} />
+          <AssistantModelSelector assistant={assistant} modelButtonMaxWidth="560px" />
         </TopModelSelectorSlot>
       </TopNavbarCenter>
       <NavbarRight
@@ -166,7 +166,7 @@ const TopModelSelectorSlot = styled.div`
   display: flex;
   align-items: center;
   min-width: 0;
-  width: min(430px, 100%);
+  width: min(720px, 100%);
   -webkit-app-region: no-drag;
 `
 

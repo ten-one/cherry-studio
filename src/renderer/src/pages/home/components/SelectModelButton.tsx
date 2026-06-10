@@ -52,14 +52,13 @@ const SelectModelButton: FC<Props> = ({ assistant }) => {
   }
 
   const providerName = getProviderName(model)
+  const modelLabel = model ? `${model.name}${providerName ? ` | ${providerName}` : ''}` : t('button.select_model')
 
   return (
-    <DropdownButton size="small" type="text" onClick={onSelectModel}>
+    <DropdownButton size="small" type="text" onClick={onSelectModel} title={modelLabel}>
       <ButtonContent>
         <ModelAvatar model={model} size={20} />
-        <ModelName>
-          {model ? model.name : t('button.select_model')} {providerName ? ' | ' + providerName : ''}
-        </ModelName>
+        <ModelName>{modelLabel}</ModelName>
       </ButtonContent>
       <ChevronsUpDown size={14} color="var(--color-icon)" />
       {!provider && <Tag color="error">{t('models.invalid_model')}</Tag>}
