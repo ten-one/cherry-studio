@@ -47,6 +47,7 @@ const Chat: FC<Props> = (props) => {
   const { showTopics } = useShowTopics()
   const { isMultiSelectMode } = useChatContext(props.activeTopic)
   const { isTopNavbar } = useNavbarPosition()
+  const showInnerChatNavbar = isTopNavbar
 
   const mainRef = React.useRef<HTMLDivElement>(null)
   const contentSearchRef = React.useRef<ContentSearchRef>(null)
@@ -151,6 +152,7 @@ const Chat: FC<Props> = (props) => {
   }
 
   const mainHeight = isTopNavbar ? 'calc(100vh - var(--navbar-height) - 6px)' : 'calc(100vh - var(--navbar-height))'
+  const contentHeight = showInnerChatNavbar ? `calc(${mainHeight} - var(--navbar-height))` : mainHeight
 
   return (
     <Container id="chat" className={classNames([messageStyle, { 'multi-select-mode': isMultiSelectMode }])}>
@@ -167,16 +169,16 @@ const Chat: FC<Props> = (props) => {
             justify="space-between"
             style={{ height: mainHeight, width: '100%' }}>
             <QuickPanelProvider>
-              <ChatNavbar
-                activeAssistant={props.assistant}
-                activeTopic={props.activeTopic}
-                setActiveTopic={props.setActiveTopic}
-                setActiveAssistant={props.setActiveAssistant}
-                position="left"
-              />
-              <div
-                className="flex flex-1 flex-col justify-between"
-                style={{ height: `calc(${mainHeight} - var(--navbar-height))` }}>
+              {showInnerChatNavbar && (
+                <ChatNavbar
+                  activeAssistant={props.assistant}
+                  activeTopic={props.activeTopic}
+                  setActiveTopic={props.setActiveTopic}
+                  setActiveAssistant={props.setActiveAssistant}
+                  position="left"
+                />
+              )}
+              <div className="flex flex-1 flex-col justify-between" style={{ height: contentHeight }}>
                 <Messages
                   key={props.activeTopic.id}
                   assistant={assistant}

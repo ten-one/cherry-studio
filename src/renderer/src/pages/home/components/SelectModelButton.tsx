@@ -71,6 +71,8 @@ const DropdownButton = styled(Button)`
   font-size: 11px;
   border-radius: 15px;
   padding: 13px 5px;
+  max-width: 100%;
+  min-width: 0;
   -webkit-app-region: none;
   box-shadow: none;
   background-color: transparent;
@@ -82,12 +84,16 @@ const ButtonContent = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 `
 
 const ModelName = styled.span`
   font-weight: 500;
   margin-right: -2px;
   font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export default SelectModelButton

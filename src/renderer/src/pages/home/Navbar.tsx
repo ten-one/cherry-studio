@@ -1,6 +1,7 @@
 import { Navbar, NavbarCenter, NavbarLeft, NavbarRight } from '@renderer/components/app/Navbar'
 import { HStack } from '@renderer/components/Layout'
 import SearchPopup from '@renderer/components/Popups/SearchPopup'
+import { useAssistant } from '@renderer/hooks/useAssistant'
 import { modelGenerating } from '@renderer/hooks/useRuntime'
 import { useSettings } from '@renderer/hooks/useSettings'
 import { useShortcut } from '@renderer/hooks/useShortcuts'
@@ -17,6 +18,8 @@ import styled from 'styled-components'
 
 import NavbarIcon from '../../components/NavbarIcon'
 import AssistantsDrawer from './components/AssistantsDrawer'
+import AssistantModelSelector from './components/ChatNavBar/ChatNavbarContent/AssistantModelSelector'
+import SettingsButton from './components/ChatNavBar/Tools/SettingsButton'
 import UpdateAppButton from './components/UpdateAppButton'
 
 interface Props {
@@ -28,6 +31,7 @@ interface Props {
 }
 
 const HeaderNavbar: FC<Props> = ({ activeAssistant, setActiveAssistant, activeTopic, setActiveTopic }) => {
+  const { assistant } = useAssistant(activeAssistant.id)
   const { showAssistants, toggleShowAssistants } = useShowAssistants()
   const { topicPosition, narrowMode } = useSettings()
   const { showTopics, toggleShowTopics } = useShowTopics()
@@ -44,7 +48,7 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant, setActiveAssistant, activeTo
 
   const onShowAssistantsDrawer = () => {
     void AssistantsDrawer.show({
-      activeAssistant,
+      activeAssistant: assistant,
       setActiveAssistant,
       activeTopic,
       setActiveTopic
@@ -99,17 +103,22 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant, setActiveAssistant, activeTo
           </AnimatePresence>
         </NavbarLeft>
       )}
-      <NavbarCenter></NavbarCenter>
+      <TopNavbarCenter $showAssistants={showAssistants}>
+        <TopModelSelectorSlot>
+          <AssistantModelSelector assistant={assistant} />
+        </TopModelSelectorSlot>
+      </TopNavbarCenter>
       <NavbarRight
         style={{
           justifyContent: 'flex-end',
-          flex: 1,
+          flex: '0 0 auto',
           position: 'relative',
           paddingRight: '15px'
         }}
         className="home-navbar-right">
         <HStack alignItems="center" gap={6}>
           <UpdateAppButton />
+          <SettingsButton assistant={assistant} />
           <Tooltip title={t('chat.assistant.search.placeholder')} mouseEnterDelay={0.8}>
             <NarrowIcon onClick={() => SearchPopup.show()}>
               <Search size={18} />
@@ -144,6 +153,21 @@ const NarrowIcon = styled(NavbarIcon)`
   @media (max-width: 1000px) {
     display: none;
   }
+`
+
+const TopNavbarCenter = styled(NavbarCenter)<{ $showAssistants: boolean }>`
+  min-width: 0;
+  padding-left: ${({ $showAssistants }) => ($showAssistants ? 'calc(var(--assistants-width) - 34px)' : '10px')};
+  padding-right: 8px;
+  font-weight: 400;
+`
+
+const TopModelSelectorSlot = styled.div`
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  width: min(430px, 100%);
+  -webkit-app-region: no-drag;
 `
 
 export default HeaderNavbar
