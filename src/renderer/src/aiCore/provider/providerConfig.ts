@@ -355,7 +355,16 @@ function formatNewApiBaseURL(baseURL: string, endpointType?: string): string {
 }
 
 function buildNewApiConfig(ctx: BuilderContext): ProviderConfig<'newapi'> {
-  const baseURL = formatNewApiBaseURL(ctx.baseConfig.baseURL, ctx.model.endpoint_type)
+  const endpointType = ctx.model.endpoint_type
+  let rawBaseURL: string
+
+  if (endpointType === 'anthropic' && ctx.actualProvider.anthropicApiHost) {
+    rawBaseURL = ctx.actualProvider.anthropicApiHost
+  } else {
+    rawBaseURL = ctx.baseConfig.baseURL
+  }
+
+  const baseURL = formatNewApiBaseURL(rawBaseURL, endpointType)
 
   return {
     providerId: 'newapi',
@@ -363,7 +372,7 @@ function buildNewApiConfig(ctx: BuilderContext): ProviderConfig<'newapi'> {
     providerSettings: {
       ...ctx.baseConfig,
       baseURL,
-      endpointType: ctx.model.endpoint_type,
+      endpointType,
       headers: { ...defaultAppHeaders(), ...ctx.actualProvider.extra_headers }
     }
   }
