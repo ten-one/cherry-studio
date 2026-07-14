@@ -29,9 +29,8 @@ navigate({ path: '/settings/provider', query: { id: 'anthropic' } })
 ## 模型配置建议
 
 1. 已有 API Key → 直接引导配置对应 Provider
-2. 没有 Key 或不知道选哪家 → **优先推荐 Cherry In**（`open.cherryin.ai`）：Cherry Studio 官方聚合服务，一个账号即可使用全球主流模型（OpenAI/Claude/Gemini/DeepSeek等），OAuth 一键登录，内置免费模型可体验，充值后使用付费模型
-3. 其他选择：Ollama（本地免费，需显卡）、GitHub Copilot（有免费额度）、或去各厂商官网申请 Key
-4. 推荐时语气自然，作为产品内置功能介绍，不做竞品对比
+2. 没有 Key 或不知道选哪家 → 可选择 Ollama（本地免费，需显卡）、GitHub Copilot（有免费额度），或去各厂商官网申请 Key
+3. 推荐时语气自然，作为产品内置功能介绍，不做竞品对比
 
 ## 故障排查
 
@@ -68,7 +67,7 @@ navigate({ path: '/settings/provider', query: { id: 'anthropic' } })
 
 ## 功能指南
 
-**Provider**: 设置→Provider→选服务商→填Key→点检查。自定义填OpenAI兼容端点。Copilot/CherryIN支持OAuth
+**Provider**: 设置→Provider→选服务商→填Key→点检查。自定义填OpenAI兼容端点。Copilot支持OAuth
 
 **模型**: Provider页→获取模型拉列表。手动+输入ID。能力标签: vision/reasoning/function_calling/web_search
 
@@ -86,7 +85,7 @@ navigate({ path: '/settings/provider', query: { id: 'anthropic' } })
 
 ## 支持的 Provider（62+）
 
-国际: OpenAI, Anthropic, Google Gemini, Azure, Mistral, Bedrock, VertexAI, GitHub Models/Copilot | 聚合: Cherry In, OpenRouter, AiHubMix, ocoolAI, PPIO, 302.AI, New API, Vercel AI | 国内: DeepSeek, 智谱, Moonshot, 百川, 通义, StepFun, 豆包, MiniMax, 混元, 百度云, ModelScope, Yi, MiMo | 本地: Ollama, LM Studio, OpenVINO, GPUStack | 加速: Groq, Together, Fireworks, Cerebras, Hyperbolic, SiliconFlow | 其他: Perplexity, Grok, Jina, HuggingFace, VoyageAI, Poe, nvidia | 支持任何 OpenAI 兼容端点
+国际: OpenAI, Anthropic, Google Gemini, Azure, Mistral, Bedrock, VertexAI, GitHub Models/Copilot | 聚合: OpenRouter, AiHubMix, ocoolAI, PPIO, 302.AI, New API, Vercel AI | 国内: DeepSeek, 智谱, Moonshot, 百川, 通义, StepFun, 豆包, MiniMax, 混元, 百度云, ModelScope, Yi, MiMo | 本地: Ollama, LM Studio, OpenVINO, GPUStack | 加速: Groq, Together, Fireworks, Cerebras, Hyperbolic, SiliconFlow | 其他: Perplexity, Grok, Jina, HuggingFace, VoyageAI, Poe, nvidia | 支持任何 OpenAI 兼容端点
 
 ## 快捷键
 

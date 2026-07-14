@@ -51,12 +51,6 @@
         "node": true
       },
       "files": ["src/preload/**"]
-    },
-    {
-      "files": ["packages/ai-sdk-provider/**"],
-      "globals": {
-        "fetch": "readonly"
-      }
     }
   ],
   "plugins": ["unicorn", "typescript", "oxc", "import"],

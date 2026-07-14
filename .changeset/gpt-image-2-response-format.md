@@ -1,6 +1,5 @@
 ---
 '@cherrystudio/ai-core': patch
-'@cherrystudio/ai-sdk-provider': patch
 ---
 
 Support OpenAI `gpt-image-2`:

@@ -13,7 +13,6 @@ import BailianProviderLogo from '@renderer/assets/images/providers/bailian.png'
 import BurnCloudProviderLogo from '@renderer/assets/images/providers/burncloud.png'
 import CephalonProviderLogo from '@renderer/assets/images/providers/cephalon.jpeg'
 import CerebrasProviderLogo from '@renderer/assets/images/providers/cerebras.webp'
-import CherryInProviderLogo from '@renderer/assets/images/providers/cherryin.png'
 import DeepSeekProviderLogo from '@renderer/assets/images/providers/deepseek.png'
 import DmxapiProviderLogo from '@renderer/assets/images/providers/DMXAPI.png'
 import FireworksProviderLogo from '@renderer/assets/images/providers/fireworks.png'
@@ -79,17 +78,6 @@ export const CHERRYAI_PROVIDER: SystemProvider = {
 }
 
 export const SYSTEM_PROVIDERS_CONFIG: Record<SystemProviderId, SystemProvider> = {
-  cherryin: {
-    id: 'cherryin',
-    name: 'CherryIN',
-    type: 'openai',
-    apiKey: '',
-    apiHost: 'https://open.cherryin.cc',
-    anthropicApiHost: 'https://open.cherryin.cc',
-    models: [],
-    isSystem: true,
-    enabled: true
-  },
   silicon: {
     id: 'silicon',
     name: 'Silicon',
@@ -743,7 +731,6 @@ export const SYSTEM_PROVIDERS_CONFIG: Record<SystemProviderId, SystemProvider> =
 export const SYSTEM_PROVIDERS: SystemProvider[] = Object.values(SYSTEM_PROVIDERS_CONFIG)
 
 export const PROVIDER_LOGO_MAP: AtLeast<SystemProviderId, string> = {
-  cherryin: CherryInProviderLogo,
   ph8: Ph8ProviderLogo,
   '302ai': Ai302ProviderLogo,
   openai: OpenAiProviderLogo,
@@ -832,17 +819,6 @@ type ProviderUrls = {
 }
 
 export const PROVIDER_URLS: Record<SystemProviderId, ProviderUrls> = {
-  cherryin: {
-    api: {
-      url: 'https://open.cherryin.net'
-    },
-    websites: {
-      official: 'https://open.cherryin.ai',
-      apiKey: 'https://open.cherryin.ai/console/token',
-      docs: 'https://open.cherryin.ai',
-      models: 'https://open.cherryin.ai/pricing'
-    }
-  },
   ph8: {
     api: {
       url: 'https://ph8.co'

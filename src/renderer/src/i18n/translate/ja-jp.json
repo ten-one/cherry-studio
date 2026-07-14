@@ -2084,16 +2084,10 @@
       "title": "デフォルトモデルを選択"
     },
     "skip": "スキップ",
-    "toast": {
-      "connected": "CherryINに正常に接続されました"
-    },
     "welcome": {
-      "login_cherryin": "CherryINでログイン",
-      "or_continue_with": "または続行",
       "other_provider": "他のプロバイダーを選択",
       "select_other_provider": "他のプロバイダーを選択",
       "setup_hint": "ベストな体験のために、少なくとも1つのプロバイダーを設定してください",
-      "subtitle": "CherryINでトップクラスのAIサービスをお楽しみください",
       "title": "Cherry Studioへようこそ"
     }
   },
@@ -2473,7 +2467,6 @@
     "burncloud": "BurnCloud",
     "cephalon": "Cephalon",
     "cerebras": "Cerebras AI",
-    "cherryin": "CherryIN",
     "copilot": "GitHub Copilot",
     "dashscope": "Alibaba Cloud",
     "deepseek": "DeepSeek",
@@ -4512,13 +4505,6 @@
       "oauth": {
         "balance": "残高",
         "button": "{{provider}} アカウントでログイン",
-        "cherryIn": {
-          "description": "セルフホストしたNew-APIサーバーでOAuth 2.0（PKCE）を使用してログイン",
-          "logged_in": "OAuth経由でログインしました",
-          "login_button": "OAuthでログイン",
-          "logout_button": "ログアウト",
-          "title": "OAuthログイン"
-        },
         "connect": "{{provider}}に接続",
         "description": "本サービスは<website>{{provider}}</website>によって提供されます",
         "error": "認証失敗",

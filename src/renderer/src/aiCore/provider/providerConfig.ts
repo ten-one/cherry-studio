@@ -9,7 +9,6 @@ import {
 } from '@renderer/hooks/useAwsBedrock'
 import { createVertexProvider, isVertexAIConfigured } from '@renderer/hooks/useVertexAI'
 import { getProviderByModel } from '@renderer/services/AssistantService'
-import { getProviderById } from '@renderer/services/ProviderService'
 import store from '@renderer/store'
 import { type Model, type Provider, SystemProviderIds } from '@renderer/types'
 import {
@@ -128,7 +127,6 @@ export function providerToAiSdkConfig(
     { match: (p) => isAzureOpenAIProvider(p), build: buildAzureConfig },
     { match: (_, id) => id === 'bedrock', build: buildBedrockConfig },
     { match: (_, id) => id === 'google-vertex', build: buildVertexConfig },
-    { match: (_, id) => id === 'cherryin', build: buildCherryinConfig },
     { match: (_, id) => id === 'newapi', build: buildNewApiConfig },
     { match: (_, id) => id === 'aihubmix', build: buildAiHubMixConfig }
   ]
@@ -248,22 +246,6 @@ function buildVertexConfig(
     endpoint: ctx.endpoint,
     providerSettings: { ...ctx.baseConfig, baseURL, project, location, googleCredentials: creds }
   } as ProviderConfig<'google-vertex'> | ProviderConfig<'google-vertex-anthropic'>
-}
-
-function buildCherryinConfig(ctx: BuilderContext): ProviderConfig<'cherryin'> {
-  const cherryinProvider = getProviderById(SystemProviderIds.cherryin)
-
-  return {
-    providerId: 'cherryin',
-    endpoint: ctx.endpoint,
-    providerSettings: {
-      ...ctx.baseConfig,
-      endpointType: ctx.model.endpoint_type,
-      anthropicBaseURL: cherryinProvider ? cherryinProvider.anthropicApiHost + '/v1' : undefined,
-      geminiBaseURL: cherryinProvider ? cherryinProvider.apiHost + '/v1beta' : undefined,
-      headers: { ...defaultAppHeaders(), ...ctx.actualProvider.extra_headers }
-    }
-  }
 }
 
 async function buildCherryAIConfig(ctx: BuilderContext): Promise<ProviderConfig<'openai-compatible'>> {

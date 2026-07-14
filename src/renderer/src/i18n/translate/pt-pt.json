@@ -2084,16 +2084,10 @@
       "title": "Escolha Seus Modelos Padrão"
     },
     "skip": "Pular",
-    "toast": {
-      "connected": "Conectado com sucesso ao CherryIN"
-    },
     "welcome": {
-      "login_cherryin": "Entrar com CherryIN",
-      "or_continue_with": "OU CONTINUAR COM",
       "other_provider": "Escolher Outros Provedores",
       "select_other_provider": "Selecionar Outro Provedor",
       "setup_hint": "Por favor, configure pelo menos um provedor para a melhor experiência",
-      "subtitle": "Desfrute de serviços de IA de alto nível com CherryIN",
       "title": "Bem-vindo ao Cherry Studio"
     }
   },
@@ -2473,7 +2467,6 @@
     "burncloud": "BurnCloud",
     "cephalon": "Cephalon",
     "cerebras": "Cerebras AI",
-    "cherryin": "CherryIN",
     "copilot": "GitHub Copiloto",
     "dashscope": "Área de Atuação AliCloud",
     "deepseek": "Busca Profunda",
@@ -4512,13 +4505,6 @@
       "oauth": {
         "balance": "Saldo",
         "button": "Entrar com a conta {{provider}}",
-        "cherryIn": {
-          "description": "Faça login com seu servidor New-API auto-hospedado usando OAuth 2.0 (PKCE)",
-          "logged_in": "Conectado via OAuth",
-          "login_button": "Entrar com OAuth",
-          "logout_button": "Sair",
-          "title": "Login OAuth"
-        },
         "connect": "Conectar {{provider}}",
         "description": "Este serviço é fornecido por <website>{{provider}}</website>",
         "error": "Falha na autenticação",

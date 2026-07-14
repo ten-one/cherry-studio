@@ -2084,16 +2084,10 @@
       "title": "Wählen Sie Ihre Standardmodelle"
     },
     "skip": "Überspringen",
-    "toast": {
-      "connected": "Erfolgreich mit CherryIN verbunden"
-    },
     "welcome": {
-      "login_cherryin": "Mit CherryIN anmelden",
-      "or_continue_with": "ODER WEITER MIT",
       "other_provider": "Andere Anbieter auswählen",
       "select_other_provider": "Wählen Sie einen anderen Anbieter",
       "setup_hint": "Bitte konfigurieren Sie mindestens einen Anbieter für die beste Erfahrung.",
-      "subtitle": "Genießen Sie erstklassige KI-Dienste mit CherryIN",
       "title": "Willkommen bei Cherry Studio"
     }
   },
@@ -2473,7 +2467,6 @@
     "burncloud": "BurnCloud",
     "cephalon": "Cephalon",
     "cerebras": "Cerebras AI",
-    "cherryin": "CherryIN",
     "copilot": "GitHub Copilot",
     "dashscope": "Alibaba Cloud Bailian",
     "deepseek": "DeepSeek",
@@ -4512,13 +4505,6 @@
       "oauth": {
         "balance": "Guthaben",
         "button": "Mit {{provider}}-Konto anmelden",
-        "cherryIn": {
-          "description": "Melden Sie sich mit Ihrem selbst gehosteten New-API-Server über OAuth 2.0 (PKCE) an.",
-          "logged_in": "Über OAuth angemeldet",
-          "login_button": "Mit OAuth anmelden",
-          "logout_button": "Abmelden",
-          "title": "OAuth-Anmeldung"
-        },
         "connect": "Verbinde {{provider}}",
         "description": "Dienst wird von <website>{{provider}}</website> bereitgestellt",
         "error": "Authentifizierung fehlgeschlagen",

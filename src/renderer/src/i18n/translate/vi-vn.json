@@ -2084,16 +2084,10 @@
       "title": "Chọn Mô hình Mặc định của Bạn"
     },
     "skip": "Bỏ qua",
-    "toast": {
-      "connected": "Đã kết nối thành công với CherryIN"
-    },
     "welcome": {
-      "login_cherryin": "Đăng nhập bằng CherryIN",
-      "or_continue_with": "HOẶC TIẾP TỤC VỚI",
       "other_provider": "Chọn Nhà Cung Cấp Khác",
       "select_other_provider": "Chọn Nhà Cung Cấp Khác",
       "setup_hint": "Vui lòng cấu hình ít nhất một nhà cung cấp để có trải nghiệm tốt nhất",
-      "subtitle": "Tận hưởng các dịch vụ AI hàng đầu với CherryIN",
       "title": "Chào mừng bạn đến với Cherry Studio"
     }
   },
@@ -2473,7 +2467,6 @@
     "burncloud": "BurnCloud",
     "cephalon": "cephalon",
     "cerebras": "Cerebras AI",
-    "cherryin": "CherryIN",
     "copilot": "GitHub Copilot",
     "dashscope": "Alibaba Cloud",
     "deepseek": "DeepSeek",
@@ -4512,13 +4505,6 @@
       "oauth": {
         "balance": "Cân bằng",
         "button": "Iniciar sesión con {{provider}}",
-        "cherryIn": {
-          "description": "Đăng nhập vào CherryIN bằng OAuth 2.0",
-          "logged_in": "Đã đăng nhập qua OAuth",
-          "login_button": "Đăng nhập bằng OAuth",
-          "logout_button": "Keluar",
-          "title": "Đăng nhập OAuth"
-        },
         "connect": "Kết nối {{provider}}",
         "description": "Dịch vụ này được cung cấp bởi <website>{{provider}}</website>",
         "error": "Autentificación fallida",

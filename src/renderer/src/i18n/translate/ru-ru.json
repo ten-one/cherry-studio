@@ -2084,16 +2084,10 @@
       "title": "Выберите модели по умолчанию"
     },
     "skip": "Пропустить",
-    "toast": {
-      "connected": "Успешно подключено к CherryIN"
-    },
     "welcome": {
-      "login_cherryin": "Войти через CherryIN",
-      "or_continue_with": "ИЛИ ПРОДОЛЖИТЬ С",
       "other_provider": "Выбрать других поставщиков",
       "select_other_provider": "Выбрать другого поставщика",
       "setup_hint": "Пожалуйста, настройте хотя бы одного поставщика для лучшего опыта",
-      "subtitle": "Наслаждайтесь услугами ИИ высшего уровня с CherryIN",
       "title": "Добро пожаловать в Cherry Studio"
     }
   },
@@ -2473,7 +2467,6 @@
     "burncloud": "BurnCloud",
     "cephalon": "Cephalon",
     "cerebras": "Cerebras AI",
-    "cherryin": "CherryIN",
     "copilot": "GitHub Copilot",
     "dashscope": "Alibaba Cloud",
     "deepseek": "DeepSeek",
@@ -4512,13 +4505,6 @@
       "oauth": {
         "balance": "Баланс",
         "button": "Войти с {{provider}}",
-        "cherryIn": {
-          "description": "Войдите на ваш собственный сервер New-API с помощью OAuth 2.0 (PKCE)",
-          "logged_in": "Вошёл через OAuth",
-          "login_button": "Войти через OAuth",
-          "logout_button": "Выход",
-          "title": "Вход через OAuth"
-        },
         "connect": "Подключить {{provider}}",
         "description": "Сервис предоставляется <website>{{provider}}</website>",
         "error": "Ошибка аутентификации",

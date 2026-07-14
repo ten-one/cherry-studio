@@ -1,6 +1,5 @@
 ---
 '@cherrystudio/ai-core': patch
-'@cherrystudio/ai-sdk-provider': patch
 ---
 
 Support Claude Opus 4.7:

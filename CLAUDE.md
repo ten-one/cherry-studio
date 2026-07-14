@@ -85,7 +85,6 @@ packages/
   aiCore/        # @cherrystudio/ai-core — AI SDK middleware & provider abstraction
   shared/        # Cross-process types, constants, IPC channel definitions
   mcp-trace/     # OpenTelemetry tracing for MCP operations
-  ai-sdk-provider/  # Custom AI SDK provider implementations
   extension-table-plus/  # TipTap table extension
 ```
 

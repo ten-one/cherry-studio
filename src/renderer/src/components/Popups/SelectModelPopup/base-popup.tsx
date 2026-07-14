@@ -1,5 +1,4 @@
 import { PushpinOutlined } from '@ant-design/icons'
-import { FreeTrialModelTag } from '@renderer/components/FreeTrialModelTag'
 import ModelTagsWithLabel from '@renderer/components/ModelTagsWithLabel'
 import { TopView } from '@renderer/components/TopView'
 import { DynamicVirtualList, type DynamicVirtualListRef } from '@renderer/components/VirtualList'
@@ -128,7 +127,6 @@ const SelectModelPopupView: React.FC<Props> = ({
     (model: Model, provider: Provider, isPinned: boolean, showIdentifier: boolean): FlatListModel => {
       const modelId = getModelUniqId(model)
       const groupName = getFancyProviderName(provider)
-      const isCherryAi = provider.id === 'cherryai'
 
       return {
         key: isPinned ? `${modelId}_pinned` : modelId,
@@ -146,7 +144,6 @@ const SelectModelPopupView: React.FC<Props> = ({
               )}
               {isPinned && <span className="whitespace-nowrap text-[var(--color-text-3)]">| {groupName}</span>}
             </div>
-            {isCherryAi && <FreeTrialModelTag model={model} showLabel={false} />}
           </ModelName>
         ),
         tags: (

@@ -2254,9 +2254,6 @@ const migrateConfig = {
   },
   '139': (state: RootState) => {
     try {
-      addProvider(state, 'cherryin')
-      state.llm.providers = moveProvider(state.llm.providers, 'cherryin', 1)
-
       const zhipuProvider = state.llm.providers.find((p) => p.id === 'zhipu')
 
       if (zhipuProvider) {
@@ -2528,47 +2525,6 @@ const migrateConfig = {
       addProvider(state, 'aionly')
       state.llm.providers = moveProvider(state.llm.providers, 'aionly', 10)
 
-      const cherryinProvider = state.llm.providers.find((provider) => provider.id === 'cherryin')
-
-      if (cherryinProvider) {
-        updateProvider(state, 'cherryin', {
-          apiHost: 'https://open.cherryin.ai',
-          models: []
-        })
-      }
-
-      if (state.llm.defaultModel?.provider === 'cherryin') {
-        state.llm.defaultModel.provider = 'cherryai'
-      }
-
-      if (state.llm.quickModel?.provider === 'cherryin') {
-        state.llm.quickModel.provider = 'cherryai'
-      }
-
-      if (state.llm.translateModel?.provider === 'cherryin') {
-        state.llm.translateModel.provider = 'cherryai'
-      }
-
-      state.assistants.assistants.forEach((assistant) => {
-        if (assistant.model?.provider === 'cherryin') {
-          assistant.model.provider = 'cherryai'
-        }
-        if (assistant.defaultModel?.provider === 'cherryin') {
-          assistant.defaultModel.provider = 'cherryai'
-        }
-      })
-
-      // @ts-ignore
-      state.agents.agents.forEach((agent) => {
-        // @ts-ignore model is not defined in Agent
-        if (agent.model?.provider === 'cherryin') {
-          // @ts-ignore model is not defined in Agent
-          agent.model.provider = 'cherryai'
-        }
-        if (agent.defaultModel?.provider === 'cherryin') {
-          agent.defaultModel.provider = 'cherryai'
-        }
-      })
       return state
     } catch (error) {
       logger.error('migrate 157 error', error as Error)
@@ -2577,7 +2533,6 @@ const migrateConfig = {
   },
   '158': (state: RootState) => {
     try {
-      state.llm.providers = state.llm.providers.filter((provider) => provider.id !== 'cherryin')
       addProvider(state, 'longcat')
       return state
     } catch (error) {
@@ -2600,8 +2555,6 @@ const migrateConfig = {
       removeMiniAppFromState(state, 'nm-search')
       removeMiniAppFromState(state, 'hika')
       removeMiniAppFromState(state, 'hugging-chat')
-      addProvider(state, 'cherryin')
-      state.llm.providers = moveProvider(state.llm.providers, 'cherryin', 1)
       return state
     } catch (error) {
       logger.error('migrate 161 error', error as Error)
@@ -2647,7 +2600,6 @@ const migrateConfig = {
     try {
       addProvider(state, 'sophnet')
       state.llm.providers = moveProvider(state.llm.providers, 'sophnet', 17)
-      state.settings.defaultPaintingProvider = 'cherryin'
       return state
     } catch (error) {
       logger.error('migrate 170 error', error as Error)
@@ -2754,9 +2706,6 @@ const migrateConfig = {
             break
           case 'grok':
             provider.anthropicApiHost = 'https://api.x.ai'
-            break
-          case 'cherryin':
-            provider.anthropicApiHost = 'https://open.cherryin.net'
             break
           case 'longcat':
             provider.anthropicApiHost = 'https://api.longcat.chat/anthropic'
@@ -2920,12 +2869,6 @@ const migrateConfig = {
   },
   '183': (state: RootState) => {
     try {
-      state.llm.providers.forEach((provider) => {
-        if (provider.id === SystemProviderIds.cherryin) {
-          provider.apiHost = 'https://open.cherryin.cc'
-          provider.anthropicApiHost = 'https://open.cherryin.cc'
-        }
-      })
       state.llm.providers = moveProvider(state.llm.providers, SystemProviderIds.poe, 10)
       logger.info('migrate 183 success')
       return state
@@ -3334,6 +3277,51 @@ const migrateConfig = {
       return state
     } catch (error) {
       logger.error('migrate 207 error', error as Error)
+      return state
+    }
+  },
+  '208': (state: RootState) => {
+    try {
+      const removedProviderId = 'cherryin'
+      const usesRemovedProvider = (model?: Model) => model?.provider === removedProviderId
+
+      state.llm.providers = state.llm.providers.filter((provider) => provider.id !== removedProviderId)
+      state.llm.hiddenProviderIds = (state.llm.hiddenProviderIds ?? []).filter((id) => id !== removedProviderId)
+      delete (state.llm.settings as unknown as Record<string, unknown>).cherryIn
+
+      if (usesRemovedProvider(state.llm.defaultModel)) {
+        state.llm.defaultModel = { ...llmInitialState.defaultModel }
+      }
+      if (usesRemovedProvider(state.llm.topicNamingModel)) {
+        state.llm.topicNamingModel = { ...llmInitialState.topicNamingModel }
+      }
+      if (usesRemovedProvider(state.llm.quickModel)) {
+        state.llm.quickModel = { ...llmInitialState.quickModel }
+      }
+      if (usesRemovedProvider(state.llm.translateModel)) {
+        state.llm.translateModel = { ...llmInitialState.translateModel }
+      }
+
+      const resetAssistantModels = (assistant: Assistant) => {
+        if (usesRemovedProvider(assistant.model)) {
+          assistant.model = { ...llmInitialState.defaultModel }
+        }
+        if (usesRemovedProvider(assistant.defaultModel)) {
+          assistant.defaultModel = { ...llmInitialState.defaultModel }
+        }
+      }
+
+      state.assistants.assistants.forEach(resetAssistantModels)
+      resetAssistantModels(state.assistants.defaultAssistant)
+
+      if (state.settings.defaultPaintingProvider === removedProviderId) {
+        state.settings.defaultPaintingProvider = 'zhipu'
+      }
+
+      logger.info('migrate 208 success')
+      return state
+    } catch (error) {
+      logger.error('migrate 208 error', error as Error)
       return state
     }
   }
