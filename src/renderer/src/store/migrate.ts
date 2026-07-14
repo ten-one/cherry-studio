@@ -3314,7 +3314,9 @@ const migrateConfig = {
       state.assistants.assistants.forEach(resetAssistantModels)
       resetAssistantModels(state.assistants.defaultAssistant)
 
-      if (state.settings.defaultPaintingProvider === removedProviderId) {
+      // Persisted state may contain provider ids that are no longer part of PaintingProvider.
+      const persistedPaintingProvider = state.settings.defaultPaintingProvider as string
+      if (persistedPaintingProvider === removedProviderId) {
         state.settings.defaultPaintingProvider = 'zhipu'
       }
 
