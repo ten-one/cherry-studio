@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import type { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import AboutSettings from './AboutSettings'
@@ -133,6 +133,7 @@ const SettingsPage: FC = () => {
         </SettingMenus>
         <SettingContent>
           <Routes>
+            <Route index element={<Navigate to="/settings/provider" replace />} />
             <Route path="provider" element={<ProviderList />} />
             <Route path="model" element={<ModelSettings />} />
             <Route path="websearch/*" element={<WebSearchSettings />} />
@@ -146,6 +147,7 @@ const SettingsPage: FC = () => {
             <Route path="selectionAssistant" element={<SelectionAssistantSettings />} />
             <Route path="data" element={<DataSettings />} />
             <Route path="about" element={<AboutSettings />} />
+            <Route path="*" element={<Navigate to="/settings/provider" replace />} />
           </Routes>
         </SettingContent>
       </ContentContainer>

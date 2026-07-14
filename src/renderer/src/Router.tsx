@@ -2,7 +2,7 @@ import '@renderer/databases'
 
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Sidebar from './components/app/Sidebar'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -32,6 +32,9 @@ const Router: FC = () => {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/agents" element={<Navigate to="/" replace />} />
+          <Route path="/code" element={<Navigate to="/" replace />} />
+          <Route path="/openclaw" element={<Navigate to="/" replace />} />
           <Route path="/store" element={<AssistantPresetsPage />} />
           <Route path="/paintings/*" element={<PaintingsRoutePage />} />
           <Route path="/translate" element={<TranslatePage />} />

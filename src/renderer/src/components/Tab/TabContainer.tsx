@@ -50,7 +50,7 @@ interface TabsContainerProps {
 }
 
 const logger = loggerService.withContext('TabContainer')
-const removedTabIds = new Set(['agents'])
+const removedTabIds = new Set(['agents', 'code', 'openclaw'])
 
 const getTabIcon = (
   tabId: string,

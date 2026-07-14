@@ -27,7 +27,7 @@ export interface TabsState {
   activeTabId: string
 }
 
-const removedTabIds = new Set(['agents'])
+const removedTabIds = new Set(['agents', 'code', 'openclaw'])
 const removedTabPaths = new Set([...removedTabIds].map((id) => `/${id}`))
 
 const sanitizeTabs = (tabs: Tab[]) => tabs.filter((tab) => !removedTabIds.has(tab.id) && !removedTabPaths.has(tab.path))
