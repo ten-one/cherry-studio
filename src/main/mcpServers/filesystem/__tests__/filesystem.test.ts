@@ -19,6 +19,10 @@ describe('filesystem MCP security', () => {
     return tempDir
   }
 
+  async function createDirectoryLink(target: string, linkPath: string) {
+    await fs.symlink(target, linkPath, process.platform === 'win32' ? 'junction' : 'dir')
+  }
+
   afterEach(async () => {
     vi.restoreAllMocks()
     await Promise.all(tempDirs.splice(0).map((tempDir) => fs.rm(tempDir, { recursive: true, force: true })))
@@ -50,9 +54,11 @@ describe('filesystem MCP security', () => {
     const symlinkPath = path.join(workspaceRoot, 'escape-link')
 
     await fs.writeFile(outsideFile, 'top-secret')
-    await fs.symlink(outsideFile, symlinkPath)
+    await createDirectoryLink(outsideRoot, symlinkPath)
 
-    await expect(validatePath(symlinkPath, workspaceRoot)).rejects.toThrow('outside the configured workspace root')
+    await expect(validatePath(path.join(symlinkPath, 'secret.txt'), workspaceRoot)).rejects.toThrow(
+      'outside the configured workspace root'
+    )
   })
 
   it('rejects relative path traversal outside the configured root', async () => {
@@ -97,7 +103,7 @@ describe('filesystem MCP security', () => {
     await fs.writeFile(secretFile, 'secret')
 
     // Create a symlink inside workspace pointing to the outside directory
-    await fs.symlink(outsideRoot, path.join(workspaceRoot, 'escape-dir'))
+    await createDirectoryLink(outsideRoot, path.join(workspaceRoot, 'escape-dir'))
 
     // Mock ripgrep to return both files (simulating --follow traversing the symlink)
     vi.spyOn(types, 'runRipgrep').mockResolvedValue({
@@ -122,7 +128,7 @@ describe('filesystem MCP security', () => {
     await fs.writeFile(path.join(outsideRoot, 'private', 'secret.txt'), 'secret')
 
     // Create a symlink inside workspace pointing to the outside directory
-    await fs.symlink(outsideRoot, path.join(workspaceRoot, 'escape-dir'))
+    await createDirectoryLink(outsideRoot, path.join(workspaceRoot, 'escape-dir'))
 
     const result = await handleLsTool({ recursive: true }, workspaceRoot)
     const text = result.content[0].text
