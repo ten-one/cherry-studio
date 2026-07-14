@@ -34,7 +34,9 @@ function normalizeProvider<T extends Provider>(provider: T): T {
 }
 
 const selectProviders = (state: RootState) => state.llm.providers
-const selectHiddenProviderIds = (state: RootState) => state.llm.hiddenProviderIds || []
+const EMPTY_HIDDEN_PROVIDER_IDS: string[] = []
+
+export const selectHiddenProviderIds = (state: RootState) => state.llm.hiddenProviderIds ?? EMPTY_HIDDEN_PROVIDER_IDS
 
 const selectEnabledProviders = createSelector(selectProviders, (providers) =>
   providers

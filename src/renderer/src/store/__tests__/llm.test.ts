@@ -27,6 +27,19 @@ describe('llm reducer provider visibility', () => {
     expect(state.providers[0].enabled).toBe(false)
   })
 
+  it('disables every provider with the hidden id', () => {
+    const state = llmReducer(
+      {
+        ...createState(),
+        providers: [{ ...testProvider }, { ...testProvider, name: 'Duplicate Provider' }]
+      },
+      hideProvider(testProvider.id)
+    )
+
+    expect(state.hiddenProviderIds).toEqual([testProvider.id])
+    expect(state.providers.every((provider) => provider.enabled === false)).toBe(true)
+  })
+
   it('unhides provider without enabling it', () => {
     const hiddenState = llmReducer(createState(), hideProvider(testProvider.id))
     const visibleState = llmReducer(hiddenState, unhideProvider(testProvider.id))

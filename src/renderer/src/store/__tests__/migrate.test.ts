@@ -83,4 +83,17 @@ describe('store migrations', () => {
       expect(migrated.settings.defaultPaintingProvider).toBe('zhipu')
     })
   })
+
+  describe('migration 209: hidden provider ids backfill', () => {
+    it('initializes hiddenProviderIds for persisted states that do not have it', async () => {
+      const state = {
+        llm: {},
+        _persist: { version: 208, rehydrated: false }
+      }
+
+      const migrated: any = await migrate(state as any, 209)
+
+      expect(migrated.llm.hiddenProviderIds).toEqual([])
+    })
+  })
 })

@@ -173,9 +173,10 @@ const llmSlice = createSlice({
         state.hiddenProviderIds.push(action.payload)
       }
 
-      const provider = state.providers.find((p) => p.id === action.payload)
-      if (provider) {
-        provider.enabled = false
+      for (const provider of state.providers) {
+        if (provider.id === action.payload) {
+          provider.enabled = false
+        }
       }
     },
     unhideProvider: (state, action: PayloadAction<string>) => {

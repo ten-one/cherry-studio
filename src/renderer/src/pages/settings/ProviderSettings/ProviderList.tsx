@@ -60,7 +60,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     unhideProvider
   } = useProviders()
   const { setTimeoutTimer } = useTimer()
-  const [selectedProvider, _setSelectedProvider] = useState<Provider>(providers[0])
+  const [selectedProvider, _setSelectedProvider] = useState<Provider | undefined>(providers[0])
   const { t } = useTranslation()
   const [searchText, setSearchText] = useState<string>('')
   const [dragging, setDragging] = useState(false)
@@ -75,12 +75,39 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     () => providers.filter((provider) => !hiddenProviderIdSet.has(provider.id)),
     [hiddenProviderIdSet, providers]
   )
-  const hiddenProviders = useMemo(
-    () => providers.filter((provider) => hiddenProviderIdSet.has(provider.id)),
-    [hiddenProviderIdSet, providers]
-  )
+  const hiddenProviders = useMemo(() => {
+    const seenProviderIds = new Set<string>()
 
-  const setSelectedProvider = useCallback((provider: Provider) => {
+    return providers.filter((provider) => {
+      if (!hiddenProviderIdSet.has(provider.id) || seenProviderIds.has(provider.id)) {
+        return false
+      }
+
+      seenProviderIds.add(provider.id)
+      return true
+    })
+  }, [hiddenProviderIdSet, providers])
+  const filteredProviders = useMemo(() => {
+    const keywords = searchText.toLowerCase().split(/\s+/).filter(Boolean)
+
+    return visibleProviders.filter((provider) => {
+      // don't show it when isOvmsSupported is loading
+      if (provider.id === 'ovms' && !isOvmsSupported) {
+        return false
+      }
+
+      // Filter by agent support
+      if (agentFilterEnabled && !isAnthropicSupportedProvider(provider)) {
+        return false
+      }
+
+      const isProviderMatch = matchKeywordsInProvider(keywords, provider)
+      const isModelMatch = provider.models.some((model) => matchKeywordsInModel(keywords, model))
+      return isProviderMatch || isModelMatch
+    })
+  }, [agentFilterEnabled, isOvmsSupported, searchText, visibleProviders])
+
+  const setSelectedProvider = useCallback((provider: Provider | undefined) => {
     startTransition(() => _setSelectedProvider(provider))
   }, [])
 
@@ -95,12 +122,9 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     const selectedProviderHidden = selectedProvider?.id ? hiddenProviderIdSet.has(selectedProvider.id) : false
 
     if (!selectedProviderExists || selectedProviderHidden) {
-      const fallbackProvider = visibleProviders[0]
-      if (fallbackProvider) {
-        setSelectedProvider(fallbackProvider)
-      }
+      setSelectedProvider(filteredProviders[0])
     }
-  }, [hiddenProviderIdSet, providers, selectedProvider?.id, setSelectedProvider, visibleProviders])
+  }, [filteredProviders, hiddenProviderIdSet, providers, selectedProvider?.id, setSelectedProvider])
 
   useEffect(() => {
     const loadAllLogos = async () => {
@@ -135,11 +159,11 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
       shouldUpdate = true
     } else if (searchParams.get('id')) {
       const providerId = searchParams.get('id')
-      const provider = visibleProviders.find((p) => p.id === providerId)
+      const provider = filteredProviders.find((p) => p.id === providerId)
       if (provider) {
         setSelectedProvider(provider)
         // 滚动到选中的 provider
-        const index = visibleProviders.findIndex((p) => p.id === providerId)
+        const index = filteredProviders.findIndex((p) => p.id === providerId)
         if (index >= 0) {
           setTimeoutTimer(
             'scroll-to-selected-provider',
@@ -148,10 +172,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
           )
         }
       } else {
-        const fallbackProvider = visibleProviders[0]
-        if (fallbackProvider) {
-          setSelectedProvider(fallbackProvider)
-        }
+        setSelectedProvider(filteredProviders[0])
       }
       searchParams.delete('id')
       shouldUpdate = true
@@ -160,7 +181,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     if (shouldUpdate) {
       setSearchParams(searchParams)
     }
-  }, [searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer, visibleProviders])
+  }, [filteredProviders, searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer])
 
   // Handle provider add key from URL schema
   useEffect(() => {
@@ -258,10 +279,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
         hideProvider(provider.id)
 
         if (selectedProvider?.id === provider.id) {
-          const fallbackProvider = visibleProviders.find((p) => p.id !== provider.id)
-          if (fallbackProvider) {
-            setSelectedProvider(fallbackProvider)
-          }
+          setSelectedProvider(filteredProviders.find((p) => p.id !== provider.id))
         }
       }
     }
@@ -331,7 +349,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
               }
             }
 
-            setSelectedProvider(providers.filter((p) => isSystemProvider(p))[0])
+            setSelectedProvider(filteredProviders.find((p) => p.id !== provider.id))
             removeProvider(provider)
           }
         })
@@ -354,23 +372,6 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
       return menus
     }
   }
-
-  const filteredProviders = visibleProviders.filter((provider) => {
-    // don't show it when isOvmsSupported is loading
-    if (provider.id === 'ovms' && !isOvmsSupported) {
-      return false
-    }
-
-    // Filter by agent support
-    if (agentFilterEnabled && !isAnthropicSupportedProvider(provider)) {
-      return false
-    }
-
-    const keywords = searchText.toLowerCase().split(/\s+/).filter(Boolean)
-    const isProviderMatch = matchKeywordsInProvider(keywords, provider)
-    const isModelMatch = provider.models.some((model) => matchKeywordsInModel(keywords, model))
-    return isProviderMatch || isModelMatch
-  })
 
   const { onDragEnd: handleReorder, itemKey } = useDraggableReorder({
     originalList: providers,
@@ -548,7 +549,9 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
           </Button>
         </AddButtonWrapper>
       </ProviderListContainer>
-      <ProviderSetting providerId={selectedProvider.id} key={selectedProvider.id} isOnboarding={isOnboarding} />
+      {selectedProvider && (
+        <ProviderSetting providerId={selectedProvider.id} key={selectedProvider.id} isOnboarding={isOnboarding} />
+      )}
     </Container>
   )
 }
