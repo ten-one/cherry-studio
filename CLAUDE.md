@@ -67,10 +67,6 @@ If the skill is unavailable, directly read `.agents/skills/gh-create-issue/SKILL
   - `pnpm i18n:translate` — Auto-translate missing keys
   - `pnpm i18n:check` — Validate i18n completeness
 - **Bundle Analysis**: `pnpm analyze:renderer` / `pnpm analyze:main` — Visualize bundle sizes
-- **Agents DB**:
-  - `pnpm agents:generate` — Generate Drizzle migrations
-  - `pnpm agents:push` — Push schema to SQLite DB
-  - `pnpm agents:studio` — Open Drizzle Studio
 
 ## Project Architecture
 
@@ -122,11 +118,6 @@ Node.js backend services. Key services:
 | `OvmsManager` | OpenVINO model server management |
 | `NodeTraceService` | OpenTelemetry trace export |
 
-Agents subsystem (`src/main/services/agents/`):
-- Drizzle ORM + LibSQL (SQLite) schema at `database/schema/index.ts`
-- Migrations in `resources/database/drizzle/`
-- **Currently undergoing v2 refactor** — only critical bug fixes accepted
-
 ### Renderer Process (`src/renderer/src/`)
 
 React 19 + Redux Toolkit SPA. Key structure:
@@ -142,7 +133,7 @@ services/        # Frontend services (ApiService, ModelService, MemoryService, e
 store/           # Redux Toolkit slices
 types/           # TypeScript type definitions
 workers/         # Web Workers
-windows/         # Multi-window entry points (mini, selection toolbar, trace)
+windows/         # Multi-window entry points (selection toolbar, trace)
 ```
 
 ### Redux Store (`src/renderer/src/store/`)
@@ -171,9 +162,6 @@ Slices (redux-persist enabled):
   - Tables: `files`, `topics`, `settings`, `knowledge_notes`, `translate_history`, `quick_phrases`, `message_blocks`, `translate_languages`
   - Schema versioned with upgrade functions (`upgradeToV5`, `upgradeToV7`, `upgradeToV8`)
   - **BLOCKED**: Do not modify schema until v2.0.0.
-- **SQLite** (Drizzle ORM + LibSQL): `src/main/services/agents/`
-  - Used for the agents subsystem
-  - DB path: `{userData}/Data/agents.db` (e.g., on macOS: `~/Library/Application Support/CherryStudioDev/Data/agents.db` in dev, `~/Library/Application Support/CherryStudio/Data/agents.db` in prod)
 
 ### IPC Communication
 
@@ -205,7 +193,6 @@ src/core/
 
 The renderer builds multiple HTML entry points:
 - `index.html` — Main application window
-- `miniWindow.html` — Compact floating window (`src/renderer/src/windows/mini/`)
 - `selectionToolbar.html` — Text selection action toolbar
 - `selectionAction.html` — Selection action popup
 - `traceWindow.html` — MCP trace viewer
@@ -245,7 +232,7 @@ logger.error("message", error);
 | Build | electron-vite 5 with rolldown-vite 7 (experimental) |
 | Test | Vitest 3 (unit), Playwright (e2e) |
 | Lint/Format | ESLint 9, oxlint, Biome 2 |
-| DB (main) | Drizzle ORM + LibSQL (SQLite) |
+| DB (main) | LibSQL (SQLite, MemoryService) |
 | DB (renderer) | Dexie (IndexedDB) |
 | Logging | Winston + winston-daily-rotate-file |
 | Tracing | OpenTelemetry |
