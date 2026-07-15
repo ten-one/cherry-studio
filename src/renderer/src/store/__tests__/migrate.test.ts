@@ -130,4 +130,21 @@ describe('store migrations', () => {
       expect(migrated.assistants.defaultAssistant.defaultModel).toEqual(llmInitialState.defaultModel)
     })
   })
+
+  describe('migration 211: removed navbar position cleanup', () => {
+    it('removes the persisted navbar position and preserves other settings', async () => {
+      const state = {
+        settings: {
+          navbarPosition: 'top',
+          showMessageOutline: true
+        },
+        _persist: { version: 210, rehydrated: false }
+      }
+
+      const migrated: any = await migrate(state as any, 211)
+
+      expect(migrated.settings).not.toHaveProperty('navbarPosition')
+      expect(migrated.settings.showMessageOutline).toBe(true)
+    })
+  })
 })
