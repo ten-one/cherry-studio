@@ -157,9 +157,6 @@ jobs:
             find dist -name "*-arm64.AppImage" -exec cp {} renamed-artifacts/cherry-studio-nightly-${DATE}-arm64.AppImage \;
           fi
 
-          # Copy update files
-          cp dist/latest*.yml renamed-artifacts/ || true
-
       # Generate SHA256 checksums (Windows)
       - name: Generate SHA256 checksums (Windows)
         if: runner.os == 'Windows'

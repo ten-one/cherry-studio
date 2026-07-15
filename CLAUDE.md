@@ -109,7 +109,6 @@ Node.js backend services. Key services:
 | `LoggerService` | Winston-based structured logging (daily rotate) |
 | `StoreSyncService` | Syncs Redux state to/from main process |
 | `BackupManager` | Data backup/restore (WebDAV, S3, Nutstore) |
-| `AppUpdater` | electron-updater auto-update |
 | `ShortcutService` | Global keyboard shortcuts |
 | `ThemeService` | System theme detection/application |
 | `SelectionService` | Text selection toolbar feature |
@@ -273,7 +272,7 @@ logger.error("message", error);
 Several dependencies have patches in `patches/` — be careful when upgrading:
 - `antd`, `@ai-sdk/google`, `@ai-sdk/openai`, `@anthropic-ai/vertex-sdk`
 - `@google/genai`, `@langchain/core`, `@langchain/openai`
-- `ollama-ai-provider-v2`, `electron-updater`, `epub`, `tesseract.js`
+- `ollama-ai-provider-v2`, `epub`, `tesseract.js`
 - `@anthropic-ai/claude-agent-sdk`
 
 ## Testing Guidelines

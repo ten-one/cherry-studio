@@ -232,9 +232,6 @@ jobs:
             copy_first "*-arm64.rpm" "${PREFIX}-arm64.rpm"
           fi
 
-          cp dist/latest*.yml renamed-artifacts/ 2>/dev/null || true
-          cp dist/*.blockmap renamed-artifacts/ 2>/dev/null || true
-
       - name: List files to be uploaded
         shell: bash
         run: |

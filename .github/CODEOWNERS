@@ -3,4 +3,3 @@
 /src/main/services/ConfigManager.ts @0xfullex @DeJeune
 /packages/shared/IpcChannel.ts @0xfullex @DeJeune
 /src/main/ipc.ts @0xfullex @DeJeune
-/app-upgrade-config.json @kangfenmao
