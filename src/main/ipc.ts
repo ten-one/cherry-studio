@@ -638,9 +638,7 @@ export async function registerIpc(mainWindow: BrowserWindow, app: Electron.App) 
   ipcMain.handle(IpcChannel.Export_Word, exportService.exportToWord.bind(exportService))
 
   // open path
-  ipcMain.handle(IpcChannel.Open_Path, async (_, path: string) => {
-    await shell.openPath(path)
-  })
+  ipcMain.handle(IpcChannel.Open_Path, fileManager.openPath.bind(fileManager))
 
   // shortcuts
   ipcMain.handle(IpcChannel.Shortcuts_Update, (_, shortcuts: Shortcut[]) => {
