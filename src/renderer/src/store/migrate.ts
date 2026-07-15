@@ -23,7 +23,7 @@ import {
   isMac
 } from '@renderer/config/constant'
 import { allMinApps } from '@renderer/config/minapps'
-import { isFunctionCallingModel, isNotSupportTextDeltaModel, qwenModel, SYSTEM_MODELS } from '@renderer/config/models'
+import { isFunctionCallingModel, isNotSupportTextDeltaModel, SYSTEM_MODELS } from '@renderer/config/models'
 import { BUILTIN_OCR_PROVIDERS, BUILTIN_OCR_PROVIDERS_MAP, DEFAULT_OCR_PROVIDER } from '@renderer/config/ocr'
 import { TRANSLATE_PROMPT } from '@renderer/config/prompts'
 import { SYSTEM_PROVIDERS } from '@renderer/config/providers'
@@ -3062,20 +3062,20 @@ const migrateConfig = {
     try {
       const GLM_4_5_FLASH_MODEL = 'glm-4.5-flash'
       if (state.llm.defaultModel?.provider === 'cherryai' && state.llm.defaultModel?.id === GLM_4_5_FLASH_MODEL) {
-        state.llm.defaultModel = qwenModel
+        state.llm.defaultModel = { ...llmInitialState.defaultModel }
       }
       if (state.llm.quickModel?.provider === 'cherryai' && state.llm.quickModel?.id === GLM_4_5_FLASH_MODEL) {
-        state.llm.quickModel = qwenModel
+        state.llm.quickModel = { ...llmInitialState.quickModel }
       }
       if (state.llm.translateModel?.provider === 'cherryai' && state.llm.translateModel?.id === GLM_4_5_FLASH_MODEL) {
-        state.llm.translateModel = qwenModel
+        state.llm.translateModel = { ...llmInitialState.translateModel }
       }
       state.assistants.assistants.forEach((assistant) => {
         if (assistant.model?.provider === 'cherryai' && assistant.model?.id === GLM_4_5_FLASH_MODEL) {
-          assistant.model = qwenModel
+          assistant.model = { ...llmInitialState.defaultModel }
         }
         if (assistant.defaultModel?.provider === 'cherryai' && assistant.defaultModel?.id === GLM_4_5_FLASH_MODEL) {
-          assistant.defaultModel = qwenModel
+          assistant.defaultModel = { ...llmInitialState.defaultModel }
         }
       })
       // Initialize mini app region filter setting
@@ -3212,20 +3212,20 @@ const migrateConfig = {
   '204': (state: RootState) => {
     try {
       if (state.llm.defaultModel?.provider === 'cherryai') {
-        state.llm.defaultModel = qwenModel
+        state.llm.defaultModel = { ...llmInitialState.defaultModel }
       }
       if (state.llm.quickModel?.provider === 'cherryai') {
-        state.llm.quickModel = qwenModel
+        state.llm.quickModel = { ...llmInitialState.quickModel }
       }
       if (state.llm.translateModel?.provider === 'cherryai') {
-        state.llm.translateModel = qwenModel
+        state.llm.translateModel = { ...llmInitialState.translateModel }
       }
       state.assistants.assistants.forEach((assistant) => {
         if (assistant.model?.provider === 'cherryai') {
-          assistant.model = qwenModel
+          assistant.model = { ...llmInitialState.defaultModel }
         }
         if (assistant.defaultModel?.provider === 'cherryai') {
-          assistant.defaultModel = qwenModel
+          assistant.defaultModel = { ...llmInitialState.defaultModel }
         }
       })
       logger.info('migrate 204 success')
@@ -3334,6 +3334,46 @@ const migrateConfig = {
       return state
     } catch (error) {
       logger.error('migrate 209 error', error as Error)
+      return state
+    }
+  },
+  '210': (state: RootState) => {
+    try {
+      const removedProviderId = 'cherryai'
+      const usesRemovedProvider = (model?: Model) => model?.provider === removedProviderId
+
+      state.llm.providers = state.llm.providers.filter((provider) => provider.id !== removedProviderId)
+      state.llm.hiddenProviderIds = (state.llm.hiddenProviderIds ?? []).filter((id) => id !== removedProviderId)
+
+      if (usesRemovedProvider(state.llm.defaultModel)) {
+        state.llm.defaultModel = { ...llmInitialState.defaultModel }
+      }
+      if (usesRemovedProvider(state.llm.topicNamingModel)) {
+        state.llm.topicNamingModel = { ...llmInitialState.topicNamingModel }
+      }
+      if (usesRemovedProvider(state.llm.quickModel)) {
+        state.llm.quickModel = { ...llmInitialState.quickModel }
+      }
+      if (usesRemovedProvider(state.llm.translateModel)) {
+        state.llm.translateModel = { ...llmInitialState.translateModel }
+      }
+
+      const resetAssistantModels = (assistant: Assistant) => {
+        if (usesRemovedProvider(assistant.model)) {
+          assistant.model = { ...llmInitialState.defaultModel }
+        }
+        if (usesRemovedProvider(assistant.defaultModel)) {
+          assistant.defaultModel = { ...llmInitialState.defaultModel }
+        }
+      }
+
+      state.assistants.assistants.forEach(resetAssistantModels)
+      resetAssistantModels(state.assistants.defaultAssistant)
+
+      logger.info('migrate 210 success')
+      return state
+    } catch (error) {
+      logger.error('migrate 210 error', error as Error)
       return state
     }
   }

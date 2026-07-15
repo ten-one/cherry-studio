@@ -96,4 +96,38 @@ describe('store migrations', () => {
       expect(migrated.llm.hiddenProviderIds).toEqual([])
     })
   })
+
+  describe('migration 210: removed CherryAI provider cleanup', () => {
+    it('removes persisted provider state and replaces all model references', async () => {
+      const removedModel = { id: 'qwen', name: 'Qwen', provider: 'cherryai' }
+      const state = {
+        llm: {
+          providers: [{ id: 'cherryai' }, { id: 'openai' }],
+          hiddenProviderIds: ['cherryai', 'openai'],
+          defaultModel: removedModel,
+          topicNamingModel: removedModel,
+          quickModel: removedModel,
+          translateModel: removedModel
+        },
+        assistants: {
+          assistants: [{ model: removedModel, defaultModel: removedModel }],
+          defaultAssistant: { model: removedModel, defaultModel: removedModel }
+        },
+        _persist: { version: 209, rehydrated: false }
+      }
+
+      const migrated: any = await migrate(state as any, 210)
+
+      expect(migrated.llm.providers).toEqual([{ id: 'openai' }])
+      expect(migrated.llm.hiddenProviderIds).toEqual(['openai'])
+      expect(migrated.llm.defaultModel).toEqual(llmInitialState.defaultModel)
+      expect(migrated.llm.topicNamingModel).toEqual(llmInitialState.topicNamingModel)
+      expect(migrated.llm.quickModel).toEqual(llmInitialState.quickModel)
+      expect(migrated.llm.translateModel).toEqual(llmInitialState.translateModel)
+      expect(migrated.assistants.assistants[0].model).toEqual(llmInitialState.defaultModel)
+      expect(migrated.assistants.assistants[0].defaultModel).toEqual(llmInitialState.defaultModel)
+      expect(migrated.assistants.defaultAssistant.model).toEqual(llmInitialState.defaultModel)
+      expect(migrated.assistants.defaultAssistant.defaultModel).toEqual(llmInitialState.defaultModel)
+    })
+  })
 })
