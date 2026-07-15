@@ -170,3 +170,14 @@
     Pop $1
     Pop $0
 !macroend
+
+!macro customInstall
+  ${If} $installMode == "all"
+    SetShellVarContext current
+  ${EndIf}
+  Delete "$LOCALAPPDATA\${APP_INSTALLER_STORE_FILE}"
+  RMDir "$LOCALAPPDATA\cherrystudio-updater"
+  ${If} $installMode == "all"
+    SetShellVarContext all
+  ${EndIf}
+!macroend
