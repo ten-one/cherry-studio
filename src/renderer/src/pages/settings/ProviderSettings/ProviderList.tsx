@@ -159,6 +159,10 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
       shouldUpdate = true
     } else if (searchParams.get('id')) {
       const providerId = searchParams.get('id')
+      if (providerId === 'ovms' && isOvmsSupported === undefined) {
+        return
+      }
+
       const provider = filteredProviders.find((p) => p.id === providerId)
       if (provider) {
         setSelectedProvider(provider)
@@ -181,7 +185,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     if (shouldUpdate) {
       setSearchParams(searchParams)
     }
-  }, [filteredProviders, searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer])
+  }, [filteredProviders, isOvmsSupported, searchParams, setSearchParams, setSelectedProvider, setTimeoutTimer])
 
   // Handle provider add key from URL schema
   useEffect(() => {
