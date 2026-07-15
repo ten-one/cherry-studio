@@ -281,7 +281,6 @@
     "show": {
       "all": "显示全部"
     },
-    "update_available": "有可用更新",
     "whole_word": "全字匹配"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "查看",
         "title": "加入我们"
       },
-      "checkUpdate": {
-        "available": "立即更新",
-        "label": "检查更新"
-      },
-      "checkingUpdate": "正在检查更新...",
       "contact": {
         "button": "邮件",
         "title": "邮件联系"
@@ -2983,7 +2977,6 @@
         "title": "调试面板"
       },
       "description": "一款为创造者而生的 AI 助手",
-      "downloading": "正在下载更新...",
       "enterprise": {
         "title": "企业版"
       },
@@ -3000,9 +2993,6 @@
         "title": "社交账号"
       },
       "title": "关于我们",
-      "updateAvailable": "发现新版本 {{version}}",
-      "updateError": "更新出错",
-      "updateNotAvailable": "你的软件已是最新版本",
       "website": {
         "button": "查看",
         "title": "官方网站"
@@ -3705,9 +3695,6 @@
       "title": "消息字体大小"
     },
     "general": {
-      "auto_check_update": {
-        "title": "自动更新"
-      },
       "avatar": {
         "builtin": "内置头像",
         "reset": "重置头像"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "拼写检查",
         "languages": "拼写检查语言"
-      },
-      "test_plan": {
-        "beta_version": "测试版 (Beta)",
-        "beta_version_tooltip": "功能可能随时变化，bug 较多，升级较快",
-        "rc_version": "预览版 (RC)",
-        "rc_version_tooltip": "接近正式版，功能基本稳定，bug 较少",
-        "title": "测试计划",
-        "tooltip": "参与测试计划，可以更快体验到最新功能，但同时也会带来更多风险，务必提前做好备份",
-        "version_channel_not_match": "预览版和测试版的切换将在下一个正式版发布时生效",
-        "version_options": "版本选择"
       },
       "title": "常规设置",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "退出",
     "show_window": "显示窗口"
-  },
-  "update": {
-    "install": "立即安装",
-    "later": "稍后",
-    "message": "发现新版本 {{version}}，是否立即安装？",
-    "noReleaseNotes": "暂无更新日志",
-    "saveDataError": "保存数据失败，请重试",
-    "title": "更新提示"
   },
   "warning": {
     "missing_provider": "供应商不存在，已回退到默认供应商 {{provider}}。这可能导致问题。"

@@ -281,7 +281,6 @@
     "show": {
       "all": "Mostrar Todo"
     },
-    "update_available": "Hay Actualizaciones Disponibles",
     "whole_word": "Coincidencia de palabra completa"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "Vista",
         "title": "Carreras"
       },
-      "checkUpdate": {
-        "available": "Actualizar ahora",
-        "label": "Comprobar actualizaciones"
-      },
-      "checkingUpdate": "Verificando actualizaciones...",
       "contact": {
         "button": "Correo electrónico",
         "title": "Contacto por correo electrónico"
@@ -2983,7 +2977,6 @@
         "title": "Panel de depuración"
       },
       "description": "Una asistente de IA creada para los creadores",
-      "downloading": "Descargando actualización...",
       "enterprise": {
         "title": "Empresa"
       },
@@ -3000,9 +2993,6 @@
         "title": "Cuentas sociales"
       },
       "title": "Acerca de nosotros",
-      "updateAvailable": "Versión nueva disponible {{version}}",
-      "updateError": "Error de actualización",
-      "updateNotAvailable": "Tu software ya está actualizado",
       "website": {
         "button": "Ver",
         "title": "Sitio web oficial"
@@ -3705,9 +3695,6 @@
       "title": "Tamaño de fuente de mensajes"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Actualización automática"
-      },
       "avatar": {
         "builtin": "Avatares integrados",
         "reset": "Restablecer avatar"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Verificación ortográfica",
         "languages": "Idiomas de verificación ortográfica"
-      },
-      "test_plan": {
-        "beta_version": "Versión beta",
-        "beta_version_tooltip": "Las funciones pueden cambiar en cualquier momento, hay más errores y las actualizaciones son más frecuentes",
-        "rc_version": "Versión preliminar (RC)",
-        "rc_version_tooltip": "Cerca de la versión final, funciones básicamente estables, pocos errores",
-        "title": "Plan de pruebas",
-        "tooltip": "Al participar en el plan de pruebas, podrá experimentar funciones más recientes más rápidamente, pero también conlleva mayores riesgos; asegúrese de hacer una copia de seguridad previamente",
-        "version_channel_not_match": "El cambio entre versión preliminar y versión beta tendrá efecto en el próximo lanzamiento oficial",
-        "version_options": "Selección de versión"
       },
       "title": "Configuración general",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Salir",
     "show_window": "Mostrar ventana"
-  },
-  "update": {
-    "install": "Instalar",
-    "later": "Más tarde",
-    "message": "Nueva versión {{version}} disponible, ¿desea instalarla ahora?",
-    "noReleaseNotes": "Sin notas de la versión",
-    "saveDataError": "Error al guardar los datos, inténtalo de nuevo",
-    "title": "Actualización"
   },
   "warning": {
     "missing_provider": "El proveedor no existe, se ha revertido al proveedor predeterminado {{provider}}. Esto podría causar problemas."

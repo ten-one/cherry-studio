@@ -20,7 +20,6 @@ import NavbarIcon from '../../components/NavbarIcon'
 import AssistantsDrawer from './components/AssistantsDrawer'
 import AssistantModelSelector from './components/ChatNavBar/ChatNavbarContent/AssistantModelSelector'
 import SettingsButton from './components/ChatNavBar/Tools/SettingsButton'
-import UpdateAppButton from './components/UpdateAppButton'
 
 interface Props {
   activeAssistant: Assistant
@@ -117,7 +116,6 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant, setActiveAssistant, activeTo
         }}
         className="home-navbar-right">
         <HStack alignItems="center" gap={6}>
-          <UpdateAppButton />
           <SettingsButton assistant={assistant} />
           <Tooltip title={t('chat.assistant.search.placeholder')} mouseEnterDelay={0.8}>
             <NarrowIcon onClick={() => SearchPopup.show()}>

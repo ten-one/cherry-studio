@@ -281,7 +281,6 @@
     "show": {
       "all": "すべて表示"
     },
-    "update_available": "更新可能",
     "whole_word": "全語一致"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "表示",
         "title": "キャリア"
       },
-      "checkUpdate": {
-        "available": "今すぐ更新",
-        "label": "更新を確認"
-      },
-      "checkingUpdate": "更新を確認中...",
       "contact": {
         "button": "メール",
         "title": "連絡先"
@@ -2983,7 +2977,6 @@
         "title": "デバッグ"
       },
       "description": "クリエイターのための強力なAIアシスタント",
-      "downloading": "ダウンロード中...",
       "enterprise": {
         "title": "エンタープライズ"
       },
@@ -3000,9 +2993,6 @@
         "title": "ソーシャルアカウント"
       },
       "title": "について",
-      "updateAvailable": "新しいバージョン {{version}} が見つかりました",
-      "updateError": "更新エラー",
-      "updateNotAvailable": "最新バージョンを使用しています",
       "website": {
         "button": "ウェブサイト",
         "title": "公式ウェブサイト"
@@ -3705,9 +3695,6 @@
       "title": "メッセージのフォントサイズ"
     },
     "general": {
-      "auto_check_update": {
-        "title": "自動更新"
-      },
       "avatar": {
         "builtin": "内蔵アバター",
         "reset": "アバターをリセット"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "スペルチェック",
         "languages": "スペルチェック言語"
-      },
-      "test_plan": {
-        "beta_version": "ベータ版(Beta)",
-        "beta_version_tooltip": "機能が変更される可能性があります。バグが多く、迅速にアップグレードされます。",
-        "rc_version": "プレビュー版(RC)",
-        "rc_version_tooltip": "安定版に近い機能ですが、バグが少なく、迅速にアップグレードされます。",
-        "title": "テストプラン",
-        "tooltip": "テストプランに参加すると、最新の機能をより早く体験できますが、同時により多くのリスクが伴います。データを事前にバックアップしてください。",
-        "version_channel_not_match": "プレビュー版とテスト版の切り替えは、次の正式版リリース時に有効になります。",
-        "version_options": "バージョンオプション"
       },
       "title": "一般設定",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "終了",
     "show_window": "ウィンドウを表示"
-  },
-  "update": {
-    "install": "今すぐインストール",
-    "later": "後で",
-    "message": "新バージョン {{version}} が利用可能です。今すぐインストールしますか？",
-    "noReleaseNotes": "暫無更新日誌",
-    "saveDataError": "データの保存に失敗しました。もう一度お試しください。",
-    "title": "更新"
   },
   "warning": {
     "missing_provider": "サプライヤーが存在しないため、デフォルトのサプライヤー {{provider}} にロールバックされました。これにより問題が発生する可能性があります。"

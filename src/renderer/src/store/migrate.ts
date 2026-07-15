@@ -49,7 +49,7 @@ import {
   isSupportDeveloperRoleProvider,
   isSupportStreamOptionsProvider
 } from '@renderer/utils/provider'
-import { defaultByPassRules, UpgradeChannel } from '@shared/config/constant'
+import { defaultByPassRules } from '@shared/config/constant'
 import { isEmpty } from 'lodash'
 import { createMigrate } from 'redux-persist'
 
@@ -1254,10 +1254,9 @@ const migrateConfig = {
   },
   '85': (state: RootState) => {
     try {
-      // @ts-ignore eslint-disable-next-line
-      state.settings.autoCheckUpdate = !state.settings.manualUpdateCheck
-      // @ts-ignore eslint-disable-next-line
-      delete state.settings.manualUpdateCheck
+      const settings = state.settings as unknown as Record<string, unknown>
+      settings.autoCheckUpdate = !settings.manualUpdateCheck
+      delete settings.manualUpdateCheck
       state.settings.gridPopoverTrigger = 'click'
       return state
     } catch (error) {
@@ -1655,7 +1654,8 @@ const migrateConfig = {
       if (state.paintings && !state.paintings.tokenflux_paintings) {
         state.paintings.tokenflux_paintings = []
       }
-      state.settings.testPlan = false
+      const settings = state.settings as unknown as Record<string, unknown>
+      settings.testPlan = false
       return state
     } catch (error) {
       logger.error('migrate 110 error', error as Error)
@@ -1774,7 +1774,8 @@ const migrateConfig = {
         delete state.websearch.contentLimit
       }
       if (state.settings) {
-        state.settings.testChannel = UpgradeChannel.LATEST
+        const settings = state.settings as unknown as Record<string, unknown>
+        settings.testChannel = 'latest'
       }
 
       return state
@@ -3385,6 +3386,19 @@ const migrateConfig = {
       return state
     } catch (error) {
       logger.error('migrate 211 error', error as Error)
+      return state
+    }
+  },
+  '212': (state: RootState) => {
+    try {
+      const settings = state.settings as unknown as Record<string, unknown>
+      delete settings.autoCheckUpdate
+      delete settings.testPlan
+      delete settings.testChannel
+      logger.info('migrate 212 success')
+      return state
+    } catch (error) {
+      logger.error('migrate 212 error', error as Error)
       return state
     }
   }

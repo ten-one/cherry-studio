@@ -8,8 +8,7 @@ import KnowledgeQueue from '@renderer/queue/KnowledgeQueue'
 import MemoryService from '@renderer/services/MemoryService'
 import { handleSaveData, useAppDispatch, useAppSelector } from '@renderer/store'
 import { selectMemoryConfig } from '@renderer/store/memory'
-import { setAvatar, setFilesPath, setResourcesPath, setUpdateState } from '@renderer/store/runtime'
-import { delay, runAsyncFunction } from '@renderer/utils'
+import { setAvatar, setFilesPath, setResourcesPath } from '@renderer/store/runtime'
 import { checkDataLimit } from '@renderer/utils'
 import { defaultLanguage } from '@shared/config/constant'
 import { IpcChannel } from '@shared/IpcChannel'
@@ -20,22 +19,13 @@ import { useDefaultModel } from './useAssistant'
 import useFullScreenNotice from './useFullScreenNotice'
 import { useRuntime } from './useRuntime'
 import { useSettings } from './useSettings'
-import useUpdateHandler from './useUpdateHandler'
 
 const logger = loggerService.withContext('useAppInit')
 
 export function useAppInit() {
   const dispatch = useAppDispatch()
-  const {
-    proxyUrl,
-    proxyBypassRules,
-    language,
-    windowStyle,
-    autoCheckUpdate,
-    proxyMode,
-    customCss,
-    enableDataCollection
-  } = useSettings()
+  const { proxyUrl, proxyBypassRules, language, windowStyle, proxyMode, customCss, enableDataCollection } =
+    useSettings()
   const { minappShow } = useRuntime()
   const { setDefaultModel, setQuickModel, setTranslateModel } = useDefaultModel()
   const avatar = useLiveQuery(() => db.settings.get('image://avatar'))
@@ -65,40 +55,11 @@ export function useAppInit() {
     })
   }, [])
 
-  useUpdateHandler()
   useFullScreenNotice()
 
   useEffect(() => {
     avatar?.value && dispatch(setAvatar(avatar.value))
   }, [avatar, dispatch])
-
-  useEffect(() => {
-    const checkForUpdates = async () => {
-      const { isPackaged } = await window.api.getAppInfo()
-
-      if (!isPackaged || !autoCheckUpdate) {
-        return
-      }
-
-      const { updateInfo } = await window.api.checkForUpdate()
-      dispatch(setUpdateState({ info: updateInfo }))
-    }
-
-    // Initial check with delay
-    void runAsyncFunction(async () => {
-      const { isPackaged } = await window.api.getAppInfo()
-      if (isPackaged && autoCheckUpdate) {
-        await delay(2)
-        await checkForUpdates()
-      }
-    })
-
-    // Set up 4-hour interval check
-    const FOUR_HOURS = 4 * 60 * 60 * 1000
-    const intervalId = setInterval(checkForUpdates, FOUR_HOURS)
-
-    return () => clearInterval(intervalId)
-  }, [dispatch, autoCheckUpdate])
 
   useEffect(() => {
     if (proxyMode === 'system') {

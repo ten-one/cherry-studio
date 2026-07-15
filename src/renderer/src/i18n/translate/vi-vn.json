@@ -281,7 +281,6 @@
     "show": {
       "all": "Hiển thị tất cả"
     },
-    "update_available": "Cập nhật có sẵn",
     "whole_word": "Nguyên từ"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "Xem",
         "title": "Sự nghiệp"
       },
-      "checkUpdate": {
-        "available": "Cập nhật",
-        "label": "Kiểm tra cập nhật"
-      },
-      "checkingUpdate": "Đang kiểm tra cập nhật...",
       "contact": {
         "button": "Email",
         "title": "Liên hệ"
@@ -2983,7 +2977,6 @@
         "title": "Gỡ lỗi"
       },
       "description": "Một trợ lý AI mạnh mẽ cho nhà sản xuất",
-      "downloading": "Đang tải xuống...",
       "enterprise": {
         "title": "Doanh nghiệp"
       },
@@ -3000,9 +2993,6 @@
         "title": "Tài khoản mạng xã hội"
       },
       "title": "Về",
-      "updateAvailable": "Đã tìm thấy phiên bản mới {{version}}",
-      "updateError": "Lỗi cập nhật",
-      "updateNotAvailable": "Bạn đang sử dụng phiên bản mới nhất",
       "website": {
         "button": "Trang web",
         "title": "Trang web chính thức"
@@ -3705,9 +3695,6 @@
       "title": "Kích thước phông chữ tin nhắn"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Tự động cập nhật"
-      },
       "avatar": {
         "builtin": "Hình đại diện tích hợp sẵn",
         "reset": "Đặt lại avatar"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Kiểm tra chính tả",
         "languages": "Sử dụng kiểm tra chính tả cho"
-      },
-      "test_plan": {
-        "beta_version": "Phiên bản Beta (Beta)",
-        "beta_version_tooltip": "Các tính năng có thể thay đổi bất cứ lúc nào, lỗi nhiều hơn, hãy nâng cấp nhanh chóng",
-        "rc_version": "Phiên bản Xem trước (RC)",
-        "rc_version_tooltip": "Gần với phiên bản ổn định, các tính năng cơ bản đã ổn định, lỗi ít",
-        "title": "Kế hoạch Kiểm thử",
-        "tooltip": "Tham gia kế hoạch thử nghiệm để trải nghiệm các tính năng mới nhanh hơn, nhưng cũng mang lại nhiều rủi ro hơn, vui lòng sao lưu dữ liệu của bạn trước.",
-        "version_channel_not_match": "Việc chuyển đổi phiên bản xem trước và thử nghiệm sẽ có hiệu lực sau khi phiên bản ổn định tiếp theo được phát hành",
-        "version_options": "Tùy chọn phiên bản"
       },
       "title": "Cài đặt chung",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Thôi",
     "show_window": "Hiển thị cửa sổ"
-  },
-  "update": {
-    "install": "Cài đặt",
-    "later": "Sau đó",
-    "message": "Phiên bản mới {{version}} đã sẵn sàng, bạn có muốn cài đặt ngay bây giờ không?",
-    "noReleaseNotes": "Không có ghi chú phát hành",
-    "saveDataError": "Không lưu được dữ liệu, vui lòng thử lại.",
-    "title": "Cập nhật"
   },
   "warning": {
     "missing_provider": "Nhà cung cấp không tồn tại; đã chuyển về nhà cung cấp mặc định {{provider}}. Điều này có thể gây ra sự cố."

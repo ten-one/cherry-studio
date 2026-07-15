@@ -147,4 +147,25 @@ describe('store migrations', () => {
       expect(migrated.settings.showMessageOutline).toBe(true)
     })
   })
+
+  describe('migration 212: removed update settings cleanup', () => {
+    it('removes persisted update settings and preserves other settings', async () => {
+      const state = {
+        settings: {
+          autoCheckUpdate: true,
+          testPlan: true,
+          testChannel: 'beta',
+          showMessageOutline: true
+        },
+        _persist: { version: 211, rehydrated: false }
+      }
+
+      const migrated: any = await migrate(state as any, 212)
+
+      expect(migrated.settings).not.toHaveProperty('autoCheckUpdate')
+      expect(migrated.settings).not.toHaveProperty('testPlan')
+      expect(migrated.settings).not.toHaveProperty('testChannel')
+      expect(migrated.settings.showMessageOutline).toBe(true)
+    })
+  })
 })

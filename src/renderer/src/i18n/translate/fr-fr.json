@@ -281,7 +281,6 @@
     "show": {
       "all": "Afficher tout"
     },
-    "update_available": "Mise à jour disponible",
     "whole_word": "Correspondance de mot entier"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "Vue",
         "title": "Carrières"
       },
-      "checkUpdate": {
-        "available": "Mettre à jour maintenant",
-        "label": "Vérifier les mises à jour"
-      },
-      "checkingUpdate": "Vérification des mises à jour en cours...",
       "contact": {
         "button": "Courriel",
         "title": "Contactez-nous par courriel"
@@ -2983,7 +2977,6 @@
         "title": "Panneau de débogage"
       },
       "description": "Un assistant IA conçu pour les créateurs",
-      "downloading": "Téléchargement de la mise à jour en cours...",
       "enterprise": {
         "title": "Entreprise"
       },
@@ -3000,9 +2993,6 @@
         "title": "Comptes sociaux"
       },
       "title": "À propos de nous",
-      "updateAvailable": "Nouvelle version disponible {{version}}",
-      "updateError": "Erreur lors de la mise à jour",
-      "updateNotAvailable": "Votre logiciel est déjà à jour",
       "website": {
         "button": "Visiter le site web",
         "title": "Site web officiel"
@@ -3705,9 +3695,6 @@
       "title": "Taille de police des messages"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Mise à jour automatique"
-      },
       "avatar": {
         "builtin": "Avatar intégré",
         "reset": "Réinitialiser l'avatar"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Vérification orthographique",
         "languages": "Langues de vérification orthographique"
-      },
-      "test_plan": {
-        "beta_version": "Version Bêta (Beta)",
-        "beta_version_tooltip": "Les fonctionnalités peuvent changer à tout moment, davantage de bogues, mises à jour fréquentes",
-        "rc_version": "Version de prévisualisation (RC)",
-        "rc_version_tooltip": "Proche de la version finale, fonctionnalités globalement stables, peu de bogues",
-        "title": "Plan de test",
-        "tooltip": "Participer au plan de test vous permet d'accéder plus rapidement aux dernières fonctionnalités, mais comporte également davantage de risques. Assurez-vous de sauvegarder vos données au préalable.",
-        "version_channel_not_match": "Le changement entre version de prévisualisation et version de test prendra effet lors de la prochaine publication de la version officielle",
-        "version_options": "Choix de version"
       },
       "title": "Paramètres généraux",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Quitter",
     "show_window": "Afficher la fenêtre"
-  },
-  "update": {
-    "install": "Installer",
-    "later": "Plus tard",
-    "message": "Nouvelle version {{version}} disponible, voulez-vous l'installer maintenant ?",
-    "noReleaseNotes": "Aucune note de version",
-    "saveDataError": "Échec de la sauvegarde des données, veuillez réessayer",
-    "title": "Mise à jour"
   },
   "warning": {
     "missing_provider": "Le fournisseur n’existe pas, retour au fournisseur par défaut {{provider}}. Cela peut entraîner des problèmes."

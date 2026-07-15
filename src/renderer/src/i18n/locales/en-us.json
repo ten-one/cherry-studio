@@ -281,7 +281,6 @@
     "show": {
       "all": "Show All"
     },
-    "update_available": "Update Available",
     "whole_word": "Whole Word"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "View",
         "title": "Careers"
       },
-      "checkUpdate": {
-        "available": "Update",
-        "label": "Check Update"
-      },
-      "checkingUpdate": "Checking for updates...",
       "contact": {
         "button": "Email",
         "title": "Contact"
@@ -2983,7 +2977,6 @@
         "title": "Debug"
       },
       "description": "A powerful AI assistant for producer",
-      "downloading": "Downloading...",
       "enterprise": {
         "title": "Enterprise"
       },
@@ -3000,9 +2993,6 @@
         "title": "Social Accounts"
       },
       "title": "About",
-      "updateAvailable": "Found new version {{version}}",
-      "updateError": "Update error",
-      "updateNotAvailable": "You are using the latest version",
       "website": {
         "button": "Website",
         "title": "Official Website"
@@ -3705,9 +3695,6 @@
       "title": "Message font size"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Auto Update"
-      },
       "avatar": {
         "builtin": "Builtin avatar",
         "reset": "Reset avatar"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Spell Check",
         "languages": "Use spell check for"
-      },
-      "test_plan": {
-        "beta_version": "Beta Version (Beta)",
-        "beta_version_tooltip": "Features may change at any time, bugs are more, upgrade quickly",
-        "rc_version": "Preview Version (RC)",
-        "rc_version_tooltip": "Close to stable version, features are basically stable, bugs are few",
-        "title": "Test Plan",
-        "tooltip": "Participate in the test plan to experience the latest features faster, but also brings more risks, please backup your data in advance",
-        "version_channel_not_match": "Preview and test version switching will take effect after the next stable version is released",
-        "version_options": "Version Options"
       },
       "title": "General Settings",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Quit",
     "show_window": "Show Window"
-  },
-  "update": {
-    "install": "Install",
-    "later": "Later",
-    "message": "New version {{version}} is ready, do you want to install it now?",
-    "noReleaseNotes": "No release notes",
-    "saveDataError": "Failed to save data, please try again.",
-    "title": "Update"
   },
   "warning": {
     "missing_provider": "The supplier does not exist; reverted to the default supplier {{provider}}. This may cause issues."

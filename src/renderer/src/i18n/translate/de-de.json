@@ -281,7 +281,6 @@
     "show": {
       "all": "Alle anzeigen"
     },
-    "update_available": "Update verfügbar",
     "whole_word": "Ganzes Wort"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "Ansicht",
         "title": "Karriere"
       },
-      "checkUpdate": {
-        "available": "Jetzt aktualisieren",
-        "label": "Auf Updates prüfen"
-      },
-      "checkingUpdate": "Sucht nach Updates...",
       "contact": {
         "button": "E-Mail",
         "title": "E-Mail-Kontakt"
@@ -2983,7 +2977,6 @@
         "title": "Debug-Panel"
       },
       "description": "Ein KI-Assistent für Kreative",
-      "downloading": "Update wird heruntergeladen...",
       "enterprise": {
         "title": "Unternehmen"
       },
@@ -3000,9 +2993,6 @@
         "title": "Social-Media-Konten"
       },
       "title": "Über uns",
-      "updateAvailable": "Neue Version {{version}} gefunden",
-      "updateError": "Aktualisierungsfehler",
-      "updateNotAvailable": "Ihre Software ist bereits auf dem neuesten Stand",
       "website": {
         "button": "Anzeigen",
         "title": "Offizielle Website"
@@ -3705,9 +3695,6 @@
       "title": "Nachrichtenschriftgröße"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Automatisches Update"
-      },
       "avatar": {
         "builtin": "Integriertes Avatar",
         "reset": "Avatar zurücksetzen"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Rechtschreibprüfung",
         "languages": "Rechtschreibprüfungssprache"
-      },
-      "test_plan": {
-        "beta_version": "Beta-Version",
-        "beta_version_tooltip": "Funktionen können sich jederzeit ändern, Fehler sind häufig, Updates sind schnell",
-        "rc_version": "Vorschauversion (RC)",
-        "rc_version_tooltip": "Näher an der stabilen Version, Funktionen sind grundsätzlich stabil, Fehler sind selten",
-        "title": "Testprogramm",
-        "tooltip": "Am Testprogramm teilnehmen für frühen Zugriff auf neue Funktionen, aber mit mehr Risiken. Backup empfohlen.",
-        "version_channel_not_match": "Die Wechsel zwischen Vorschau- und Testversionen wird mit dem nächsten stabilen Release wirksam",
-        "version_options": "Versionsauswahl"
       },
       "title": "Allgemeine Einstellungen",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Beenden",
     "show_window": "Fenster anzeigen"
-  },
-  "update": {
-    "install": "Jetzt installieren",
-    "later": "Später",
-    "message": "Neue Version {{version}} gefunden. Jetzt installieren?",
-    "noReleaseNotes": "Kein Changelog verfügbar",
-    "saveDataError": "Speichern fehlgeschlagen, bitte erneut versuchen",
-    "title": "Update-Hinweis"
   },
   "warning": {
     "missing_provider": "Anbieter nicht gefunden, Standardanbieter {{provider}} verwendet. Dies kann zu Problemen führen."

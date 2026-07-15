@@ -37,7 +37,6 @@ import type {
   OpenAIReasoningSummary,
   OpenAIVerbosity
 } from '@renderer/types/aiCoreTypes'
-import { UpgradeChannel } from '@shared/config/constant'
 import { v4 as uuid } from 'uuid'
 
 import type { RemoteSyncState } from './backup'
@@ -88,9 +87,6 @@ export interface SettingsState {
   pasteLongTextAsFile: boolean
   pasteLongTextThreshold: number
   clickAssistantToShowTopic: boolean
-  autoCheckUpdate: boolean
-  testPlan: boolean
-  testChannel: UpgradeChannel
   renderInputMessageAsMarkdown: boolean
   // 代码执行
   codeExecution: {
@@ -278,9 +274,6 @@ export const initialState: SettingsState = {
   pasteLongTextAsFile: false,
   pasteLongTextThreshold: 1500,
   clickAssistantToShowTopic: true,
-  autoCheckUpdate: true,
-  testPlan: false,
-  testChannel: UpgradeChannel.LATEST,
   renderInputMessageAsMarkdown: false,
   codeExecution: {
     enabled: false,
@@ -524,15 +517,6 @@ const settingsSlice = createSlice({
     },
     setPasteLongTextAsFile: (state, action: PayloadAction<boolean>) => {
       state.pasteLongTextAsFile = action.payload
-    },
-    setAutoCheckUpdate: (state, action: PayloadAction<boolean>) => {
-      state.autoCheckUpdate = action.payload
-    },
-    setTestPlan: (state, action: PayloadAction<boolean>) => {
-      state.testPlan = action.payload
-    },
-    setTestChannel: (state, action: PayloadAction<UpgradeChannel>) => {
-      state.testChannel = action.payload
     },
     setRenderInputMessageAsMarkdown: (state, action: PayloadAction<boolean>) => {
       state.renderInputMessageAsMarkdown = action.payload
@@ -883,9 +867,6 @@ export const {
   setPinTopicsToTop,
   setAssistantIconType,
   setPasteLongTextAsFile,
-  setAutoCheckUpdate,
-  setTestPlan,
-  setTestChannel,
   setRenderInputMessageAsMarkdown,
   setClickAssistantToShowTopic,
   setSkipBackupFile,

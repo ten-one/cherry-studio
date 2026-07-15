@@ -281,7 +281,6 @@
     "show": {
       "all": "Mostrar tudo"
     },
-    "update_available": "Atualização disponível",
     "whole_word": "Correspondência de palavra inteira"
   },
   "chat": {
@@ -2969,11 +2968,6 @@
         "button": "Visualizar",
         "title": "Carreiras"
       },
-      "checkUpdate": {
-        "available": "Atualizar agora",
-        "label": "Verificar atualizações"
-      },
-      "checkingUpdate": "Verificando atualizações...",
       "contact": {
         "button": "E-mail",
         "title": "Contato por e-mail"
@@ -2983,7 +2977,6 @@
         "title": "Painel de Depuração"
       },
       "description": "Um assistente de IA criado para criadores",
-      "downloading": "Baixando atualizações...",
       "enterprise": {
         "title": "Empresa"
       },
@@ -3000,9 +2993,6 @@
         "title": "Contas sociais"
       },
       "title": "Sobre nós",
-      "updateAvailable": "Nova versão disponível {{version}}",
-      "updateError": "Erro ao atualizar",
-      "updateNotAvailable": "Seu software já está atualizado",
       "website": {
         "button": "Ver",
         "title": "Site oficial"
@@ -3705,9 +3695,6 @@
       "title": "Tamanho da fonte da mensagem"
     },
     "general": {
-      "auto_check_update": {
-        "title": "Atualização automática"
-      },
       "avatar": {
         "builtin": "Avatares embutidos",
         "reset": "Redefinir avatar"
@@ -3732,16 +3719,6 @@
       "spell_check": {
         "label": "Verificação Ortográfica",
         "languages": "Idiomas da Verificação Ortográfica"
-      },
-      "test_plan": {
-        "beta_version": "Versão Beta",
-        "beta_version_tooltip": "Funcionalidades podem mudar a qualquer momento, mais bugs, atualizações frequentes",
-        "rc_version": "Versão de Pré-visualização (RC)",
-        "rc_version_tooltip": "Próxima da versão final, funcionalidades basicamente estáveis, poucos bugs",
-        "title": "Plano de Testes",
-        "tooltip": "Participar do plano de testes permite experimentar recursos mais recentes mais cedo, mas também traz mais riscos; certifique-se de fazer backup com antecedência",
-        "version_channel_not_match": "A troca entre versão de pré-visualização e versão de teste entrará em vigor na próxima versão estável",
-        "version_options": "Seleção de Versão"
       },
       "title": "Configurações gerais",
       "user_name": {
@@ -5012,14 +4989,6 @@
   "tray": {
     "quit": "Sair",
     "show_window": "Exibir Janela"
-  },
-  "update": {
-    "install": "Instalar",
-    "later": "Mais tarde",
-    "message": "Nova versão {{version}} disponível, deseja instalar agora?",
-    "noReleaseNotes": "Sem notas de versão",
-    "saveDataError": "Falha ao salvar os dados, tente novamente",
-    "title": "Atualização"
   },
   "warning": {
     "missing_provider": "O fornecedor não existe; foi revertido para o fornecedor predefinido {{provider}}. Isto pode causar problemas."
