@@ -2,7 +2,6 @@ import { Navbar, NavbarMain } from '@renderer/components/app/Navbar'
 import App from '@renderer/components/MinApp/MinApp'
 import Scrollbar from '@renderer/components/Scrollbar'
 import { useMinapps } from '@renderer/hooks/useMinapps'
-import { useNavbarPosition } from '@renderer/hooks/useSettings'
 import { Button, Input } from 'antd'
 import { Search, SettingsIcon } from 'lucide-react'
 import type { FC } from 'react'
@@ -17,7 +16,6 @@ const AppsPage: FC = () => {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const { minapps } = useMinapps()
-  const { isTopNavbar } = useNavbarPosition()
 
   const filteredApps = search
     ? minapps.filter(
@@ -66,25 +64,6 @@ const AppsPage: FC = () => {
       <ContentContainer id="content-container">
         <MainContainer>
           <RightContainer>
-            {isTopNavbar && (
-              <HeaderContainer>
-                <Input
-                  placeholder={t('common.search')}
-                  className="nodrag"
-                  style={{ width: '30%', borderRadius: 15 }}
-                  variant="filled"
-                  suffix={<Search size={18} />}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <Button
-                  type="text"
-                  className="nodrag"
-                  icon={<SettingsIcon size={18} color="var(--color-text-2)" />}
-                  onClick={() => MinappSettingsPopup.show()}
-                />
-              </HeaderContainer>
-            )}
             <AppsContainerWrapper>
               <AppsContainer style={{ height: containerHeight }}>
                 {filteredApps.map((app) => (
@@ -116,16 +95,6 @@ const ContentContainer = styled.div`
   height: 100%;
 `
 
-const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  width: 100%;
-  gap: 10px;
-`
-
 const MainContainer = styled.div`
   display: flex;
   flex: 1;
@@ -152,9 +121,6 @@ const AppsContainerWrapper = styled(Scrollbar)`
   padding: 50px 0;
   width: 100%;
   margin-bottom: 20px;
-  [navbar-position='top'] & {
-    padding: 20px 0;
-  }
 `
 
 const AppsContainer = styled.div`

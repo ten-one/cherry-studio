@@ -238,8 +238,6 @@ export interface SettingsState {
   s3: S3Config
   // Developer mode
   enableDeveloperMode: boolean
-  // UI
-  navbarPosition: 'left' | 'top'
   showMessageOutline: boolean
 }
 
@@ -430,8 +428,6 @@ export const initialState: SettingsState = {
 
   // Developer mode
   enableDeveloperMode: false,
-  // UI
-  navbarPosition: 'top',
   showMessageOutline: false
 }
 
@@ -849,9 +845,6 @@ const settingsSlice = createSlice({
     setEnableDeveloperMode: (state, action: PayloadAction<boolean>) => {
       state.enableDeveloperMode = action.payload
     },
-    setNavbarPosition: (state, action: PayloadAction<'left' | 'top'>) => {
-      state.navbarPosition = action.payload
-    },
     setShowMessageOutline: (state, action: PayloadAction<boolean>) => {
       state.showMessageOutline = action.payload
     }
@@ -980,7 +973,6 @@ export const {
   setS3,
   setS3Partial,
   setEnableDeveloperMode,
-  setNavbarPosition,
   setShowMessageOutline
 } = settingsSlice.actions
 

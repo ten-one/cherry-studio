@@ -3667,14 +3667,6 @@
         "select": "Select Font",
         "title": "Font Settings"
       },
-      "navbar": {
-        "position": {
-          "label": "Navbar Position",
-          "left": "Left",
-          "top": "Top"
-        },
-        "title": "Navbar Settings"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "Assistants are basic functions, not supported for hiding"

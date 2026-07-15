@@ -9,7 +9,7 @@ import { QuickPanelProvider } from '@renderer/components/QuickPanel'
 import { isEmbeddingModel, isRerankModel, isWebSearchModel } from '@renderer/config/models'
 import { useAssistant } from '@renderer/hooks/useAssistant'
 import { useChatContext } from '@renderer/hooks/useChatContext'
-import { useNavbarPosition, useSettings } from '@renderer/hooks/useSettings'
+import { useSettings } from '@renderer/hooks/useSettings'
 import { useShortcut } from '@renderer/hooks/useShortcuts'
 import { useShowTopics } from '@renderer/hooks/useStore'
 import { useTimer } from '@renderer/hooks/useTimer'
@@ -25,7 +25,6 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import ChatNavbar from './components/ChatNavBar'
 import Inputbar from './Inputbar/Inputbar'
 import ChatNavigation from './Messages/ChatNavigation'
 import Messages from './Messages/Messages'
@@ -46,9 +45,6 @@ const Chat: FC<Props> = (props) => {
   const { topicPosition, messageStyle, messageNavigation } = useSettings()
   const { showTopics } = useShowTopics()
   const { isMultiSelectMode } = useChatContext(props.activeTopic)
-  const { isTopNavbar } = useNavbarPosition()
-  const showInnerChatNavbar = isTopNavbar
-
   const mainRef = React.useRef<HTMLDivElement>(null)
   const contentSearchRef = React.useRef<ContentSearchRef>(null)
   const [filterIncludeUser, setFilterIncludeUser] = useState(false)
@@ -151,8 +147,7 @@ const Chat: FC<Props> = (props) => {
     firstUpdateOrNoFirstUpdateHandler()
   }
 
-  const mainHeight = isTopNavbar ? 'calc(100vh - var(--navbar-height) - 6px)' : 'calc(100vh - var(--navbar-height))'
-  const contentHeight = showInnerChatNavbar ? `calc(${mainHeight} - var(--navbar-height))` : mainHeight
+  const mainHeight = 'calc(100vh - var(--navbar-height))'
 
   return (
     <Container id="chat" className={classNames([messageStyle, { 'multi-select-mode': isMultiSelectMode }])}>
@@ -169,16 +164,7 @@ const Chat: FC<Props> = (props) => {
             justify="space-between"
             style={{ height: mainHeight, width: '100%' }}>
             <QuickPanelProvider>
-              {showInnerChatNavbar && (
-                <ChatNavbar
-                  activeAssistant={props.assistant}
-                  activeTopic={props.activeTopic}
-                  setActiveTopic={props.setActiveTopic}
-                  setActiveAssistant={props.setActiveAssistant}
-                  position="left"
-                />
-              )}
-              <div className="flex flex-1 flex-col justify-between" style={{ height: contentHeight }}>
+              <div className="flex flex-1 flex-col justify-between" style={{ height: mainHeight }}>
                 <Messages
                   key={props.activeTopic.id}
                   assistant={assistant}
@@ -233,18 +219,10 @@ const Container = styled.div`
   height: calc(100vh - var(--navbar-height));
   flex: 1;
   overflow: hidden;
-  [navbar-position='top'] & {
-    height: calc(100vh - var(--navbar-height) - 6px);
-    background-color: var(--color-background);
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-  }
 `
 
 const Main = styled(Flex)`
-  [navbar-position='left'] & {
-    height: calc(100vh - var(--navbar-height));
-  }
+  height: calc(100vh - var(--navbar-height));
   transform: translateZ(0);
   position: relative;
 `

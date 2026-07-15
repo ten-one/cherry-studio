@@ -4,7 +4,6 @@ import ListItem from '@renderer/components/ListItem'
 import Scrollbar from '@renderer/components/Scrollbar'
 import CustomTag from '@renderer/components/Tags/CustomTag'
 import { useAssistantPresets } from '@renderer/hooks/useAssistantPresets'
-import { useNavbarPosition } from '@renderer/hooks/useSettings'
 import { createAssistantFromAgent } from '@renderer/services/AssistantService'
 import type { AssistantPreset } from '@renderer/types'
 import { uuid } from '@renderer/utils'
@@ -30,10 +29,8 @@ const AssistantPresetsPage: FC = () => {
   const [searchInput, setSearchInput] = useState('')
   const [activeGroup, setActiveGroup] = useState('我的')
   const [agentGroups, setAgentGroups] = useState<Record<string, AssistantPreset[]>>({})
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const systemPresets = useSystemAssistantPresets()
   const { presets: userPresets } = useAssistantPresets()
-  const { isTopNavbar } = useNavbarPosition()
 
   useEffect(() => {
     const systemAgentsGroupList = groupByCategories(systemPresets)
@@ -126,32 +123,14 @@ const AssistantPresetsPage: FC = () => {
     setSearch('')
     setSearchInput('')
     setActiveGroup('我的')
-    setIsSearchExpanded(false)
-  }
-
-  const handleSearchIconClick = () => {
-    if (!isSearchExpanded) {
-      setIsSearchExpanded(true)
-    } else {
-      handleSearch()
-    }
   }
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchInput(value)
-    // 如果输入内容为空，折叠搜索框
     if (value.trim() === '') {
-      setIsSearchExpanded(false)
       setSearch('')
       setActiveGroup('我的')
-    }
-  }
-
-  const handleSearchInputBlur = () => {
-    // 如果输入内容为空，失焦时折叠搜索框
-    if (searchInput.trim() === '') {
-      setIsSearchExpanded(false)
     }
   }
 
@@ -197,7 +176,6 @@ const AssistantPresetsPage: FC = () => {
             maxLength={50}
             onChange={handleSearchInputChange}
             onPressEnter={handleSearch}
-            onBlur={handleSearchInputBlur}
           />
           <div style={{ width: 80 }} />
         </NavbarCenter>
@@ -251,33 +229,6 @@ const AssistantPresetsPage: FC = () => {
               }
             </AgentsListTitle>
             <Flex gap={2}>
-              {isSearchExpanded ? (
-                <Input
-                  placeholder={t('common.search')}
-                  className="nodrag"
-                  style={{ width: 200, height: 28, borderRadius: 15, paddingLeft: 12 }}
-                  size="small"
-                  variant="filled"
-                  allowClear
-                  onClear={handleSearchClear}
-                  suffix={<Search size={14} color="var(--color-icon)" onClick={handleSearchIconClick} />}
-                  value={searchInput}
-                  maxLength={50}
-                  onChange={handleSearchInputChange}
-                  onPressEnter={handleSearch}
-                  onBlur={handleSearchInputBlur}
-                  autoFocus
-                />
-              ) : (
-                isTopNavbar && (
-                  <Button
-                    type="text"
-                    onClick={handleSearchIconClick}
-                    icon={<Search size={18} color="var(--color-icon)" />}>
-                    {t('common.search')}
-                  </Button>
-                )
-              )}
               <Button type="text" onClick={handleImportAgent} icon={<Import size={18} color="var(--color-icon)" />}>
                 {t('assistants.presets.import.title')}
               </Button>

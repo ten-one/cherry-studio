@@ -1948,7 +1948,8 @@ const migrateConfig = {
   },
   '122': (state: RootState) => {
     try {
-      state.settings.navbarPosition = 'left'
+      const persistedSettings = state.settings as unknown as Record<string, unknown>
+      persistedSettings.navbarPosition = 'left'
       return state
     } catch (error) {
       logger.error('migrate 122 error', error as Error)

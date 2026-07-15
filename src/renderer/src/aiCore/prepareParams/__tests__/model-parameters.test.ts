@@ -45,8 +45,7 @@ vi.mock('@renderer/services/AssistantService', () => ({
 
 vi.mock('@renderer/hooks/useSettings', () => ({
   getStoreSetting: vi.fn(),
-  useSettings: vi.fn(() => ({})),
-  useNavbarPosition: vi.fn(() => ({ navbarPosition: 'left', isLeftNavbar: true, isTopNavbar: false }))
+  useSettings: vi.fn(() => ({}))
 }))
 
 vi.mock('@renderer/hooks/useStore', () => ({

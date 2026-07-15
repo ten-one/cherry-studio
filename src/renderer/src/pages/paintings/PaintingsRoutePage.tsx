@@ -2,7 +2,6 @@ import { loggerService } from '@logger'
 import { useAllProviders } from '@renderer/hooks/useProvider'
 import { useAppDispatch } from '@renderer/store'
 import { setDefaultPaintingProvider } from '@renderer/store/settings'
-import { updateTab } from '@renderer/store/tabs'
 import type { PaintingProvider, SystemProviderId } from '@renderer/types'
 import { isNewApiProvider } from '@renderer/utils/provider'
 import type { FC } from 'react'
@@ -46,7 +45,6 @@ const PaintingsRoutePage: FC = () => {
     logger.debug(`defaultPaintingProvider: ${provider}`)
     if (provider && validOptions.includes(provider)) {
       dispatch(setDefaultPaintingProvider(provider as PaintingProvider))
-      dispatch(updateTab({ id: 'paintings', updates: { path: `/paintings/${provider}` } }))
     }
   }, [provider, dispatch, validOptions])
 

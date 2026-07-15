@@ -2,7 +2,7 @@ import { useTheme } from '@renderer/context/ThemeProvider'
 import { useMinappPopup } from '@renderer/hooks/useMinappPopup'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import { useRuntime } from '@renderer/hooks/useRuntime'
-import { useNavbarPosition, useSettings } from '@renderer/hooks/useSettings'
+import { useSettings } from '@renderer/hooks/useSettings'
 import type { MinAppType } from '@renderer/types'
 import type { MenuProps } from 'antd'
 import { Dropdown, Tooltip } from 'antd'
@@ -21,7 +21,6 @@ export const SidebarOpenedMinappTabs: FC = () => {
   const { showOpenedMinappsInSidebar } = useSettings() // 获取控制显示的设置
   const { theme } = useTheme()
   const { t } = useTranslation()
-  const { isLeftNavbar } = useNavbarPosition()
 
   const handleOnClick = (app: MinAppType) => {
     if (minappShow && currentMinappId === app.id) {
@@ -63,7 +62,7 @@ export const SidebarOpenedMinappTabs: FC = () => {
 
   return (
     <TabsContainer className="TabsContainer">
-      {isLeftNavbar && <Divider />}
+      <Divider />
       <TabsWrapper>
         <Menus>
           {openedKeepAliveMinapps.map((app) => {
@@ -110,7 +109,6 @@ export const SidebarPinnedApps: FC = () => {
   const { minappShow, openedKeepAliveMinapps, currentMinappId } = useRuntime()
   const { theme } = useTheme()
   const { openMinappKeepAlive } = useMinappPopup()
-  const { isTopNavbar } = useNavbarPosition()
 
   return (
     <DraggableList list={pinned} onUpdate={updatePinnedMinapps} listStyle={{ marginBottom: 5 }}>
@@ -118,7 +116,7 @@ export const SidebarPinnedApps: FC = () => {
         const menuItems: MenuProps['items'] = [
           {
             key: 'togglePin',
-            label: isTopNavbar ? t('minapp.remove_from_launchpad') : t('minapp.remove_from_sidebar'),
+            label: t('minapp.remove_from_sidebar'),
             onClick: () => {
               updatePinnedMinapps(pinned.filter((item) => item.id !== app.id))
             }

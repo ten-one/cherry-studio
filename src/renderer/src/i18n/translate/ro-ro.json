@@ -3667,14 +3667,6 @@
         "select": "Selectează font",
         "title": "Setări font"
       },
-      "navbar": {
-        "position": {
-          "label": "Poziție bară de navigare",
-          "left": "Stânga",
-          "top": "Sus"
-        },
-        "title": "Setări bară de navigare"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "Asistenții sunt funcții de bază, nu se acceptă ascunderea"

@@ -725,9 +725,6 @@ const Container = styled.div`
   position: relative;
   z-index: 2;
   padding: 0 18px 18px 18px;
-  [navbar-position='top'] & {
-    padding: 0 18px 10px 18px;
-  }
 `
 
 const InputBarContainer = styled.div`

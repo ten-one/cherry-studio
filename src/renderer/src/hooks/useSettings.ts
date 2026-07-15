@@ -23,7 +23,6 @@ import {
   setEnableDeveloperMode,
   setLaunchOnBoot,
   setLaunchToTray,
-  setNavbarPosition,
   setPinTopicsToTop,
   setSendMessageShortcut as _setSendMessageShortcut,
   setSidebarIcons,
@@ -154,16 +153,4 @@ export const useEnableDeveloperMode = () => {
 
 export const getEnableDeveloperMode = () => {
   return store.getState().settings.enableDeveloperMode
-}
-
-export const useNavbarPosition = () => {
-  const navbarPosition = useAppSelector((state) => state.settings.navbarPosition)
-  const dispatch = useAppDispatch()
-
-  return {
-    navbarPosition,
-    isLeftNavbar: navbarPosition === 'left',
-    isTopNavbar: navbarPosition === 'top',
-    setNavbarPosition: (position: 'left' | 'top') => dispatch(setNavbarPosition(position))
-  }
 }

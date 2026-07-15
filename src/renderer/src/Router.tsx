@@ -6,15 +6,12 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Sidebar from './components/app/Sidebar'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import TabsContainer from './components/Tab/TabContainer'
 import NavigationHandler from './handler/NavigationHandler'
 import { useOnboardingState } from './hooks/useOnboardingState'
-import { useNavbarPosition } from './hooks/useSettings'
 import FilesPage from './pages/files/FilesPage'
 import HomePage from './pages/home/HomePage'
 import KnowledgePage from './pages/knowledge/KnowledgePage'
 import LaunchpadPage from './pages/launchpad/LaunchpadPage'
-import MinAppPage from './pages/minapps/MinAppPage'
 import MinAppsPage from './pages/minapps/MinAppsPage'
 import NotesPage from './pages/notes/NotesPage'
 import { OnboardingPage } from './pages/onboarding'
@@ -25,7 +22,6 @@ import TranslatePage from './pages/translate/TranslatePage'
 
 const Router: FC = () => {
   const { onboardingCompleted, completeOnboarding } = useOnboardingState()
-  const { navbarPosition } = useNavbarPosition()
 
   const routes = useMemo(() => {
     return (
@@ -41,7 +37,7 @@ const Router: FC = () => {
           <Route path="/files" element={<FilesPage />} />
           <Route path="/notes" element={<NotesPage />} />
           <Route path="/knowledge" element={<KnowledgePage />} />
-          <Route path="/apps/:appId" element={<MinAppPage />} />
+          <Route path="/apps/:appId" element={<Navigate to="/apps" replace />} />
           <Route path="/apps" element={<MinAppsPage />} />
           <Route path="/settings/*" element={<SettingsPage />} />
           <Route path="/launchpad" element={<LaunchpadPage />} />
@@ -54,20 +50,11 @@ const Router: FC = () => {
     return <OnboardingPage onComplete={completeOnboarding} />
   }
 
-  if (navbarPosition === 'left') {
-    return (
-      <HashRouter>
-        <Sidebar />
-        {routes}
-        <NavigationHandler />
-      </HashRouter>
-    )
-  }
-
   return (
     <HashRouter>
+      <Sidebar />
+      {routes}
       <NavigationHandler />
-      <TabsContainer>{routes}</TabsContainer>
     </HashRouter>
   )
 }

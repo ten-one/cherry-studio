@@ -19,7 +19,7 @@ import { useMinappPopup } from '@renderer/hooks/useMinappPopup'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import useNavBackgroundColor from '@renderer/hooks/useNavBackgroundColor'
 import { useRuntime } from '@renderer/hooks/useRuntime'
-import { useNavbarPosition, useSettings } from '@renderer/hooks/useSettings'
+import { useSettings } from '@renderer/hooks/useSettings'
 import { useTimer } from '@renderer/hooks/useTimer'
 import { useAppDispatch } from '@renderer/store'
 import { setMinappsOpenLinkExternal } from '@renderer/store/settings'
@@ -147,7 +147,6 @@ const MinappPopupContainer: React.FC = () => {
   const { pinned, updatePinnedMinapps } = useMinapps()
   const { t } = useTranslation()
   const backgroundColor = useNavBackgroundColor()
-  const { isTopNavbar } = useNavbarPosition()
   const dispatch = useAppDispatch()
 
   /** control the drawer open or close */
@@ -167,8 +166,6 @@ const MinappPopupContainer: React.FC = () => {
   /** Note: WebView loaded states now managed globally via webviewStateManager */
   /** whether the minapps open link external is enabled */
   const { minappsOpenLinkExternal } = useSettings()
-
-  const { isLeftNavbar } = useNavbarPosition()
 
   const { setTimeoutTimer } = useTimer()
 
@@ -428,8 +425,7 @@ const MinappPopupContainer: React.FC = () => {
         <Spacer />
         <ButtonsGroup
           className={isWin || isLinux ? 'windows' : ''}
-          style={{ marginRight: isWin || isLinux ? '140px' : 0 }}
-          isTopNavbar={isTopNavbar}>
+          style={{ marginRight: isWin || isLinux ? '140px' : 0 }}>
           <Tooltip title={t('minapp.popup.goBack')} mouseEnterDelay={0.8} placement="bottom">
             <TitleButton onClick={() => handleGoBack(appInfo.id)}>
               <ArrowLeftOutlined />
@@ -447,15 +443,7 @@ const MinappPopupContainer: React.FC = () => {
           </Tooltip>
           {appInfo.canPinned && (
             <Tooltip
-              title={
-                appInfo.isPinned
-                  ? isTopNavbar
-                    ? t('minapp.remove_from_launchpad')
-                    : t('minapp.remove_from_sidebar')
-                  : isTopNavbar
-                    ? t('minapp.add_to_launchpad')
-                    : t('minapp.add_to_sidebar')
-              }
+              title={appInfo.isPinned ? t('minapp.remove_from_sidebar') : t('minapp.add_to_sidebar')}
               mouseEnterDelay={0.8}
               placement="bottom">
               <TitleButton onClick={() => handleTogglePin(appInfo.id)} className={appInfo.isPinned ? 'pinned' : ''}>
@@ -523,21 +511,20 @@ const MinappPopupContainer: React.FC = () => {
 
   return (
     <Drawer
-      title={isTopNavbar ? null : <Title appInfo={currentAppInfo} url={currentUrl} />}
+      title={<Title appInfo={currentAppInfo} url={currentUrl} />}
       placement="bottom"
       onClose={handlePopupMinimize}
       open={isPopupShow}
       mask={false}
       rootClassName="minapp-drawer"
       maskClassName="minapp-mask"
-      height={isTopNavbar ? 'calc(100% - var(--navbar-height))' : '100%'}
+      height="100%"
       maskClosable={false}
       closeIcon={null}
       styles={{
         wrapper: {
           position: 'fixed',
-          marginLeft: isLeftNavbar ? 'var(--sidebar-width)' : 0,
-          marginTop: isTopNavbar ? 'var(--navbar-height)' : 0
+          marginLeft: 'var(--sidebar-width)'
         },
         content: {
           backgroundColor: window.root.style.background
@@ -574,13 +561,7 @@ const TitleContainer = styled.div`
   right: 0;
   bottom: 0;
   background-color: transparent;
-  [navbar-position='left'] & {
-    padding-left: ${isMac ? '40px' : '10px'};
-  }
-  [navbar-position='top'] & {
-    padding-left: ${isMac ? '80px' : '10px'};
-    border-bottom: 0.5px solid var(--color-border);
-  }
+  padding-left: ${isMac ? '40px' : '10px'};
 `
 
 const TitleText = styled.div`
@@ -600,7 +581,7 @@ const TitleTextTooltip = styled.span`
   }
 `
 
-const ButtonsGroup = styled.div<{ isTopNavbar: boolean }>`
+const ButtonsGroup = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -2,7 +2,7 @@ import { loggerService } from '@logger'
 
 const logger = loggerService.withContext('WebviewStateManager')
 
-// Global WebView loaded states - shared between popup and tab modes
+// Global WebView loaded states shared by all mini-app instances.
 const globalWebviewStates = new Map<string, boolean>()
 
 // Per-app listeners (fine grained)

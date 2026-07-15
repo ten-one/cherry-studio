@@ -3667,14 +3667,6 @@
         "select": "Schriftart auswählen",
         "title": "Schriftart-Einstellungen"
       },
-      "navbar": {
-        "position": {
-          "label": "Navigationsleistenposition",
-          "left": "Links",
-          "top": "Oben"
-        },
-        "title": "Navigationsleisten-Einstellungen"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "Assistent ist Basisfunktion, kann nicht ausgeblendet werden"

@@ -3667,14 +3667,6 @@
         "select": "選擇字型",
         "title": "字型設定"
       },
-      "navbar": {
-        "position": {
-          "label": "導覽列位置",
-          "left": "左側",
-          "top": "頂端"
-        },
-        "title": "導覽列設定"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "助手是基礎功能，不支援隱藏"

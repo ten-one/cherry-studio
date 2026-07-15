@@ -1,6 +1,6 @@
 import AddAssistantPopup from '@renderer/components/Popups/AddAssistantPopup'
 import { useAssistants, useDefaultAssistant } from '@renderer/hooks/useAssistant'
-import { useNavbarPosition, useSettings } from '@renderer/hooks/useSettings'
+import { useSettings } from '@renderer/hooks/useSettings'
 import { useShowTopics } from '@renderer/hooks/useStore'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import type { Assistant, Topic } from '@renderer/types'
@@ -39,15 +39,12 @@ const HomeTabs: FC<Props> = ({
   const { topicPosition } = useSettings()
   const { defaultAssistant } = useDefaultAssistant()
   const { toggleShowTopics } = useShowTopics()
-  const { isLeftNavbar } = useNavbarPosition()
   const { t } = useTranslation()
 
   const [tab, setTab] = useState<Tab>(position === 'left' ? _tab || 'assistants' : 'topic')
   const borderStyle = '0.5px solid var(--color-border)'
   const border =
-    position === 'left'
-      ? { borderRight: isLeftNavbar ? borderStyle : 'none' }
-      : { borderLeft: isLeftNavbar ? borderStyle : 'none', borderTopLeftRadius: 0 }
+    position === 'left' ? { borderRight: borderStyle } : { borderLeft: borderStyle, borderTopLeftRadius: 0 }
 
   if (position === 'left' && topicPosition === 'left') {
     _tab = tab
@@ -144,12 +141,7 @@ const Container = styled.div`
     height: calc(100vh - var(--navbar-height));
   }
 
-  [navbar-position='left'] & {
-    background-color: var(--color-background);
-  }
-  [navbar-position='top'] & {
-    height: calc(100vh - var(--navbar-height));
-  }
+  background-color: var(--color-background);
   overflow: hidden;
   .collapsed {
     width: 0;
@@ -173,9 +165,6 @@ const CustomTabs = styled.div`
   border-bottom: 1px solid var(--color-border);
   background: transparent;
   -webkit-app-region: no-drag;
-  [navbar-position='top'] & {
-    padding-top: 2px;
-  }
 `
 
 const TabItem = styled.button<{ active: boolean }>`

@@ -3667,14 +3667,6 @@
         "select": "Selecionar fonte",
         "title": "Configuração de fonte"
       },
-      "navbar": {
-        "position": {
-          "label": "Posição da Barra de Navegação",
-          "left": "Esquerda",
-          "top": "Superior"
-        },
-        "title": "Configurações da Barra de Navegação"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "O assistente é uma funcionalidade básica e não pode ser ocultada"

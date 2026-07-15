@@ -3667,14 +3667,6 @@
         "select": "Chọn Phông chữ",
         "title": "Cài đặt phông chữ"
       },
-      "navbar": {
-        "position": {
-          "label": "Vị trí thanh điều hướng",
-          "left": "Trái",
-          "top": "Đỉnh"
-        },
-        "title": "Cài đặt thanh điều hướng"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "Trợ lý là các chức năng cơ bản, không được hỗ trợ ẩn"

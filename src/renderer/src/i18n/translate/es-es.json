@@ -3667,14 +3667,6 @@
         "select": "Seleccionar fuente",
         "title": "Configuración de fuente"
       },
-      "navbar": {
-        "position": {
-          "label": "Posición de la barra de navegación",
-          "left": "Izquierda",
-          "top": "Superior"
-        },
-        "title": "Configuración de la barra de navegación"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "El asistente es una función básica y no se puede ocultar"

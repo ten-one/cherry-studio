@@ -3667,14 +3667,6 @@
         "select": "Sélectionner la police",
         "title": "Paramètres de police"
       },
-      "navbar": {
-        "position": {
-          "label": "Position de la barre de navigation",
-          "left": "Gauche",
-          "top": "Haut"
-        },
-        "title": "Paramètres de la barre de navigation"
-      },
       "sidebar": {
         "chat": {
           "hiddenMessage": "L'assistant est une fonction de base et ne peut pas être masquée"
