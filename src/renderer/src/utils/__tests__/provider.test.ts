@@ -9,7 +9,6 @@ import {
   isAnthropicProvider,
   isAnthropicSupportedProvider,
   isAzureOpenAIProvider,
-  isCherryAIProvider,
   isGeminiProvider,
   isGeminiWebSearchProvider,
   isNewApiProvider,
@@ -187,9 +186,6 @@ describe('provider utils', () => {
   })
 
   it('detects specific provider ids', () => {
-    expect(isCherryAIProvider(createProvider({ id: 'cherryai' }))).toBe(true)
-    expect(isCherryAIProvider(createProvider())).toBe(false)
-
     expect(isPerplexityProvider(createProvider({ id: SystemProviderIds.perplexity }))).toBe(true)
     expect(isPerplexityProvider(createProvider())).toBe(false)
   })

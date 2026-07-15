@@ -5,7 +5,6 @@ import path from 'node:path'
 import type { TokenUsageData } from '@cherrystudio/analytics-client'
 import { loggerService } from '@logger'
 import { isLinux, isMac, isPortable, isWin } from '@main/constant'
-import { generateSignature } from '@main/integration/cherryai'
 import anthropicService from '@main/services/AnthropicService'
 import { getIpCountry } from '@main/utils/ipService'
 import {
@@ -965,9 +964,6 @@ export async function registerIpc(mainWindow: BrowserWindow, app: Electron.App) 
     ipcMain.handle(IpcChannel.Ovms_RunOVMS, fallback)
     ipcMain.handle(IpcChannel.Ovms_StopOVMS, fallback)
   }
-
-  // CherryAI
-  ipcMain.handle(IpcChannel.Cherryai_GetSignature, (_, params) => generateSignature(params))
 
   ipcMain.handle(IpcChannel.LocalTransfer_ListServices, () => localTransferService.getState())
   ipcMain.handle(IpcChannel.LocalTransfer_StartScan, () => localTransferService.startDiscovery({ resetList: true }))

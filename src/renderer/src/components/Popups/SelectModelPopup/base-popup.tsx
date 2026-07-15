@@ -208,7 +208,7 @@ const SelectModelPopupView: React.FC<Props> = ({
 
       if (filteredModels.length === 0) return
 
-      const canNavigateToSettings = provider.id !== 'cherryai' && !!getProviderById(provider.id)
+      const canNavigateToSettings = !!getProviderById(provider.id)
 
       // 添加 provider 分组标题
       items.push({

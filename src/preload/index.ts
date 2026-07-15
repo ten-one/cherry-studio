@@ -527,10 +527,6 @@ const api = {
       ipcRenderer.invoke(IpcChannel.OCR_ocr, file, provider),
     listProviders: (): Promise<string[]> => ipcRenderer.invoke(IpcChannel.OCR_ListProviders)
   },
-  cherryai: {
-    generateSignature: (params: { method: string; path: string; query: string; body: Record<string, any> }) =>
-      ipcRenderer.invoke(IpcChannel.Cherryai_GetSignature, params)
-  },
   windowControls: {
     minimize: (): Promise<void> => ipcRenderer.invoke(IpcChannel.Windows_Minimize),
     maximize: (): Promise<void> => ipcRenderer.invoke(IpcChannel.Windows_Maximize),

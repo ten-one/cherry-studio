@@ -1,10 +1,9 @@
-import { CHERRYAI_PROVIDER } from '@renderer/config/providers'
 import { loggerService } from '@renderer/services/LoggerService'
 import store from '@renderer/store'
 import type { Model } from '@renderer/types'
 import type { SerializedError } from '@renderer/types/error'
 
-import { fetchGenerate, fetchModels } from './ApiService'
+import { fetchGenerate } from './ApiService'
 
 const logger = loggerService.withContext('ErrorDiagnosisService')
 
@@ -25,32 +24,9 @@ export interface DiagnosisContext {
   modelId?: string
 }
 
-async function getCherryAiFreeModel(): Promise<Model | undefined> {
-  try {
-    const models = await fetchModels(CHERRYAI_PROVIDER)
-    return models.length > 0 ? models[0] : undefined
-  } catch {
-    logger.warn('Failed to fetch CherryAI free models')
-    return undefined
-  }
-}
-
-async function buildModelsToTry(context?: DiagnosisContext): Promise<Model[]> {
+function buildModelsToTry(context?: DiagnosisContext): Model[] {
   const defaultModel = store.getState().llm.defaultModel
-  const models: Model[] = []
-
-  // CherryAI free model as primary diagnosis model
-  const cherryModel = await getCherryAiFreeModel()
-  if (cherryModel) {
-    models.push(cherryModel)
-  }
-
-  // User's default model as fallback (skip if same as failing model)
-  if (defaultModel && defaultModel.id !== context?.modelId && !models.some((m) => m.id === defaultModel.id)) {
-    models.push(defaultModel)
-  }
-
-  return models
+  return defaultModel && defaultModel.id !== context?.modelId ? [defaultModel] : []
 }
 
 function buildContextHint(errorInfo: Record<string, unknown>, context?: DiagnosisContext): string {
@@ -187,7 +163,7 @@ Output: {"summary":"OpenAI API key is invalid or expired","category":"auth","exp
 
   const content = JSON.stringify(errorInfo)
 
-  const modelsToTry = await buildModelsToTry(context)
+  const modelsToTry = buildModelsToTry(context)
   let lastError: Error | null = null
 
   for (const model of modelsToTry) {
@@ -218,7 +194,7 @@ export async function classifyErrorByAI(error: SerializedError, language: string
   const prompt = `You are an error diagnosis assistant for Cherry Studio. Summarize this error in one sentence (max 30 words) in ${language}. Return ONLY the summary text, no JSON, no markdown, no quotes.`
   const content = `Error: ${error.name}: ${error.message}`
 
-  const modelsToTry = await buildModelsToTry()
+  const modelsToTry = buildModelsToTry()
 
   for (const model of modelsToTry) {
     try {

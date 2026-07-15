@@ -64,18 +64,7 @@ import type { AtLeast, SystemProvider, SystemProviderId } from '@renderer/types'
 import { OpenAIServiceTiers } from '@renderer/types'
 
 import { TOKENFLUX_HOST } from './constant'
-import { qwenModel, SYSTEM_MODELS } from './models'
-
-export const CHERRYAI_PROVIDER: SystemProvider = {
-  id: 'cherryai' as SystemProviderId,
-  name: 'CherryAI',
-  type: 'openai',
-  apiKey: '',
-  apiHost: 'https://api.cherry-ai.com',
-  models: [qwenModel],
-  isSystem: true,
-  enabled: true
-}
+import { SYSTEM_MODELS } from './models'
 
 export const SYSTEM_PROVIDERS_CONFIG: Record<SystemProviderId, SystemProvider> = {
   silicon: {

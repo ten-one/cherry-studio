@@ -21,7 +21,6 @@ import {
 import {
   isAnthropicProvider,
   isAzureOpenAIProvider,
-  isCherryAIProvider,
   isGeminiProvider,
   isOllamaProvider,
   isPerplexityProvider,
@@ -81,7 +80,6 @@ export function formatProviderApiHost(provider: Provider): Provider {
       match: (p) => p.id === SystemProviderIds.copilot || p.id === SystemProviderIds.github,
       format: (p) => formatApiHost(p.apiHost, false)
     },
-    { match: isCherryAIProvider, format: (p) => formatApiHost(p.apiHost, false) },
     { match: isPerplexityProvider, format: (p) => formatApiHost(p.apiHost, false) },
     { match: isOllamaProvider, format: (p) => formatOllamaApiHost(p.apiHost) },
     { match: isGeminiProvider, format: (p, av) => formatApiHost(p.apiHost, av, 'v1beta') },
@@ -121,7 +119,6 @@ export function providerToAiSdkConfig(
 
   const builders: ConfigBuilderEntry[] = [
     { match: (p) => p.id === SystemProviderIds.copilot, build: buildCopilotConfig },
-    { match: (p) => p.id === 'cherryai', build: buildCherryAIConfig },
     { match: (p) => p.id === 'anthropic' && p.authType === 'oauth', build: buildAnthropicConfig },
     { match: (p) => isOllamaProvider(p), build: buildOllamaConfig },
     { match: (p) => isAzureOpenAIProvider(p), build: buildAzureConfig },
@@ -246,27 +243,6 @@ function buildVertexConfig(
     endpoint: ctx.endpoint,
     providerSettings: { ...ctx.baseConfig, baseURL, project, location, googleCredentials: creds }
   } as ProviderConfig<'google-vertex'> | ProviderConfig<'google-vertex-anthropic'>
-}
-
-async function buildCherryAIConfig(ctx: BuilderContext): Promise<ProviderConfig<'openai-compatible'>> {
-  return {
-    providerId: 'openai-compatible',
-    endpoint: ctx.endpoint,
-    providerSettings: {
-      ...ctx.baseConfig,
-      name: ctx.actualProvider.id,
-      headers: { ...defaultAppHeaders(), ...ctx.actualProvider.extra_headers },
-      fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
-        const signature = await window.api.cherryai.generateSignature({
-          method: 'POST',
-          path: '/chat/completions',
-          query: '',
-          body: init?.body && typeof init.body === 'string' ? JSON.parse(init.body) : undefined
-        })
-        return fetch(input, { ...init, headers: { ...init?.headers, ...signature } })
-      }
-    }
-  }
 }
 
 function formatAzureBaseURL(baseURL: string, forAnthropic: boolean): string {

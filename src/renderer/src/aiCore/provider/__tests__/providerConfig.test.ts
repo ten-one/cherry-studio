@@ -92,14 +92,9 @@ const createWindowKeyv = () => {
 interface WindowMockApi {
   copilot?: { getToken: ReturnType<typeof vi.fn> }
   anthropic_oauth?: { getAccessToken: ReturnType<typeof vi.fn> }
-  cherryai?: { generateSignature: ReturnType<typeof vi.fn> }
 }
 
-const setupWindowMock = (options?: {
-  withCopilotToken?: boolean
-  withAnthropicOAuth?: boolean
-  withCherryAI?: boolean
-}) => {
+const setupWindowMock = (options?: { withCopilotToken?: boolean; withAnthropicOAuth?: boolean }) => {
   const api: WindowMockApi = {}
   if (options?.withCopilotToken) {
     api.copilot = {
@@ -111,12 +106,6 @@ const setupWindowMock = (options?: {
       getAccessToken: vi.fn().mockResolvedValue('mock-oauth-token')
     }
   }
-  if (options?.withCherryAI) {
-    api.cherryai = {
-      generateSignature: vi.fn().mockResolvedValue({ 'X-Signature': 'mock-sig' })
-    }
-  }
-
   Object.defineProperty(globalThis, 'window', {
     value: { ...globalThis.window, keyv: createWindowKeyv(), api },
     writable: true,
@@ -251,32 +240,6 @@ describe('formatProviderApiHost', () => {
       const result = formatProviderApiHost(provider)
 
       expect(result.apiHost).toBe('https://models.inference.ai.azure.com')
-    })
-  })
-
-  describe('CherryAI provider', () => {
-    it('formats apiHost without appending version', () => {
-      const provider = makeProvider({
-        id: 'cherryai',
-        type: 'openai',
-        apiHost: 'https://api.cherryai.com'
-      })
-
-      const result = formatProviderApiHost(provider)
-
-      expect(result.apiHost).toBe('https://api.cherryai.com')
-    })
-
-    it('handles empty apiHost gracefully', () => {
-      const provider = makeProvider({
-        id: 'cherryai',
-        type: 'openai',
-        apiHost: ''
-      })
-
-      const result = formatProviderApiHost(provider)
-
-      expect(result.apiHost).toBe('')
     })
   })
 
@@ -563,7 +526,7 @@ describe('adaptProvider', () => {
 
 describe('providerToAiSdkConfig', () => {
   beforeEach(() => {
-    setupWindowMock({ withCopilotToken: true, withAnthropicOAuth: true, withCherryAI: true })
+    setupWindowMock({ withCopilotToken: true, withAnthropicOAuth: true })
     setupStoreMock()
     vi.clearAllMocks()
   })
@@ -601,23 +564,6 @@ describe('providerToAiSdkConfig', () => {
       const settings = config.providerSettings as GitHubCopilotProviderSettings
       expect(settings.headers).toBeDefined()
       expect(settings.headers!['X-Custom']).toBe('value')
-    })
-  })
-
-  describe('CherryAI builder', () => {
-    it('returns openai-compatible with custom fetch for signature', async () => {
-      const provider = makeProvider({
-        id: 'cherryai',
-        type: 'openai',
-        apiHost: 'https://api.cherryai.com'
-      })
-
-      const config = await providerToAiSdkConfig(provider, makeModel('gpt-4', 'cherryai'))
-
-      expect(config.providerId).toBe('openai-compatible')
-      const settings = config.providerSettings as OpenAICompatibleProviderSettings
-      expect(settings.name).toBe('cherryai')
-      expect(typeof settings.fetch).toBe('function')
     })
   })
 

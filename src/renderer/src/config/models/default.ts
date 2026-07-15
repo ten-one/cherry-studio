@@ -1,22 +1,29 @@
 import type { Model, SystemProviderId } from '@renderer/types'
 
-export const qwenModel: Model = {
-  id: 'qwen',
-  name: 'Qwen',
-  provider: 'cherryai',
+const defaultAssistantModel: Model = {
+  id: 'deepseek-ai/DeepSeek-V3.2',
+  name: 'deepseek-ai/DeepSeek-V3.2',
+  provider: 'silicon',
+  group: 'deepseek-ai'
+}
+
+const defaultTopicNamingModel: Model = {
+  id: 'Qwen/Qwen3-8B',
+  name: 'Qwen/Qwen3-8B',
+  provider: 'silicon',
   group: 'Qwen'
 }
 
 export const SYSTEM_MODELS: Record<SystemProviderId | 'defaultModel', Model[]> = {
   defaultModel: [
     // Default assistant model
-    qwenModel,
+    defaultAssistantModel,
     // Default topic naming model
-    qwenModel,
+    defaultTopicNamingModel,
     // Default translation model
-    qwenModel,
+    defaultAssistantModel,
     // Default quick assistant model
-    qwenModel
+    defaultAssistantModel
   ],
   vertexai: [],
   sophnet: [],

@@ -158,7 +158,6 @@ export function isAwsBedrockProvider(provider: Provider): boolean {
 export {
   isAnthropicProvider,
   isAzureOpenAIProvider,
-  isCherryAIProvider,
   isGeminiProvider,
   isOllamaProvider,
   isPerplexityProvider,

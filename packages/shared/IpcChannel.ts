@@ -348,9 +348,6 @@ export enum IpcChannel {
   Ovms_RunOVMS = 'ovms:run-ovms',
   Ovms_StopOVMS = 'ovms:stop-ovms',
 
-  // CherryAI
-  Cherryai_GetSignature = 'cherryai:get-signature',
-
   // Local Transfer
   LocalTransfer_ListServices = 'local-transfer:list',
   LocalTransfer_StartScan = 'local-transfer:start-scan',

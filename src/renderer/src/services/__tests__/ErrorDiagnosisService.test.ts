@@ -1,15 +1,9 @@
 import type { SerializedError } from '@renderer/types/error'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Mock fetchGenerate and fetchModels
+// Mock fetchGenerate
 vi.mock('../ApiService', () => ({
-  fetchGenerate: vi.fn(),
-  fetchModels: vi.fn().mockResolvedValue([])
-}))
-
-// Mock CHERRYAI_PROVIDER
-vi.mock('@renderer/config/providers', () => ({
-  CHERRYAI_PROVIDER: { id: 'cherryai', type: 'openai', apiHost: 'https://api.cherry-ai.com', models: [] }
+  fetchGenerate: vi.fn()
 }))
 
 // Mock store
@@ -37,12 +31,12 @@ vi.mock('@renderer/services/LoggerService', () => ({
 
 import store from '@renderer/store'
 
-import { fetchGenerate, fetchModels } from '../ApiService'
+import { fetchGenerate } from '../ApiService'
 import { diagnoseError } from '../ErrorDiagnosisService'
 
 const mockFetchGenerate = vi.mocked(fetchGenerate)
-const mockFetchModels = vi.mocked(fetchModels)
 const mockGetState = vi.mocked(store.getState)
+const defaultModel = { id: 'gpt-4', name: 'GPT-4', provider: 'openai' }
 
 function makeError(overrides: Partial<SerializedError> = {}): SerializedError {
   return { name: 'Error', message: 'test error', stack: null, ...overrides }
@@ -52,10 +46,8 @@ describe('ErrorDiagnosisService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockGetState.mockReturnValue({
-      llm: { defaultModel: null }
+      llm: { defaultModel }
     } as any)
-    // Default: CherryAI returns a free model as fallback
-    mockFetchModels.mockResolvedValue([{ id: 'qwen', name: 'Qwen', provider: 'cherryai' }] as any)
   })
 
   describe('diagnoseError', () => {
@@ -102,27 +94,7 @@ describe('ErrorDiagnosisService', () => {
       await expect(diagnoseError(makeError(), 'en')).rejects.toThrow('Invalid diagnosis response format')
     })
 
-    it('uses CherryAI free model as primary', async () => {
-      const customModel = { id: 'gpt-4', name: 'GPT-4', provider: 'openai' }
-      mockGetState.mockReturnValue({ llm: { defaultModel: customModel } } as any)
-
-      const mockResult = {
-        summary: 'Error',
-        category: 'unknown',
-        explanation: 'Something went wrong.',
-        steps: []
-      }
-      mockFetchGenerate.mockResolvedValue(JSON.stringify(mockResult))
-
-      await diagnoseError(makeError(), 'en')
-      // First call should use CherryAI free model (primary), not defaultModel
-      expect(mockFetchGenerate.mock.calls[0][0]).toEqual(
-        expect.objectContaining({ model: expect.objectContaining({ id: 'qwen' }) })
-      )
-    })
-
-    it('falls back to defaultModel when CherryAI is unavailable', async () => {
-      mockFetchModels.mockResolvedValue([])
+    it('uses the configured default model', async () => {
       const customModel = { id: 'gpt-4', name: 'GPT-4', provider: 'openai' }
       mockGetState.mockReturnValue({ llm: { defaultModel: customModel } } as any)
 
@@ -138,23 +110,18 @@ describe('ErrorDiagnosisService', () => {
       expect(mockFetchGenerate.mock.calls[0][0]).toEqual(expect.objectContaining({ model: customModel }))
     })
 
-    it('uses only CherryAI when no default model', async () => {
+    it('fails without calling a model when no default model is available', async () => {
       mockGetState.mockReturnValue({ llm: { defaultModel: null } } as any)
 
-      const mockResult = {
-        summary: 'Error',
-        category: 'unknown',
-        explanation: 'Something went wrong.',
-        steps: []
-      }
-      mockFetchGenerate.mockResolvedValue(JSON.stringify(mockResult))
+      await expect(diagnoseError(makeError(), 'en')).rejects.toThrow('All diagnosis models failed')
+      expect(mockFetchGenerate).not.toHaveBeenCalled()
+    })
 
-      await diagnoseError(makeError(), 'en')
-      expect(mockFetchGenerate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          model: expect.objectContaining({ id: 'qwen' })
-        })
+    it('does not retry the model that produced the original error', async () => {
+      await expect(diagnoseError(makeError(), 'en', { modelId: defaultModel.id })).rejects.toThrow(
+        'All diagnosis models failed'
       )
+      expect(mockFetchGenerate).not.toHaveBeenCalled()
     })
 
     it('includes context in error info', async () => {
@@ -169,12 +136,12 @@ describe('ErrorDiagnosisService', () => {
       await diagnoseError(makeError({ statusCode: 401 }), 'zh-CN', {
         errorSource: 'chat',
         providerName: 'openai',
-        modelId: 'gpt-4'
+        modelId: 'gpt-4o'
       })
 
       const callArgs = mockFetchGenerate.mock.calls[0][0]
       expect(callArgs.content).toContain('openai')
-      expect(callArgs.content).toContain('gpt-4')
+      expect(callArgs.content).toContain('gpt-4o')
       expect(callArgs.content).toContain('401')
     })
 
