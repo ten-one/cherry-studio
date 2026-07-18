@@ -849,7 +849,6 @@
     "models": "モデル",
     "more": "もっと",
     "name": "名前",
-    "next_match": "次の試合",
     "no_results": "検索結果なし",
     "none": "無",
     "off": "オフ",
@@ -864,7 +863,6 @@
     },
     "powered_by": "搭載",
     "preview": "プレビュー",
-    "previous_match": "前回の試合",
     "prompt": "プロンプト",
     "provider": "プロバイダー",
     "reasoning_content": "深く考察済み",
@@ -1322,10 +1320,6 @@
     "unknown": "未知",
     "urdu": "ウルドゥー語",
     "vietnamese": "ベトナム語"
-  },
-  "launchpad": {
-    "apps": "アプリ",
-    "minapps": "アプリ"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "スタート画面に追加",
     "add_to_sidebar": "サイドバーに追加",
     "popup": {
       "close": "ミニアプリを閉じる",
@@ -1801,7 +1794,6 @@
       "refresh": "更新",
       "rightclick_copyurl": "右クリックでURLをコピー"
     },
-    "remove_from_launchpad": "スタート画面から削除",
     "remove_from_sidebar": "サイドバーから削除",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "チェック",
       "docs_more_details": "詳細を確認",
-      "filter": {
-        "agent": "エージェントサポート",
-        "all": "すべてのプロバイダー"
-      },
-      "filter_agent": "フィルターエージェント対応プロバイダー",
       "get_api_key": "APIキーを取得",
       "hidden": {
         "hide": "非表示",
@@ -4822,21 +4809,6 @@
       "reset": "リセット",
       "title": "ページズーム"
     }
-  },
-  "title": {
-    "apps": "アプリ",
-    "code": "Code",
-    "files": "ファイル",
-    "home": "ホーム",
-    "knowledge": "ナレッジベース",
-    "launchpad": "ランチパッド",
-    "mcp-servers": "MCP サーバー",
-    "memories": "メモリ",
-    "notes": "ノート",
-    "paintings": "ペインティング",
-    "settings": "設定",
-    "store": "アシスタントライブラリ",
-    "translate": "翻訳"
   },
   "trace": {
     "backList": "リストに戻る",

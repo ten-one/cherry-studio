@@ -849,7 +849,6 @@
     "models": "Modele",
     "more": "Mai mult",
     "name": "Nume",
-    "next_match": "Următorul meci",
     "no_results": "Niciun rezultat",
     "none": "Nimic",
     "off": "Oprit",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Cu tehnologia",
     "preview": "Previzualizare",
-    "previous_match": "Meciul anterior",
     "prompt": "Prompt",
     "provider": "Furnizor",
     "reasoning_content": "Raționament profund",
@@ -1322,10 +1320,6 @@
     "unknown": "necunoscut",
     "urdu": "Urdu",
     "vietnamese": "Vietnameză"
-  },
-  "launchpad": {
-    "apps": "Aplicații",
-    "minapps": "Mini-aplicații"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Adaugă în Launchpad",
     "add_to_sidebar": "Adaugă în bara laterală",
     "popup": {
       "close": "Închide MinApp",
@@ -1801,7 +1794,6 @@
       "refresh": "Reîmprospătează",
       "rightclick_copyurl": "Clic dreapta pentru a copia URL-ul"
     },
-    "remove_from_launchpad": "Elimină din Launchpad",
     "remove_from_sidebar": "Elimină din bara laterală",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Verifică",
       "docs_more_details": "pentru mai multe detalii",
-      "filter": {
-        "agent": "Asistat de agent",
-        "all": "Toți furnizorii"
-      },
-      "filter_agent": "Furnizori acceptați de agentul de filtrare",
       "get_api_key": "Obține cheie API",
       "hidden": {
         "hide": "Ascunde",
@@ -4822,21 +4809,6 @@
       "reset": "Resetează",
       "title": "Zoom pagină"
     }
-  },
-  "title": {
-    "apps": "Aplicații",
-    "code": "Cod",
-    "files": "Fișiere",
-    "home": "Acasă",
-    "knowledge": "Bază de cunoștințe",
-    "launchpad": "Launchpad",
-    "mcp-servers": "Servere MCP",
-    "memories": "Amintiri",
-    "notes": "Notițe",
-    "paintings": "Imagini",
-    "settings": "Setări",
-    "store": "Bibliotecă asistenți",
-    "translate": "Traducere"
   },
   "trace": {
     "backList": "Înapoi la listă",

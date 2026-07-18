@@ -849,7 +849,6 @@
     "models": "Modelos",
     "more": "Mais",
     "name": "Nome",
-    "next_match": "Próxima partida",
     "no_results": "Nenhum resultado",
     "none": "Nenhum",
     "off": "Desligado",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Desenvolvido por",
     "preview": "Pré-visualização",
-    "previous_match": "Partida anterior",
     "prompt": "Prompt",
     "provider": "Fornecedor",
     "reasoning_content": "Pensamento profundo concluído",
@@ -1322,10 +1320,6 @@
     "unknown": "desconhecido",
     "urdu": "Urdu",
     "vietnamese": "Vietnamita"
-  },
-  "launchpad": {
-    "apps": "Aplicativos",
-    "minapps": "Miniaplicativos"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Adicionar ao Painel de Inicialização",
     "add_to_sidebar": "Adicionar à Barra Lateral",
     "popup": {
       "close": "Fechar aplicativo",
@@ -1801,7 +1794,6 @@
       "refresh": "Atualizar",
       "rightclick_copyurl": "Copiar URL com botão direito"
     },
-    "remove_from_launchpad": "Remover do Painel de Inicialização",
     "remove_from_sidebar": "Remover da Barra Lateral",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Verificar",
       "docs_more_details": "Obter mais detalhes",
-      "filter": {
-        "agent": "Suportado por Agente",
-        "all": "Todos os Provedores"
-      },
-      "filter_agent": "Agente de Filtro - Provedores Suportados",
       "get_api_key": "Clique aqui para obter a chave",
       "hidden": {
         "hide": "Ocultar",
@@ -4822,21 +4809,6 @@
       "reset": "Redefinir",
       "title": "Escala"
     }
-  },
-  "title": {
-    "apps": "Miniaplicativos",
-    "code": "Código",
-    "files": "Arquivos",
-    "home": "Página Inicial",
-    "knowledge": "Base de Conhecimento",
-    "launchpad": "Plataforma de Inicialização",
-    "mcp-servers": "Servidores MCP",
-    "memories": "Memórias",
-    "notes": "Notas",
-    "paintings": "Pinturas",
-    "settings": "Configurações",
-    "store": "Biblioteca de assistentes",
-    "translate": "Traduzir"
   },
   "trace": {
     "backList": "Voltar à lista",

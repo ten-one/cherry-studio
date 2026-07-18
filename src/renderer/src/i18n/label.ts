@@ -138,27 +138,6 @@ export const getRestoreProgressLabel = (key: string): string => {
   return getLabel(restoreProgressKeyMap, key)
 }
 
-const titleKeyMap = {
-  // TODO: update i18n key
-  store: 'title.store',
-  apps: 'title.apps',
-  code: 'title.code',
-  files: 'title.files',
-  home: 'title.home',
-  knowledge: 'title.knowledge',
-  launchpad: 'title.launchpad',
-  'mcp-servers': 'title.mcp-servers',
-  memories: 'title.memories',
-  notes: 'title.notes',
-  paintings: 'title.paintings',
-  settings: 'title.settings',
-  translate: 'title.translate'
-} as const
-
-export const getTitleLabel = (key: string): string => {
-  return getLabel(titleKeyMap, key)
-}
-
 const themeModeKeyMap = {
   dark: 'settings.theme.dark',
   light: 'settings.theme.light',

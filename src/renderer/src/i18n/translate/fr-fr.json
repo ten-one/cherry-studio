@@ -849,7 +849,6 @@
     "models": "Modèles",
     "more": "Plus",
     "name": "Nom",
-    "next_match": "Prochain match",
     "no_results": "Aucun résultat",
     "none": "Aucun",
     "off": "Désactivé",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Propulsé par",
     "preview": "Aperçu",
-    "previous_match": "Match précédent",
     "prompt": "Prompt",
     "provider": "Fournisseur",
     "reasoning_content": "Réflexion approfondie",
@@ -1322,10 +1320,6 @@
     "unknown": "inconnu",
     "urdu": "Ourdou",
     "vietnamese": "Vietnamien"
-  },
-  "launchpad": {
-    "apps": "Applications",
-    "minapps": "Mini-applications"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Ajouter au tableau de bord",
     "add_to_sidebar": "Ajouter à la barre latérale",
     "popup": {
       "close": "Закрыть мини-программу",
@@ -1801,7 +1794,6 @@
       "refresh": "Обновить",
       "rightclick_copyurl": "Скопировать URL через правую кнопку мыши"
     },
-    "remove_from_launchpad": "Supprimer du tableau de bord",
     "remove_from_sidebar": "Supprimer de la barre latérale",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Voir",
       "docs_more_details": "Obtenir plus de détails",
-      "filter": {
-        "agent": "Prise en charge par un agent",
-        "all": "Tous les fournisseurs"
-      },
-      "filter_agent": "Fournisseurs pris en charge par l'agent de filtrage",
       "get_api_key": "Cliquez ici pour obtenir une clé",
       "hidden": {
         "hide": "Masquer",
@@ -4822,21 +4809,6 @@
       "reset": "Réinitialiser",
       "title": "Zoom"
     }
-  },
-  "title": {
-    "apps": "Mini-programmes",
-    "code": "Code",
-    "files": "Fichiers",
-    "home": "Page d'accueil",
-    "knowledge": "Base de connaissances",
-    "launchpad": "Tableau de lancement",
-    "mcp-servers": "Serveurs MCP",
-    "memories": "Mémoires",
-    "notes": "notes",
-    "paintings": "Peintures",
-    "settings": "Paramètres",
-    "store": "Bibliothèque d'assistants",
-    "translate": "Traduire"
   },
   "trace": {
     "backList": "Retour à la liste",

@@ -849,7 +849,6 @@
     "models": "Mô hình",
     "more": "Thêm",
     "name": "Tên",
-    "next_match": "Trận đấu tiếp theo",
     "no_results": "Không có kết quả",
     "none": "",
     "off": "Tắt",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Được cung cấp bởi",
     "preview": "Xem trước",
-    "previous_match": "Trận đấu trước",
     "prompt": "Lời nhắc",
     "provider": "Nhà cung cấp",
     "reasoning_content": "Reasoning profundo",
@@ -1322,10 +1320,6 @@
     "unknown": "không rõ",
     "urdu": "Tiếng Urdu",
     "vietnamese": "Tiếng Việt"
-  },
-  "launchpad": {
-    "apps": "Ứng dụng",
-    "minapps": "Minapps"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Ajouter à Launchpad",
     "add_to_sidebar": "Thêm vào thanh bên",
     "popup": {
       "close": "Đóng MinApp",
@@ -1801,7 +1794,6 @@
       "refresh": "Làm mới",
       "rightclick_copyurl": "Nhấp chuột phải để sao chép URL"
     },
-    "remove_from_launchpad": "Xóa khỏi Launchpad",
     "remove_from_sidebar": "Xóa khỏi thanh bên",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Kiểm tra",
       "docs_more_details": "để biết thêm chi tiết",
-      "filter": {
-        "agent": "Được hỗ trợ bởi đại lý",
-        "all": "Tất cả nhà cung cấp"
-      },
-      "filter_agent": "Các nhà cung cấp được Hỗ trợ bởi Agent Lọc",
       "get_api_key": "Lấy Khóa API",
       "hidden": {
         "hide": "Ẩn",
@@ -4822,21 +4809,6 @@
       "reset": "Đặt lại",
       "title": "Zoom de página"
     }
-  },
-  "title": {
-    "apps": "Ứng dụng",
-    "code": "Mã",
-    "files": "Tập tin",
-    "home": "Trang chủ",
-    "knowledge": "Cơ sở tri thức",
-    "launchpad": "Bảng khởi chạy",
-    "mcp-servers": "MCP Servers",
-    "memories": "Kỷ niệm",
-    "notes": "Ghi chú",
-    "paintings": "Tranh vẽ",
-    "settings": "Cài đặt",
-    "store": "Thư viện Trợ lý",
-    "translate": "Dịch"
   },
   "trace": {
     "backList": "Quay lại danh sách",

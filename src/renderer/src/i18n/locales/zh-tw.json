@@ -849,7 +849,6 @@
     "models": "模型",
     "more": "更多",
     "name": "名稱",
-    "next_match": "下一場比賽",
     "no_results": "沒有結果",
     "none": "無",
     "off": "關閉",
@@ -864,7 +863,6 @@
     },
     "powered_by": "技術提供",
     "preview": "預覽",
-    "previous_match": "上一場比賽",
     "prompt": "提示詞",
     "provider": "供應商",
     "reasoning_content": "已深度思考",
@@ -1322,10 +1320,6 @@
     "unknown": "未知",
     "urdu": "烏爾都文",
     "vietnamese": "越南文"
-  },
-  "launchpad": {
-    "apps": "應用",
-    "minapps": "小程式"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "新增到啟動台",
     "add_to_sidebar": "新增到側邊欄",
     "popup": {
       "close": "關閉小工具",
@@ -1801,7 +1794,6 @@
       "refresh": "重新整理",
       "rightclick_copyurl": "右鍵複製 URL"
     },
-    "remove_from_launchpad": "從啟動台移除",
     "remove_from_sidebar": "從側邊欄移除",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "檢查",
       "docs_more_details": "檢視更多細節",
-      "filter": {
-        "agent": "支援 Agent",
-        "all": "全部服務商"
-      },
-      "filter_agent": "篩選支援 Agent 的服務商",
       "get_api_key": "點選這裡取得金鑰",
       "hidden": {
         "hide": "隱藏",
@@ -4822,21 +4809,6 @@
       "reset": "重設",
       "title": "縮放"
     }
-  },
-  "title": {
-    "apps": "小程式",
-    "code": "程式碼",
-    "files": "檔案",
-    "home": "首頁",
-    "knowledge": "知識庫",
-    "launchpad": "啟動台",
-    "mcp-servers": "MCP 伺服器",
-    "memories": "記憶",
-    "notes": "筆記",
-    "paintings": "繪畫",
-    "settings": "設定",
-    "store": "助手庫",
-    "translate": "翻譯"
   },
   "trace": {
     "backList": "回到清單",

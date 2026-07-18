@@ -849,7 +849,6 @@
     "models": "Modelos",
     "more": "Más",
     "name": "Nombre",
-    "next_match": "Próximo partido",
     "no_results": "Sin resultados",
     "none": "无",
     "off": "Apagado",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Impulsado por",
     "preview": "Vista previa",
-    "previous_match": "Partido anterior",
     "prompt": "Prompt",
     "provider": "Proveedor",
     "reasoning_content": "Pensamiento profundo",
@@ -1322,10 +1320,6 @@
     "unknown": "desconocido",
     "urdu": "urdu",
     "vietnamese": "vietnamita"
-  },
-  "launchpad": {
-    "apps": "Aplicaciones",
-    "minapps": "Miniaplicaciones"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Agregar al panel de inicio",
     "add_to_sidebar": "Agregar a la barra lateral",
     "popup": {
       "close": "Cerrar la aplicación",
@@ -1801,7 +1794,6 @@
       "refresh": "Actualizar",
       "rightclick_copyurl": "Copiar URL con clic derecho"
     },
-    "remove_from_launchpad": "Eliminar del panel de inicio",
     "remove_from_sidebar": "Eliminar de la barra lateral",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Ver",
       "docs_more_details": "Obtener más detalles",
-      "filter": {
-        "agent": "Soporte de Agente",
-        "all": "Todos los Proveedores"
-      },
-      "filter_agent": "Proveedores compatibles con el agente de filtrado",
       "get_api_key": "Haga clic aquí para obtener la clave",
       "hidden": {
         "hide": "Ocultar",
@@ -4822,21 +4809,6 @@
       "reset": "Restablecer",
       "title": "Escala"
     }
-  },
-  "title": {
-    "apps": "Aplicaciones",
-    "code": "Código",
-    "files": "Archivos",
-    "home": "Inicio",
-    "knowledge": "Base de conocimiento",
-    "launchpad": "Centro de lanzamiento",
-    "mcp-servers": "Servidores MCP",
-    "memories": "Memorias",
-    "notes": "notas",
-    "paintings": "Pinturas",
-    "settings": "Configuración",
-    "store": "Biblioteca de asistentes",
-    "translate": "Traducir"
   },
   "trace": {
     "backList": "Volver a la lista",

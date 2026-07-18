@@ -849,7 +849,6 @@
     "models": "Models",
     "more": "More",
     "name": "Name",
-    "next_match": "Next match",
     "no_results": "No results",
     "none": "None",
     "off": "Off",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Powered by ",
     "preview": "Preview",
-    "previous_match": "Previous match",
     "prompt": "Prompt",
     "provider": "Provider",
     "reasoning_content": "Deep reasoning",
@@ -1322,10 +1320,6 @@
     "unknown": "unknown",
     "urdu": "Urdu",
     "vietnamese": "Vietnamese"
-  },
-  "launchpad": {
-    "apps": "Apps",
-    "minapps": "Minapps"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Add to Launchpad",
     "add_to_sidebar": "Add to Sidebar",
     "popup": {
       "close": "Close MinApp",
@@ -1801,7 +1794,6 @@
       "refresh": "Refresh",
       "rightclick_copyurl": "Right-click to copy URL"
     },
-    "remove_from_launchpad": "Remove from Launchpad",
     "remove_from_sidebar": "Remove from Sidebar",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Check",
       "docs_more_details": "for more details",
-      "filter": {
-        "agent": "Agent Supported",
-        "all": "All Providers"
-      },
-      "filter_agent": "Filter Agent Supported Providers",
       "get_api_key": "Get API Key",
       "hidden": {
         "hide": "Hide",
@@ -4822,21 +4809,6 @@
       "reset": "Reset",
       "title": "Page Zoom"
     }
-  },
-  "title": {
-    "apps": "Apps",
-    "code": "Code",
-    "files": "Files",
-    "home": "Home",
-    "knowledge": "Knowledge Base",
-    "launchpad": "Launchpad",
-    "mcp-servers": "MCP Servers",
-    "memories": "Memories",
-    "notes": "Notes",
-    "paintings": "Paintings",
-    "settings": "Settings",
-    "store": "Assistant Library",
-    "translate": "Translate"
   },
   "trace": {
     "backList": "Back To List",

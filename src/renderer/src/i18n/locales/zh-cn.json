@@ -849,7 +849,6 @@
     "models": "模型",
     "more": "更多",
     "name": "名称",
-    "next_match": "下一个匹配",
     "no_results": "无结果",
     "none": "无",
     "off": "关闭",
@@ -864,7 +863,6 @@
     },
     "powered_by": "由 ",
     "preview": "预览",
-    "previous_match": "上一个匹配",
     "prompt": "提示词",
     "provider": "提供商",
     "reasoning_content": "已深度思考",
@@ -1322,10 +1320,6 @@
     "unknown": "未知",
     "urdu": "乌尔都文",
     "vietnamese": "越南文"
-  },
-  "launchpad": {
-    "apps": "应用",
-    "minapps": "小程序"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "添加到启动台",
     "add_to_sidebar": "添加到侧边栏",
     "popup": {
       "close": "关闭小程序",
@@ -1801,7 +1794,6 @@
       "refresh": "刷新",
       "rightclick_copyurl": "右键复制 URL"
     },
-    "remove_from_launchpad": "从启动台移除",
     "remove_from_sidebar": "从侧边栏移除",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "查看",
       "docs_more_details": "获取更多详情",
-      "filter": {
-        "agent": "支持 Agent",
-        "all": "全部服务商"
-      },
-      "filter_agent": "筛选支持 Agent 的服务商",
       "get_api_key": "点击这里获取密钥",
       "hidden": {
         "hide": "隐藏",
@@ -4822,21 +4809,6 @@
       "reset": "重置",
       "title": "缩放"
     }
-  },
-  "title": {
-    "apps": "小程序",
-    "code": "Code",
-    "files": "文件",
-    "home": "首页",
-    "knowledge": "知识库",
-    "launchpad": "启动台",
-    "mcp-servers": "MCP 服务器",
-    "memories": "记忆",
-    "notes": "笔记",
-    "paintings": "绘画",
-    "settings": "设置",
-    "store": "助手库",
-    "translate": "翻译"
   },
   "trace": {
     "backList": "返回列表",

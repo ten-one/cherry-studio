@@ -849,7 +849,6 @@
     "models": "Modelle",
     "more": "Mehr",
     "name": "Name",
-    "next_match": "Nächstes Spiel",
     "no_results": "Keine Ergebnisse",
     "none": "Keine",
     "off": "Aus",
@@ -864,7 +863,6 @@
     },
     "powered_by": "Bereitgestellt von",
     "preview": "Vorschau",
-    "previous_match": "Vorheriges Spiel",
     "prompt": "Prompt",
     "provider": "Anbieter",
     "reasoning_content": "Tiefgehend nachgedacht",
@@ -1322,10 +1320,6 @@
     "unknown": "Unbekannt",
     "urdu": "Urdu",
     "vietnamese": "Vietnamesisch"
-  },
-  "launchpad": {
-    "apps": "Apps",
-    "minapps": "Mini-Apps"
   },
   "lmstudio": {
     "keep_alive_time": {
@@ -1787,7 +1781,6 @@
     }
   },
   "minapp": {
-    "add_to_launchpad": "Zu Launchpad hinzufügen",
     "add_to_sidebar": "Zur Seitenleiste hinzufügen",
     "popup": {
       "close": "Mini-App schließen",
@@ -1801,7 +1794,6 @@
       "refresh": "Aktualisieren",
       "rightclick_copyurl": "Rechtsklick zum Kopieren der URL"
     },
-    "remove_from_launchpad": "Aus Launchpad entfernen",
     "remove_from_sidebar": "Aus Seitenleiste entfernen",
     "sidebar": {
       "close": {
@@ -4459,11 +4451,6 @@
       },
       "docs_check": "Anzeigen",
       "docs_more_details": "Weitere Details anzeigen",
-      "filter": {
-        "agent": "Vom Agenten unterstützt",
-        "all": "Alle Anbieter"
-      },
-      "filter_agent": "Von Filter-Agent unterstützte Anbieter",
       "get_api_key": "Hier klicken um Schlüssel zu erhalten",
       "hidden": {
         "hide": "Ausblenden",
@@ -4822,21 +4809,6 @@
       "reset": "Zurücksetzen",
       "title": "Zoom"
     }
-  },
-  "title": {
-    "apps": "Mini-Apps",
-    "code": "Code",
-    "files": "Datei",
-    "home": "Startseite",
-    "knowledge": "Wissensdatenbank",
-    "launchpad": "Launchpad",
-    "mcp-servers": "MCP-Server",
-    "memories": "Erinnerungen",
-    "notes": "Notizen",
-    "paintings": "Zeichnen",
-    "settings": "Einstellungen",
-    "store": "Assistenten-Bibliothek",
-    "translate": "Übersetzen"
   },
   "trace": {
     "backList": "Rückgängig-Liste",
