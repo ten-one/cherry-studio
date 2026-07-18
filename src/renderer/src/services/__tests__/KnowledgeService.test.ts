@@ -27,7 +27,7 @@ describe('getKnowledgeBaseParams', () => {
     const base = {
       id: 'legacy-base',
       name: 'Legacy Base',
-      model: { id: 'baai/bge-m3(free)', name: 'BGE M3', provider: 'cherryin' },
+      model: { id: 'baai/bge-m3(free)', name: 'BGE M3', provider: 'cherryin', group: 'BAAI' },
       items: [],
       created_at: 1,
       updated_at: 1,
