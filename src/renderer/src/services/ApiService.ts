@@ -313,10 +313,9 @@ async function collectImagesFromMessages(userMessage: Message, assistantMessage?
   const images: string[] = []
 
   // 收集用户消息中的图像
-  // NOTE: Use `block.file.name` (always the on-disk filename) rather than
-  // `block.file.id + block.file.ext` — some save paths (saveBase64Image,
-  // savePastedImage) store `ext` without the leading dot, so concatenation
-  // produces broken paths like `<uuid>jpg` → ENOENT.
+  // NOTE: Use `block.file.name`, the canonical stored filename, rather than
+  // rebuilding it from `block.file.id + block.file.ext`. Legacy metadata may
+  // contain `ext` without a leading dot, which would produce an invalid filename.
   // Also note: `block.file.type` is a FileType enum (e.g. "image"), NOT a MIME
   // type. `base64Image` derives the real MIME from the extension internally
   // (and normalizes jpg → image/jpeg).
