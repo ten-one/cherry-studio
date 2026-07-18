@@ -866,7 +866,7 @@ export async function registerIpc(mainWindow: BrowserWindow, app: Electron.App) 
   ipcMain.handle(IpcChannel.App_GetDiskInfo, async (_, directoryPath: string) => {
     try {
       const stats = await statfs(directoryPath)
-      const free = stats.bsize * stats.bfree
+      const free = stats.bsize * stats.bavail
       const size = stats.bsize * stats.blocks
       logger.debug('disk space', { free, size })
       return { free, size }
