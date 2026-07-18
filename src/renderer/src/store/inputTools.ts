@@ -44,11 +44,7 @@ export const DEFAULT_TOOL_ORDER: ToolOrder = {
 // Note: New tools not listed here will auto-show at the end.
 // Tools are filtered by visibleInScopes first, so this only controls order/visibility of available tools.
 export const DEFAULT_TOOL_ORDER_BY_SCOPE: Record<InputbarScope, ToolOrder> = {
-  [TopicType.Chat]: DEFAULT_TOOL_ORDER,
-  'mini-window': {
-    visible: ['attachment', 'mention_models', 'quick_phrases'],
-    hidden: []
-  }
+  [TopicType.Chat]: DEFAULT_TOOL_ORDER
 }
 
 type InputToolsState = {
