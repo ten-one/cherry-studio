@@ -31,6 +31,10 @@ const createEmbedApiClient = (overrides: Partial<ApiClient>): ApiClient => ({
 describe('EmbeddingsFactory', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    openAiEmbeddingsMock.mockImplementation(() => ({
+      getDimensions: vi.fn().mockResolvedValue(undefined),
+      embedQuery: vi.fn().mockResolvedValue(new Array(1536).fill(0))
+    }))
   })
 
   it('passes custom model names through without passing dimensions to OpenAI-compatible embeddings', async () => {
@@ -57,7 +61,7 @@ describe('EmbeddingsFactory', () => {
     expect(openAiEmbeddingsMock.mock.calls[0][0]).not.toHaveProperty('dimensions')
   })
 
-  it('keeps configured dimensions local without passing them to official OpenAI embeddings', async () => {
+  it('passes configured dimensions to official OpenAI embeddings', async () => {
     const { default: Embeddings } = await import('../Embeddings')
 
     const embeddings = new Embeddings({
@@ -68,11 +72,27 @@ describe('EmbeddingsFactory', () => {
       dimensions: 768
     })
 
-    expect(openAiEmbeddingsMock.mock.calls[0][0]).not.toHaveProperty('dimensions')
+    expect(openAiEmbeddingsMock.mock.calls[0][0]).toHaveProperty('dimensions', 768)
     await expect(embeddings.getDimensions()).resolves.toBe(768)
   })
 
-  it('does not pass dimensions to Ollama or Voyage SDK constructors', async () => {
+  it('detects actual dimensions when a custom provider cannot receive the dimensions parameter', async () => {
+    const { default: Embeddings } = await import('../Embeddings')
+
+    const embeddings = new Embeddings({
+      embedApiClient: createEmbedApiClient({
+        provider: 'custom-provider',
+        baseURL: 'https://api.example.com/v1',
+        model: 'custom/embedding-model'
+      }),
+      dimensions: 768
+    })
+
+    expect(openAiEmbeddingsMock.mock.calls[0][0]).not.toHaveProperty('dimensions')
+    await expect(embeddings.getDimensions()).resolves.toBe(1536)
+  })
+
+  it('passes dimensions to Ollama and Voyage SDK constructors', async () => {
     const { default: EmbeddingsFactory } = await import('../EmbeddingsFactory')
 
     EmbeddingsFactory.create({
@@ -80,22 +100,26 @@ describe('EmbeddingsFactory', () => {
         provider: 'ollama',
         baseURL: 'http://localhost:11434/api',
         model: 'nomic-embed-text'
-      })
+      }),
+      dimensions: 768
     })
     EmbeddingsFactory.create({
       embedApiClient: createEmbedApiClient({
         provider: 'voyageai',
         model: 'voyage-3'
-      })
+      }),
+      dimensions: 512
     })
 
     expect(ollamaEmbeddingsMock.mock.calls[0][0]).toEqual({
       model: 'nomic-embed-text',
-      baseUrl: 'http://localhost:11434'
+      baseUrl: 'http://localhost:11434',
+      dimensions: 768
     })
     expect(voyageEmbeddingsMock.mock.calls[0][0]).toEqual({
       modelName: 'voyage-3',
       apiKey: 'test-key',
+      outputDimension: 512,
       batchSize: 8
     })
   })
