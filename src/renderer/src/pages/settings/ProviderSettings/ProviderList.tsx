@@ -13,10 +13,9 @@ import ImageStorage from '@renderer/services/ImageStorage'
 import type { Provider, ProviderType } from '@renderer/types'
 import { isSystemProvider } from '@renderer/types'
 import { getFancyProviderName, matchKeywordsInModel, matchKeywordsInProvider, uuid } from '@renderer/utils'
-import { isAnthropicSupportedProvider } from '@renderer/utils/provider'
 import type { MenuProps } from 'antd'
 import { Button, Dropdown, Input, Tag } from 'antd'
-import { Check, ChevronDown, ChevronRight, Eye, EyeOff, Filter, GripVertical, PlusIcon, Search } from 'lucide-react'
+import { ChevronDown, ChevronRight, Eye, EyeOff, GripVertical, PlusIcon, Search } from 'lucide-react'
 import type { FC } from 'react'
 import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -64,7 +63,6 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
   const { t } = useTranslation()
   const [searchText, setSearchText] = useState<string>('')
   const [dragging, setDragging] = useState(false)
-  const [agentFilterEnabled, setAgentFilterEnabled] = useState(false)
   const [hiddenProvidersExpanded, setHiddenProvidersExpanded] = useState(false)
   const [providerLogos, setProviderLogos] = useState<Record<string, string>>({})
   const listRef = useRef<DraggableVirtualListRef>(null)
@@ -96,16 +94,11 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
         return false
       }
 
-      // Filter by agent support
-      if (agentFilterEnabled && !isAnthropicSupportedProvider(provider)) {
-        return false
-      }
-
       const isProviderMatch = matchKeywordsInProvider(keywords, provider)
       const isModelMatch = provider.models.some((model) => matchKeywordsInModel(keywords, model))
       return isProviderMatch || isModelMatch
     })
-  }, [agentFilterEnabled, isOvmsSupported, searchText, visibleProviders])
+  }, [isOvmsSupported, searchText, visibleProviders])
 
   const setSelectedProvider = useCallback((provider: Provider | undefined) => {
     startTransition(() => _setSelectedProvider(provider))
@@ -149,15 +142,7 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
 
   useEffect(() => {
     let shouldUpdate = false
-    const hasFilterParam = searchParams.get('filter') === 'agent'
-
-    // Handle filter param first - when filter is enabled, ignore id param
-    if (hasFilterParam) {
-      setAgentFilterEnabled(true)
-      searchParams.delete('filter')
-      searchParams.delete('id') // Clear id param when filter is enabled
-      shouldUpdate = true
-    } else if (searchParams.get('id')) {
+    if (searchParams.get('id')) {
       const providerId = searchParams.get('id')
       if (providerId === 'ovms' && isOvmsSupported === undefined) {
         return
@@ -388,7 +373,6 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
     (provider: Provider) => {
       unhideProvider(provider.id)
       setSearchText('')
-      setAgentFilterEnabled(false)
       setSelectedProvider(provider)
 
       const restoredProviders = providers.filter((p) => p.id === provider.id || !hiddenProviderIdSet.has(p.id))
@@ -426,33 +410,6 @@ const ProviderList: FC<ProviderListProps> = ({ isOnboarding = false }) => {
             value={searchText}
             style={{ borderRadius: 'var(--list-item-border-radius)', height: 35 }}
             prefix={<Search size={14} />}
-            suffix={
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      label: t('settings.provider.filter.all'),
-                      key: 'all',
-                      icon: agentFilterEnabled ? <CheckPlaceholder /> : <Check size={14} />,
-                      onClick: () => setAgentFilterEnabled(false)
-                    },
-                    {
-                      label: t('settings.provider.filter.agent'),
-                      key: 'agent',
-                      icon: agentFilterEnabled ? <Check size={14} /> : <CheckPlaceholder />,
-                      onClick: () => setAgentFilterEnabled(true)
-                    }
-                  ]
-                }}
-                trigger={['click']}>
-                <FilterButton>
-                  <Filter
-                    size={14}
-                    className={agentFilterEnabled ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-3)]'}
-                  />
-                </FilterButton>
-              </Dropdown>
-            }
             onChange={(e) => setSearchText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
@@ -686,22 +643,6 @@ const HiddenProviderItem = styled.div`
     flex: 1;
     min-width: 0;
   }
-`
-
-const FilterButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  cursor: pointer;
-`
-
-const CheckPlaceholder = styled.span`
-  display: inline-block;
-  width: 14px;
-  height: 14px;
 `
 
 export default ProviderList

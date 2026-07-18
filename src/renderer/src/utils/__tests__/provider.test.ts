@@ -3,11 +3,8 @@ import { type AzureOpenAIProvider, type Provider, SystemProviderIds } from '@ren
 import { describe, expect, it, vi } from 'vitest'
 
 import {
-  getAnthropicSupportedProviders,
-  getClaudeSupportedProviders,
   isAIGatewayProvider,
   isAnthropicProvider,
-  isAnthropicSupportedProvider,
   isAzureOpenAIProvider,
   isGeminiProvider,
   isGeminiWebSearchProvider,
@@ -60,43 +57,10 @@ const createSystemProvider = (overrides: Partial<Provider> = {}): Provider =>
 describe('provider utils', () => {
   it('configures StepFun as Anthropic-compatible with current official documentation links', () => {
     expect(SYSTEM_PROVIDERS_CONFIG.stepfun.anthropicApiHost).toBe('https://api.stepfun.com')
-    expect(isAnthropicSupportedProvider(SYSTEM_PROVIDERS_CONFIG.stepfun)).toBe(true)
-    expect(getClaudeSupportedProviders([createSystemProvider({ id: SystemProviderIds.stepfun })])).toHaveLength(1)
     expect(PROVIDER_URLS.stepfun.websites?.docs).toBe(
       'https://platform.stepfun.com/docs/api-reference/chat/chat-completion-create'
     )
     expect(PROVIDER_URLS.stepfun.websites?.models).toBe('https://platform.stepfun.com/docs/guides/models/overview')
-  })
-
-  it('filters Claude supported providers', () => {
-    const providers = [
-      createProvider({ id: 'anthropic-official', type: 'anthropic' }),
-      createProvider({ id: 'custom-host', anthropicApiHost: 'https://anthropic.local' }),
-      createProvider({ id: 'aihubmix' }),
-      createProvider({ id: 'other' })
-    ]
-
-    expect(getClaudeSupportedProviders(providers)).toEqual(providers.slice(0, 3))
-  })
-
-  it('filters Anthropic supported providers', () => {
-    const providers = [
-      createProvider({ id: 'anthropic-official', type: 'anthropic' }),
-      createProvider({ id: 'custom-host', anthropicApiHost: 'https://anthropic.local' }),
-      createProvider({ id: 'aihubmix' }),
-      createProvider({ id: 'other' })
-    ]
-
-    expect(getAnthropicSupportedProviders(providers)).toEqual(providers.slice(0, 2))
-  })
-
-  it('checks Anthropic supported provider', () => {
-    expect(isAnthropicSupportedProvider(createProvider({ id: 'anthropic-official', type: 'anthropic' }))).toBe(true)
-    expect(
-      isAnthropicSupportedProvider(createProvider({ id: 'custom-host', anthropicApiHost: 'https://anthropic.local' }))
-    ).toBe(true)
-    expect(isAnthropicSupportedProvider(createProvider({ id: 'aihubmix' }))).toBe(false)
-    expect(isAnthropicSupportedProvider(createProvider({ id: 'other' }))).toBe(false)
   })
 
   it('evaluates message array content support', () => {
