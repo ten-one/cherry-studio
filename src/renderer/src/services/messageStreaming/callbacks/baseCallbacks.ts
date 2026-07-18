@@ -7,7 +7,6 @@ import { estimateMessagesUsage } from '@renderer/services/TokenService'
 import { updateOneBlock } from '@renderer/store/messageBlock'
 import { selectMessagesForTopic } from '@renderer/store/newMessage'
 import { newMessagesActions } from '@renderer/store/newMessage'
-import { toolPermissionsActions } from '@renderer/store/toolPermissions'
 import type { Assistant } from '@renderer/types'
 import { ERROR_I18N_KEY_REQUEST_TIMEOUT, ERROR_I18N_KEY_STREAM_PAUSED } from '@renderer/types/error'
 import type {
@@ -202,10 +201,6 @@ export const createBaseCallbacks = (deps: BaseCallbacksDependencies) => {
           }
         }
       }
-
-      // Clean up pending/submitting tool permission requests from this stream.
-      // Preserve 'invoking' entries as they may belong to concurrent streams.
-      dispatch(toolPermissionsActions.clearPending())
 
       const errorBlock = createErrorBlock(assistantMsgId, serializableError, { status: MessageBlockStatus.SUCCESS })
       await blockManager.handleBlockTransition(errorBlock, MessageBlockType.ERROR)

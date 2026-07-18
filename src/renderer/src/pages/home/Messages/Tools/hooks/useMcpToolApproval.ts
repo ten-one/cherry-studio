@@ -157,8 +157,6 @@ export function useMcpToolApproval(block: ToolMessageBlock): ToolApprovalState &
     // State
     isWaiting,
     isExecuting,
-    isSubmitting: false,
-    input: undefined,
 
     // Actions
     confirm,

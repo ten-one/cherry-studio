@@ -23,7 +23,6 @@ export interface ToolApprovalActionsProps extends ToolApprovalState, ToolApprova
 export const ToolApprovalActionsComponent: FC<ToolApprovalActionsProps> = ({
   isWaiting,
   isExecuting,
-  isSubmitting,
   confirm,
   cancel,
   autoApprove,
@@ -70,7 +69,6 @@ export const ToolApprovalActionsComponent: FC<ToolApprovalActionsProps> = ({
         size="small"
         color="danger"
         variant={compact ? 'text' : 'outlined'}
-        disabled={isSubmitting}
         onClick={(e) => handleClick(e, cancel)}>
         <CircleX size={compact ? 13 : 14} className="lucide-custom" />
         {!compact && t('common.cancel')}
@@ -80,7 +78,6 @@ export const ToolApprovalActionsComponent: FC<ToolApprovalActionsProps> = ({
         <StyledDropdownButton
           size="small"
           type="primary"
-          disabled={isSubmitting}
           icon={<ChevronDown size={compact ? 12 : 14} />}
           onClick={(e) => handleClick(e, confirm)}
           menu={{
@@ -97,7 +94,7 @@ export const ToolApprovalActionsComponent: FC<ToolApprovalActionsProps> = ({
           {t('settings.mcp.tools.run', 'Run')}
         </StyledDropdownButton>
       ) : (
-        <Button size="small" type="primary" disabled={isSubmitting} onClick={(e) => handleClick(e, confirm)}>
+        <Button size="small" type="primary" onClick={(e) => handleClick(e, confirm)}>
           <CirclePlay size={compact ? 13 : 15} className="lucide-custom" />
           {t('settings.mcp.tools.run', 'Run')}
         </Button>
