@@ -203,10 +203,16 @@ const anthropicFetcher: ModelFetcher = {
   match: (p) => p.id === SystemProviderIds.anthropic,
   fetch: async (provider, signal) => {
     const baseUrl = formatApiHost(provider.apiHost)
-    const authHeaders: Record<string, string> =
-      provider.authType === 'oauth'
-        ? { Authorization: `Bearer ${await window.api.anthropic_oauth.getAccessToken()}` }
-        : { 'x-api-key': getApiKey(provider) }
+    let authHeaders: Record<string, string>
+    if (provider.authType === 'oauth') {
+      const accessToken = await window.api.anthropic_oauth.getAccessToken()
+      if (!accessToken) {
+        throw new Error('Anthropic OAuth access token is missing')
+      }
+      authHeaders = { Authorization: `Bearer ${accessToken}` }
+    } else {
+      authHeaders = { 'x-api-key': getApiKey(provider) }
+    }
     const headers = {
       ...defaultAppHeaders(),
       ...authHeaders,

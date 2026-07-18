@@ -584,6 +584,24 @@ describe('listModels', () => {
       expect(request.headers).not.toHaveProperty('x-api-key')
     })
 
+    it('should skip the Anthropic model request when the OAuth access token is missing', async () => {
+      mockAnthropicGetAccessToken.mockResolvedValueOnce(null)
+
+      const models = await listModels(
+        makeProvider({
+          id: 'anthropic',
+          type: 'anthropic' as any,
+          apiHost: 'https://api.anthropic.com/v1',
+          apiKey: '',
+          authType: 'oauth'
+        })
+      )
+
+      expect(models).toEqual([])
+      expect(mockAnthropicGetAccessToken).toHaveBeenCalledTimes(1)
+      expect(mockGetFromApi).not.toHaveBeenCalled()
+    })
+
     it('should paginate Anthropic model list results via after_id', async () => {
       mockGetFromApi
         .mockResolvedValueOnce({
