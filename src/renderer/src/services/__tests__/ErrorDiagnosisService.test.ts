@@ -32,7 +32,7 @@ vi.mock('@renderer/services/LoggerService', () => ({
 import store from '@renderer/store'
 
 import { fetchGenerate } from '../ApiService'
-import { diagnoseError } from '../ErrorDiagnosisService'
+import { classifyErrorByAI, diagnoseError } from '../ErrorDiagnosisService'
 
 const mockFetchGenerate = vi.mocked(fetchGenerate)
 const mockGetState = vi.mocked(store.getState)
@@ -117,11 +117,22 @@ describe('ErrorDiagnosisService', () => {
       expect(mockFetchGenerate).not.toHaveBeenCalled()
     })
 
-    it('does not retry the model that produced the original error', async () => {
-      await expect(diagnoseError(makeError(), 'en', { modelId: defaultModel.id })).rejects.toThrow(
-        'All diagnosis models failed'
+    it('uses a configured alternate instead of retrying the model that produced the original error', async () => {
+      const quickModel = { id: 'claude-sonnet-4', name: 'Claude Sonnet 4', provider: 'anthropic' }
+      mockGetState.mockReturnValue({ llm: { defaultModel, quickModel } } as any)
+      mockFetchGenerate.mockResolvedValue(
+        JSON.stringify({
+          summary: 'Error',
+          category: 'unknown',
+          explanation: 'Something went wrong.',
+          steps: []
+        })
       )
-      expect(mockFetchGenerate).not.toHaveBeenCalled()
+
+      await diagnoseError(makeError(), 'en', { providerName: defaultModel.provider, modelId: defaultModel.id })
+
+      expect(mockFetchGenerate).toHaveBeenCalledTimes(1)
+      expect(mockFetchGenerate).toHaveBeenCalledWith(expect.objectContaining({ model: quickModel }))
     })
 
     it('includes context in error info', async () => {
@@ -156,6 +167,18 @@ describe('ErrorDiagnosisService', () => {
 
       const result = await diagnoseError(makeError(), 'en')
       expect(result.category).toBe('unknown')
+    })
+  })
+
+  describe('classifyErrorByAI', () => {
+    it('does not retry the original model when no alternate is configured', async () => {
+      const result = await classifyErrorByAI(makeError(), 'en', {
+        providerName: defaultModel.provider,
+        modelId: defaultModel.id
+      })
+
+      expect(result).toBe('')
+      expect(mockFetchGenerate).not.toHaveBeenCalled()
     })
   })
 })

@@ -84,6 +84,14 @@ const MessageErrorInfo: React.FC<{ block: ErrorMessageBlock; message: Message }>
 
   const providerId = message.model?.provider ?? (block.error?.providerId as string | undefined)
   const classification = useMemo(() => classifyError(block.error, providerId), [block.error, providerId])
+  const diagnosisContext = useMemo(
+    () => ({
+      errorSource: 'chat' as const,
+      providerName: (block.error?.providerId as string | undefined) ?? message.model?.provider,
+      modelId: (block.error?.modelId as string | undefined) ?? message.model?.id
+    }),
+    [block.error?.providerId, block.error?.modelId, message.model?.provider, message.model?.id]
+  )
 
   // AI fallback: when rule-based classification returns 'unknown', ask AI for a one-line summary
   const errorForAI = block.error
@@ -94,7 +102,7 @@ const MessageErrorInfo: React.FC<{ block: ErrorMessageBlock; message: Message }>
     const cached = aiClassifyCache.get(cacheKey)
     const promise =
       cached ??
-      classifyErrorByAI(errorForAI, i18n.language).then((summary) => {
+      classifyErrorByAI(errorForAI, i18n.language, diagnosisContext).then((summary) => {
         if (!summary) aiClassifyCache.delete(cacheKey)
         return summary
       })
@@ -107,16 +115,7 @@ const MessageErrorInfo: React.FC<{ block: ErrorMessageBlock; message: Message }>
     return () => {
       cancelled = true
     }
-  }, [classification.category, errorForAI, i18n.language])
-
-  const diagnosisContext = useMemo(
-    () => ({
-      errorSource: 'chat' as const,
-      providerName: block.error?.providerId as string | undefined,
-      modelId: block.error?.modelId as string | undefined
-    }),
-    [block.error?.providerId, block.error?.modelId]
-  )
+  }, [classification.category, diagnosisContext, errorForAI, i18n.language])
 
   const onRemoveBlock = useCallback(
     (e: React.MouseEvent) => {

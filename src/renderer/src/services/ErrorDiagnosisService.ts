@@ -25,8 +25,19 @@ export interface DiagnosisContext {
 }
 
 function buildModelsToTry(context?: DiagnosisContext): Model[] {
-  const defaultModel = store.getState().llm.defaultModel
-  return defaultModel && defaultModel.id !== context?.modelId ? [defaultModel] : []
+  const { defaultModel, quickModel, topicNamingModel, translateModel } = store.getState().llm
+  const seenModels = new Set<string>()
+
+  return [defaultModel, quickModel, topicNamingModel, translateModel].filter((model): model is Model => {
+    if (!model) return false
+
+    const modelKey = `${model.provider}:${model.id}`
+    if (seenModels.has(modelKey)) return false
+    seenModels.add(modelKey)
+
+    if (model.id !== context?.modelId) return true
+    return Boolean(context.providerName && model.provider !== context.providerName)
+  })
 }
 
 function buildContextHint(errorInfo: Record<string, unknown>, context?: DiagnosisContext): string {
@@ -190,11 +201,15 @@ Output: {"summary":"OpenAI API key is invalid or expired","category":"auth","exp
  * Lightweight AI classification for errors that don't match any rule.
  * Returns a one-line summary in the user's language, or empty string on failure.
  */
-export async function classifyErrorByAI(error: SerializedError, language: string): Promise<string> {
+export async function classifyErrorByAI(
+  error: SerializedError,
+  language: string,
+  context?: DiagnosisContext
+): Promise<string> {
   const prompt = `You are an error diagnosis assistant for Cherry Studio. Summarize this error in one sentence (max 30 words) in ${language}. Return ONLY the summary text, no JSON, no markdown, no quotes.`
   const content = `Error: ${error.name}: ${error.message}`
 
-  const modelsToTry = buildModelsToTry()
+  const modelsToTry = buildModelsToTry(context)
 
   for (const model of modelsToTry) {
     try {
