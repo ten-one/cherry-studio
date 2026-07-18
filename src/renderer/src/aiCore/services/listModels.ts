@@ -203,7 +203,7 @@ const anthropicFetcher: ModelFetcher = {
   match: (p) => p.id === SystemProviderIds.anthropic,
   fetch: async (provider, signal) => {
     const baseUrl = formatApiHost(provider.apiHost)
-    const authHeaders =
+    const authHeaders: Record<string, string> =
       provider.authType === 'oauth'
         ? { Authorization: `Bearer ${await window.api.anthropic_oauth.getAccessToken()}` }
         : { 'x-api-key': getApiKey(provider) }
