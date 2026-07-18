@@ -5,6 +5,8 @@ import { getMessageContent } from '@renderer/aiCore/plugins/searchOrchestrationP
 import { DEFAULT_KNOWLEDGE_DOCUMENT_COUNT, DEFAULT_KNOWLEDGE_THRESHOLD } from '@renderer/config/constant'
 import { getEmbeddingMaxContext } from '@renderer/config/embedings'
 import { REFERENCE_PROMPT } from '@renderer/config/prompts'
+import { getStoreProviders } from '@renderer/hooks/useStore'
+import i18n from '@renderer/i18n'
 import { addSpan, endSpan } from '@renderer/services/SpanManagerService'
 import store from '@renderer/store'
 import type { Assistant } from '@renderer/types'
@@ -26,7 +28,6 @@ import { isAzureOpenAIProvider, isGeminiProvider } from '@renderer/utils/provide
 import type { ModelMessage, UserModelMessage } from 'ai'
 import { isEmpty } from 'lodash'
 
-import { getProviderByModel } from './AssistantService'
 import FileManager from './FileManager'
 import type { BlockManager } from './messageStreaming'
 import { estimateTextTokens } from './TokenService'
@@ -34,8 +35,20 @@ import { estimateTextTokens } from './TokenService'
 const logger = loggerService.withContext('RendererKnowledgeService')
 
 export const getKnowledgeBaseParams = (base: KnowledgeBase): KnowledgeBaseParams => {
-  const rerankProvider = getProviderByModel(base.rerankModel)
-  const aiProvider = new AiProvider(base.model)
+  const providers = getStoreProviders()
+  const modelProvider = providers.find((provider) => provider.id === base.model?.provider)
+  if (!modelProvider) {
+    throw new Error(i18n.t('knowledge.provider_not_found'))
+  }
+
+  const rerankProvider = base.rerankModel
+    ? providers.find((provider) => provider.id === base.rerankModel?.provider)
+    : modelProvider
+  if (!rerankProvider) {
+    throw new Error(i18n.t('knowledge.provider_not_found'))
+  }
+
+  const aiProvider = new AiProvider(base.model, modelProvider)
   const rerankAiProvider = new AiProvider(rerankProvider)
 
   // get preprocess provider from store instead of base.preprocessProvider

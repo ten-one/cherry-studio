@@ -168,4 +168,86 @@ describe('store migrations', () => {
       expect(migrated.settings.showMessageOutline).toBe(true)
     })
   })
+
+  describe('migration 213: removed feature state and provider reference cleanup', () => {
+    it('preserves orphaned knowledge bases for explicit migration and clears safe stale references', async () => {
+      const removedEmbeddingModel = { id: 'baai/bge-m3(free)', name: 'BGE M3', provider: 'cherryin' }
+      const removedChatModel = { id: 'glm-4.5-flash', name: 'GLM 4.5 Flash', provider: 'cherryin' }
+      const state = {
+        settings: {
+          apiServer: { apiKey: 'cs-sk-secret', enabled: true },
+          enableQuickAssistant: true,
+          clickTrayToShowQuickAssistant: true,
+          readClipboardAtStartup: true,
+          showMessageOutline: true,
+          sidebarIcons: {
+            visible: ['assistants', 'agents', 'openclaw', 'minapp'],
+            disabled: ['code', 'notes']
+          }
+        },
+        shortcuts: {
+          shortcuts: [
+            { key: 'show_app', shortcut: [], editable: true, enabled: true, system: true },
+            { key: 'mini_window', shortcut: ['CommandOrControl', 'E'], editable: true, enabled: true, system: true }
+          ]
+        },
+        inputTools: {
+          toolOrder: { visible: [], hidden: [] },
+          sessionToolOrder: { visible: ['create_session'], hidden: [] }
+        },
+        codeTools: { environmentVariables: { 'claude-code': 'secret' } },
+        openclaw: { gatewayPort: 18790 },
+        knowledge: {
+          bases: [
+            {
+              id: 'legacy-base',
+              name: 'Legacy Base',
+              model: removedEmbeddingModel,
+              rerankModel: removedEmbeddingModel,
+              items: [{ id: 'item-1', processingStatus: 'completed' }],
+              updated_at: 1
+            }
+          ]
+        },
+        memory: {
+          memoryConfig: {
+            embeddingModel: removedEmbeddingModel,
+            embeddingDimensions: 1024,
+            llmModel: removedChatModel,
+            isAutoDimensions: false
+          },
+          globalMemoryEnabled: true
+        },
+        _persist: { version: 212, rehydrated: false }
+      }
+
+      const migrated: any = await migrate(state as any, 213)
+
+      expect(migrated.settings).not.toHaveProperty('apiServer')
+      expect(migrated.settings).not.toHaveProperty('enableQuickAssistant')
+      expect(migrated.settings).not.toHaveProperty('clickTrayToShowQuickAssistant')
+      expect(migrated.settings).not.toHaveProperty('readClipboardAtStartup')
+      expect(migrated.settings.showMessageOutline).toBe(true)
+      expect(migrated.settings.sidebarIcons).toEqual({ visible: ['assistants', 'minapp'], disabled: ['notes'] })
+      expect(migrated.shortcuts.shortcuts.map((shortcut: { key: string }) => shortcut.key)).toEqual(['show_app'])
+      expect(migrated.inputTools).not.toHaveProperty('sessionToolOrder')
+      expect(migrated).not.toHaveProperty('codeTools')
+      expect(migrated).not.toHaveProperty('openclaw')
+
+      const migratedBase = migrated.knowledge.bases[0]
+      expect(migratedBase.model).toEqual(removedEmbeddingModel)
+      expect(migratedBase).not.toHaveProperty('rerankModel')
+      expect(migratedBase.items[0]).toMatchObject({
+        processingStatus: 'failed',
+        retryCount: 1
+      })
+      expect(migratedBase.items[0].processingError).toBeTruthy()
+
+      expect(migrated.memory.memoryConfig).not.toHaveProperty('embeddingModel')
+      expect(migrated.memory.memoryConfig).not.toHaveProperty('embeddingDimensions')
+      expect(migrated.memory.memoryConfig).not.toHaveProperty('llmModel')
+      expect(migrated.memory.memoryConfig.isAutoDimensions).toBe(true)
+      expect(migrated.memory.globalMemoryEnabled).toBe(false)
+    })
+  })
 })

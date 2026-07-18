@@ -27,7 +27,7 @@ import { isFunctionCallingModel, isNotSupportTextDeltaModel, SYSTEM_MODELS } fro
 import { BUILTIN_OCR_PROVIDERS, BUILTIN_OCR_PROVIDERS_MAP, DEFAULT_OCR_PROVIDER } from '@renderer/config/ocr'
 import { TRANSLATE_PROMPT } from '@renderer/config/prompts'
 import { SYSTEM_PROVIDERS } from '@renderer/config/providers'
-import { DEFAULT_SIDEBAR_ICONS } from '@renderer/config/sidebar'
+import { DEFAULT_SIDEBAR_ICONS, filterValidSidebarIcons } from '@renderer/config/sidebar'
 import db from '@renderer/databases'
 import { getModel } from '@renderer/hooks/useModel'
 import i18n from '@renderer/i18n'
@@ -60,7 +60,7 @@ import { mcpSlice } from './mcp'
 import { initialState as notesInitialState } from './note'
 import { defaultActionItems } from './selectionStore'
 import { initialState as settingsInitialState } from './settings'
-import { initialState as shortcutsInitialState } from './shortcuts'
+import { getSupportedShortcuts, initialState as shortcutsInitialState } from './shortcuts'
 import { defaultWebSearchProviders } from './websearch'
 
 const logger = loggerService.withContext('Migrate')
@@ -3399,6 +3399,74 @@ const migrateConfig = {
       return state
     } catch (error) {
       logger.error('migrate 212 error', error as Error)
+      return state
+    }
+  },
+  '213': (state: RootState) => {
+    try {
+      const removedProviderId = 'cherryin'
+      const usesRemovedProvider = (model?: Model) => model?.provider === removedProviderId
+      const stateRecord = state as unknown as Record<string, unknown>
+      const settings = state.settings as unknown as Record<string, unknown>
+
+      delete settings.apiServer
+      delete settings.enableQuickAssistant
+      delete settings.clickTrayToShowQuickAssistant
+      delete settings.readClipboardAtStartup
+
+      if (state.settings.sidebarIcons) {
+        state.settings.sidebarIcons.visible = filterValidSidebarIcons(state.settings.sidebarIcons.visible)
+        state.settings.sidebarIcons.disabled = filterValidSidebarIcons(state.settings.sidebarIcons.disabled)
+      }
+
+      if (state.shortcuts?.shortcuts) {
+        state.shortcuts.shortcuts = getSupportedShortcuts(state.shortcuts.shortcuts)
+      }
+
+      const inputTools = state.inputTools as unknown as Record<string, unknown>
+      delete inputTools.sessionToolOrder
+
+      delete stateRecord.codeTools
+      delete stateRecord.openclaw
+
+      state.knowledge?.bases?.forEach((base) => {
+        if (usesRemovedProvider(base.rerankModel)) {
+          delete base.rerankModel
+        }
+
+        if (usesRemovedProvider(base.model)) {
+          const providerError = i18n.t('knowledge.provider_not_found')
+          base.items?.forEach((item) => {
+            item.processingStatus = 'failed'
+            item.processingError = providerError
+            item.retryCount = 1
+          })
+          base.updated_at = Date.now()
+        }
+      })
+
+      const memoryConfig = state.memory?.memoryConfig
+      if (memoryConfig) {
+        const removedEmbeddingModel = usesRemovedProvider(memoryConfig.embeddingModel)
+        const removedLlmModel = usesRemovedProvider(memoryConfig.llmModel)
+
+        if (removedEmbeddingModel) {
+          delete memoryConfig.embeddingModel
+          delete memoryConfig.embeddingDimensions
+          memoryConfig.isAutoDimensions = true
+        }
+        if (removedLlmModel) {
+          delete memoryConfig.llmModel
+        }
+        if (removedEmbeddingModel || removedLlmModel) {
+          state.memory.globalMemoryEnabled = false
+        }
+      }
+
+      logger.info('migrate 213 success')
+      return state
+    } catch (error) {
+      logger.error('migrate 213 error', error as Error)
       return state
     }
   }
