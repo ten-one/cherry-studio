@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const mockGetFromApi = vi.fn()
 const mockCopilotGetToken = vi.fn()
 const mockVertexGetAuthHeaders = vi.fn()
+const mockAnthropicGetAccessToken = vi.fn()
 const mockToastError = vi.fn()
 const createMockStoreState = () => ({
   copilot: {
@@ -399,10 +400,12 @@ beforeEach(() => {
   mockGetFromApi.mockReset()
   mockCopilotGetToken.mockReset()
   mockVertexGetAuthHeaders.mockReset()
+  mockAnthropicGetAccessToken.mockReset()
   mockToastError.mockReset()
   mockStoreState = createMockStoreState()
   mockCopilotGetToken.mockResolvedValue({ token: 'copilot-dynamic-token' })
   mockVertexGetAuthHeaders.mockResolvedValue({ Authorization: 'Bearer vertex-token' })
+  mockAnthropicGetAccessToken.mockResolvedValue('anthropic-oauth-token')
   vi.stubGlobal('window', {
     ...globalThis.window,
     keyv: { get: vi.fn(), set: vi.fn() },
@@ -415,6 +418,9 @@ beforeEach(() => {
       },
       vertexAI: {
         getAuthHeaders: mockVertexGetAuthHeaders
+      },
+      anthropic_oauth: {
+        getAccessToken: mockAnthropicGetAccessToken
       }
     }
   })
@@ -554,6 +560,28 @@ describe('listModels', () => {
         group: 'anthropic',
         owned_by: 'anthropic'
       })
+    })
+
+    it('uses the OAuth access token when Anthropic is configured for OAuth', async () => {
+      mockGetFromApi.mockResolvedValue({ value: REAL_ANTHROPIC })
+
+      await listModels(
+        makeProvider({
+          id: 'anthropic',
+          type: 'anthropic' as any,
+          apiHost: 'https://api.anthropic.com/v1',
+          apiKey: '',
+          authType: 'oauth'
+        })
+      )
+
+      expect(mockAnthropicGetAccessToken).toHaveBeenCalledTimes(1)
+      const [request] = mockGetFromApi.mock.calls[0]
+      expect(request.headers).toMatchObject({
+        Authorization: 'Bearer anthropic-oauth-token',
+        'anthropic-version': '2023-06-01'
+      })
+      expect(request.headers).not.toHaveProperty('x-api-key')
     })
 
     it('should paginate Anthropic model list results via after_id', async () => {

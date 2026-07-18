@@ -203,10 +203,13 @@ const anthropicFetcher: ModelFetcher = {
   match: (p) => p.id === SystemProviderIds.anthropic,
   fetch: async (provider, signal) => {
     const baseUrl = formatApiHost(provider.apiHost)
-    const apiKey = getApiKey(provider)
+    const authHeaders =
+      provider.authType === 'oauth'
+        ? { Authorization: `Bearer ${await window.api.anthropic_oauth.getAccessToken()}` }
+        : { 'x-api-key': getApiKey(provider) }
     const headers = {
       ...defaultAppHeaders(),
-      ...(apiKey ? { 'x-api-key': apiKey } : {}),
+      ...authHeaders,
       'anthropic-version': '2023-06-01',
       ...provider.extra_headers
     }
