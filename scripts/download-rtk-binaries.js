@@ -10,6 +10,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const { execFileSync } = require('child_process')
+const AdmZip = require('adm-zip')
 
 const RTK_VERSION = '0.30.1'
 
@@ -29,6 +30,14 @@ function downloadFile(url, destPath) {
   }
 }
 
+function extractArchive(archivePath, destinationDir) {
+  if (archivePath.endsWith('.tar.gz')) {
+    execFileSync('tar', ['-xzf', archivePath, '-C', destinationDir], { stdio: 'inherit' })
+  } else if (archivePath.endsWith('.zip')) {
+    new AdmZip(archivePath).extractAllTo(destinationDir, true)
+  }
+}
+
 function downloadRtk(platformKey, outputDir) {
   const pkg = RTK_PACKAGES[platformKey]
   if (!pkg) {
@@ -42,12 +51,7 @@ function downloadRtk(platformKey, outputDir) {
 
   try {
     downloadFile(url, tempFile)
-
-    if (pkg.file.endsWith('.tar.gz')) {
-      execFileSync('tar', ['-xzf', tempFile, '-C', tempDir], { stdio: 'inherit' })
-    } else if (pkg.file.endsWith('.zip')) {
-      execFileSync('unzip', ['-o', tempFile, '-d', tempDir], { stdio: 'inherit' })
-    }
+    extractArchive(tempFile, tempDir)
 
     // rtk archives extract the binary at the root level
     const srcPath = path.join(tempDir, pkg.binary)
@@ -84,9 +88,14 @@ function main() {
   console.log(`All binaries downloaded to ${outputDir}`)
 }
 
-try {
-  main()
-} catch (error) {
-  console.error('Failed to download binaries:', error.message)
-  // Non-fatal: don't block the build if binary download fails
+if (require.main === module) {
+  try {
+    main()
+  } catch (error) {
+    console.error('Failed to download binaries:', error.message)
+    // Report failure to before-pack; it decides whether the download is fatal.
+    process.exitCode = 1
+  }
 }
+
+module.exports = { extractArchive }
