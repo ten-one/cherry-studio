@@ -11,7 +11,6 @@ import { useOnboardingState } from './hooks/useOnboardingState'
 import FilesPage from './pages/files/FilesPage'
 import HomePage from './pages/home/HomePage'
 import KnowledgePage from './pages/knowledge/KnowledgePage'
-import LaunchpadPage from './pages/launchpad/LaunchpadPage'
 import MinAppsPage from './pages/minapps/MinAppsPage'
 import NotesPage from './pages/notes/NotesPage'
 import { OnboardingPage } from './pages/onboarding'
@@ -40,7 +39,7 @@ const Router: FC = () => {
           <Route path="/apps/:appId" element={<Navigate to="/apps" replace />} />
           <Route path="/apps" element={<MinAppsPage />} />
           <Route path="/settings/*" element={<SettingsPage />} />
-          <Route path="/launchpad" element={<LaunchpadPage />} />
+          <Route path="/launchpad" element={<Navigate to="/" replace />} />
         </Routes>
       </ErrorBoundary>
     )

@@ -67,17 +67,10 @@ const attachKeyboardHandler = (contents: Electron.WebContents) => {
       return
     }
 
-    // Helper to check if this is a shortcut we handle
-    const isHandledShortcut = (k: string) => {
-      const isFindShortcut = (input.control || input.meta) && k === 'f'
-      const isPrintShortcut = (input.control || input.meta) && k === 'p'
-      const isSaveShortcut = (input.control || input.meta) && k === 's'
-      const isEscape = k === 'escape'
-      const isEnter = k === 'enter'
-      return isFindShortcut || isPrintShortcut || isSaveShortcut || isEscape || isEnter
-    }
+    const isPrintShortcut = (input.control || input.meta) && key === 'p'
+    const isSaveShortcut = (input.control || input.meta) && key === 's'
 
-    if (!isHandledShortcut(key)) {
+    if (!isPrintShortcut && !isSaveShortcut) {
       return
     }
 
@@ -86,23 +79,10 @@ const attachKeyboardHandler = (contents: Electron.WebContents) => {
       return
     }
 
-    const isFindShortcut = (input.control || input.meta) && key === 'f'
-    const isPrintShortcut = (input.control || input.meta) && key === 'p'
-    const isSaveShortcut = (input.control || input.meta) && key === 's'
-
-    // Always prevent Cmd/Ctrl+F to override the guest page's native find dialog
-    if (isFindShortcut) {
-      event.preventDefault()
-    }
-
     // Prevent default print/save dialogs and handle them with custom logic
-    if (isPrintShortcut || isSaveShortcut) {
-      event.preventDefault()
-    }
+    event.preventDefault()
 
-    // Send the hotkey event to the renderer
-    // The renderer will decide whether to preventDefault for Escape and Enter
-    // based on whether the search bar is visible
+    // Send the hotkey event to the renderer for custom print/save handling.
     host.send(IpcChannel.Webview_SearchHotkey, {
       webviewId: contents.id,
       key,
