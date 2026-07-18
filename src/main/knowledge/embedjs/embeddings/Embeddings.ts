@@ -3,7 +3,7 @@ import { loggerService } from '@logger'
 import { TraceMethod } from '@mcp-trace/trace-core'
 import type { ApiClient } from '@types'
 
-import EmbeddingsFactory, { supportsEmbeddingDimensionRequest } from './EmbeddingsFactory'
+import EmbeddingsFactory from './EmbeddingsFactory'
 
 const logger = loggerService.withContext('Embeddings')
 
@@ -11,16 +11,12 @@ export default class Embeddings {
   private sdk: BaseEmbeddings
   private readonly configuredDimensions?: number
   private readonly provider: string
-  private readonly usesConfiguredDimensions: boolean
 
   constructor({ embedApiClient, dimensions }: { embedApiClient: ApiClient; dimensions?: number }) {
     this.configuredDimensions = dimensions
     this.provider = embedApiClient.provider
-    this.usesConfiguredDimensions =
-      dimensions !== undefined && supportsEmbeddingDimensionRequest(embedApiClient.provider)
     this.sdk = EmbeddingsFactory.create({
-      embedApiClient,
-      dimensions
+      embedApiClient
     })
   }
   public async init(): Promise<void> {
@@ -29,21 +25,16 @@ export default class Embeddings {
 
   @TraceMethod({ spanName: 'dimensions', tag: 'Embeddings' })
   public async getDimensions(): Promise<number> {
-    if (this.usesConfiguredDimensions) {
-      return this.configuredDimensions!
+    let detectedDimensions = await this.sdk.getDimensions()
+    if (!detectedDimensions) {
+      detectedDimensions = (await this.sdk.embedQuery('sample')).length
     }
 
-    const sdkDimensions = await this.sdk.getDimensions()
-    if (sdkDimensions) {
-      return sdkDimensions
-    }
-
-    const detectedDimensions = (await this.sdk.embedQuery('sample')).length
     if (!detectedDimensions) {
       throw new Error('Embedding provider returned an empty vector while detecting dimensions')
     }
 
-    if (this.configuredDimensions && this.configuredDimensions !== detectedDimensions) {
+    if (this.configuredDimensions !== undefined && this.configuredDimensions !== detectedDimensions) {
       logger.warn('Configured embedding dimensions differ from the provider response; using detected dimensions', {
         provider: this.provider,
         configuredDimensions: this.configuredDimensions,
