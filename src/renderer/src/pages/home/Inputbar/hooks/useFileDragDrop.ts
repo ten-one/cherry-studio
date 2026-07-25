@@ -2,7 +2,7 @@ import { loggerService } from '@logger'
 import { useDrag } from '@renderer/hooks/useDrag'
 import type { FileMetadata } from '@renderer/types'
 import { filterSupportedFiles } from '@renderer/utils'
-import { getFilesFromDropEvent, getTextFromDropEvent } from '@renderer/utils/input'
+import { getFilesFromDropEvent, hasFileDropData } from '@renderer/utils/input'
 import type { TFunction } from 'i18next'
 import { useCallback } from 'react'
 
@@ -11,10 +11,11 @@ const logger = loggerService.withContext('useFileDragDrop')
 export interface UseFileDragDropOptions {
   supportedExts: string[]
   setFiles: (updater: (prevFiles: FileMetadata[]) => FileMetadata[]) => void
-  onTextDropped?: (text: string) => void
   enabled?: boolean
   t: TFunction
 }
+
+const shouldHandleFileDrag = (event: React.DragEvent<HTMLDivElement>) => hasFileDropData(event.dataTransfer)
 
 /**
  * Inputbar 文件拖拽上传 Hook
@@ -29,7 +30,6 @@ export interface UseFileDragDropOptions {
  * const dragDrop = useFileDragDrop({
  *   supportedExts: ['.png', '.jpg', '.pdf'],
  *   setFiles: (updater) => setFiles(updater),
- *   onTextDropped: (text) => setText(text),
  *   enabled: true,
  *   t: useTranslation().t
  * })
@@ -46,16 +46,12 @@ export interface UseFileDragDropOptions {
  * ```
  */
 export function useFileDragDrop(options: UseFileDragDropOptions) {
+  const { enabled, setFiles, supportedExts, t } = options
+
   const handleDrop = useCallback(
     async (event: React.DragEvent<HTMLDivElement>) => {
-      if (!options.enabled) {
+      if (!enabled) {
         return
-      }
-
-      // 处理文本拖拽
-      const droppedText = await getTextFromDropEvent(event)
-      if (droppedText) {
-        options.onTextDropped?.(droppedText)
       }
 
       // 处理文件拖拽
@@ -65,32 +61,32 @@ export function useFileDragDrop(options: UseFileDragDropOptions) {
       })
 
       if (droppedFiles) {
-        const supportedFiles = await filterSupportedFiles(droppedFiles, options.supportedExts)
+        const supportedFiles = await filterSupportedFiles(droppedFiles, supportedExts)
         if (supportedFiles.length > 0) {
-          options.setFiles((prevFiles) => [...prevFiles, ...supportedFiles])
+          setFiles((prevFiles) => [...prevFiles, ...supportedFiles])
         }
 
         // 如果有不支持的文件，显示提示
         if (droppedFiles.length > 0 && supportedFiles.length !== droppedFiles.length) {
           window.toast.info(
-            options.t('chat.input.file_not_supported_count', {
+            t('chat.input.file_not_supported_count', {
               count: droppedFiles.length - supportedFiles.length
             })
           )
         }
       }
     },
-    [options]
+    [enabled, setFiles, supportedExts, t]
   )
 
-  const dragState = useDrag(handleDrop)
+  const dragState = useDrag(handleDrop, shouldHandleFileDrag)
 
   return {
-    isDragging: options.enabled ? dragState.isDragging : false,
+    isDragging: enabled ? dragState.isDragging : false,
     setIsDragging: dragState.setIsDragging,
-    handleDragOver: options.enabled ? dragState.handleDragOver : undefined,
-    handleDragEnter: options.enabled ? dragState.handleDragEnter : undefined,
-    handleDragLeave: options.enabled ? dragState.handleDragLeave : undefined,
-    handleDrop: options.enabled ? dragState.handleDrop : undefined
+    handleDragOver: enabled ? dragState.handleDragOver : undefined,
+    handleDragEnter: enabled ? dragState.handleDragEnter : undefined,
+    handleDragLeave: enabled ? dragState.handleDragLeave : undefined,
+    handleDrop: enabled ? dragState.handleDrop : undefined
   }
 }

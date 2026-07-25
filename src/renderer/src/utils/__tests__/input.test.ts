@@ -1,7 +1,7 @@
 import type { SendMessageShortcut } from '@renderer/store/settings'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getFilesFromDropEvent, getSendMessageShortcutLabel, isSendMessageKeyPressed } from '../input'
+import { getFilesFromDropEvent, getSendMessageShortcutLabel, hasFileDropData, isSendMessageKeyPressed } from '../input'
 
 // Mock 外部依赖
 vi.mock('@renderer/config/logger', () => ({
@@ -123,6 +123,50 @@ describe('input', () => {
 
       const result = await getFilesFromDropEvent(event)
       expect(result).toEqual([])
+    })
+  })
+
+  describe('hasFileDropData', () => {
+    const createDataTransfer = ({
+      files = [],
+      items = [],
+      types = []
+    }: {
+      files?: File[]
+      items?: Array<Partial<DataTransferItem>>
+      types?: string[]
+    }): DataTransfer =>
+      ({
+        files,
+        items,
+        types
+      }) as unknown as DataTransfer
+
+    it('should recognize native file payloads', () => {
+      expect(hasFileDropData(createDataTransfer({ files: [new File(['content'], 'file.txt')] }))).toBe(true)
+      expect(hasFileDropData(createDataTransfer({ types: ['Files'] }))).toBe(true)
+      expect(hasFileDropData(createDataTransfer({ items: [{ kind: 'file', type: '' }] }))).toBe(true)
+    })
+
+    it('should recognize codefiles payloads', () => {
+      expect(hasFileDropData(createDataTransfer({ types: ['codefiles'] }))).toBe(true)
+      expect(hasFileDropData(createDataTransfer({ items: [{ kind: 'string', type: 'codefiles' }] }))).toBe(true)
+    })
+
+    it('should not treat plain or HTML text as files', () => {
+      expect(hasFileDropData(createDataTransfer({ types: ['text/plain'] }))).toBe(false)
+      expect(hasFileDropData(createDataTransfer({ types: ['text/html'] }))).toBe(false)
+      expect(
+        hasFileDropData(
+          createDataTransfer({
+            items: [
+              { kind: 'string', type: 'text/plain' },
+              { kind: 'string', type: 'text/html' }
+            ],
+            types: ['text/plain', 'text/html']
+          })
+        )
+      ).toBe(false)
     })
   })
 

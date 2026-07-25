@@ -182,7 +182,6 @@ export const InputbarCore: FC<InputbarCoreProps> = ({
   const { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, isDragging } = useFileDragDrop({
     supportedExts,
     setFiles,
-    onTextDropped: (droppedText) => setText((prev) => prev + droppedText),
     enabled: config.enableDragDrop,
     t
   })

@@ -15,7 +15,7 @@ import { FILE_TYPE } from '@renderer/types'
 import type { Message, MessageBlock } from '@renderer/types/newMessage'
 import { MessageBlockStatus, MessageBlockType } from '@renderer/types/newMessage'
 import { classNames } from '@renderer/utils'
-import { getFilesFromDropEvent, isSendMessageKeyPressed } from '@renderer/utils/input'
+import { getFilesFromDropEvent, hasFileDropData, isSendMessageKeyPressed } from '@renderer/utils/input'
 import { createFileBlock, createImageBlock } from '@renderer/utils/messageUtils/create'
 import { findAllBlocks } from '@renderer/utils/messageUtils/find'
 import { documentExts, imageExts, textExts } from '@shared/config/constant'
@@ -172,31 +172,61 @@ const MessageBlockEditor: FC<Props> = ({ message, topicId, onSave, onResend, onC
     setEditedBlocks((prev) => prev.filter((block) => block.id !== blockId))
   }
 
-  // 处理拖拽上传
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleFileDragEnter = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (!hasFileDropData(event.dataTransfer)) return
+
+    event.preventDefault()
+    event.stopPropagation()
+    setIsFileDragging(true)
+  }, [])
+
+  const handleFileDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (!hasFileDropData(event.dataTransfer)) return
+
+    event.preventDefault()
+    event.stopPropagation()
+  }, [])
+
+  const handleFileDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (!hasFileDropData(event.dataTransfer)) return
+
+    event.preventDefault()
+    event.stopPropagation()
+    if (event.currentTarget.contains(event.relatedTarget as Node)) return
+
     setIsFileDragging(false)
+  }, [])
 
-    const files = await getFilesFromDropEvent(e).catch((err) => {
-      logger.error('[src/renderer/src/pages/home/Inputbar/Inputbar.tsx] handleDrop:', err)
-      return null
-    })
-    if (files) {
-      let supportedFiles = 0
-      files.forEach((file) => {
-        if (extensions.includes(file.ext.toLowerCase())) {
-          setFiles((prevFiles) => [...prevFiles, file])
-          supportedFiles++
-        }
+  // 仅拦截文件拖放；文本拖放交给原生 textarea 处理
+  const handleDrop = useCallback(
+    async (event: React.DragEvent<HTMLDivElement>) => {
+      if (!hasFileDropData(event.dataTransfer)) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      setIsFileDragging(false)
+
+      const droppedFiles = await getFilesFromDropEvent(event).catch((err) => {
+        logger.error('[MessageEditor] handleDrop:', err)
+        return null
       })
+      if (droppedFiles) {
+        let supportedFiles = 0
+        droppedFiles.forEach((file) => {
+          if (extensions.includes(file.ext.toLowerCase())) {
+            setFiles((prevFiles) => [...prevFiles, file])
+            supportedFiles++
+          }
+        })
 
-      // 如果有文件，但都不支持
-      if (files.length > 0 && supportedFiles === 0) {
-        window.toast.info(t('chat.input.file_not_supported'))
+        // 如果有文件，但都不支持
+        if (droppedFiles.length > 0 && supportedFiles === 0) {
+          window.toast.info(t('chat.input.file_not_supported'))
+        }
       }
-    }
-  }
+    },
+    [extensions, t]
+  )
 
   // 处理编辑区块并上传文件
   const processEditedBlocks = async () => {
@@ -258,7 +288,9 @@ const MessageBlockEditor: FC<Props> = ({ message, topicId, onSave, onResend, onC
         direction="vertical"
         size="small"
         style={{ display: 'flex' }}
-        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={handleFileDragEnter}
+        onDragLeave={handleFileDragLeave}
+        onDragOver={handleFileDragOver}
         onDrop={handleDrop}>
         {editedBlocks
           .filter((block) => block.type === MessageBlockType.MAIN_TEXT)

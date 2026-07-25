@@ -31,7 +31,7 @@ import {
 import { getFileExtension, isTextFile, runAsyncFunction, uuid } from '@renderer/utils'
 import { abortCompletion } from '@renderer/utils/abortController'
 import { formatErrorMessageWithPrefix, isAbortError } from '@renderer/utils/error'
-import { getFilesFromDropEvent, getTextFromDropEvent } from '@renderer/utils/input'
+import { getFilesFromDropEvent, hasFileDropData } from '@renderer/utils/input'
 import {
   createInputScrollHandler,
   createOutputScrollHandler,
@@ -54,6 +54,8 @@ import TranslateHistoryList from './TranslateHistory'
 import TranslateSettings from './TranslateSettings'
 
 const logger = loggerService.withContext('TranslatePage')
+
+const shouldHandleFileDrag = (event: React.DragEvent<HTMLDivElement>) => hasFileDropData(event.dataTransfer)
 
 // cache variables
 let _sourceLanguage: TranslateLanguage | 'auto' = 'auto'
@@ -607,24 +609,13 @@ const TranslatePage: FC = () => {
     handleDragLeave,
     handleDragOver,
     handleDrop: preventDrop
-  } = useDrag<HTMLDivElement>()
+  } = useDrag<HTMLDivElement>(undefined, shouldHandleFileDrag)
 
   const onDrop = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
       setIsProcessing(true)
       setIsDragging(false)
       const process = async () => {
-        // const supportedFiles = await filterSupportedFiles(_files, extensions)
-        const data = await getTextFromDropEvent(e).catch((err) => {
-          logger.error('getTextFromDropEvent', err)
-          window.toast.error(t('translate.files.error.unknown'))
-          return null
-        })
-        if (data === null) {
-          return
-        }
-        setText(text + data)
-
         const droppedFiles = await getFilesFromDropEvent(e).catch((err) => {
           logger.error('handleDrop:', err)
           window.toast.error(t('translate.files.error.unknown'))
@@ -640,7 +631,7 @@ const TranslatePage: FC = () => {
       await process()
       setIsProcessing(false)
     },
-    [getSingleFile, processFile, setIsDragging, setText, t, text]
+    [getSingleFile, processFile, setIsDragging, t]
   )
 
   const {
@@ -649,7 +640,7 @@ const TranslatePage: FC = () => {
     handleDragLeave: handleDragLeaveInput,
     handleDragOver: handleDragOverInput,
     handleDrop
-  } = useDrag<HTMLDivElement>(onDrop)
+  } = useDrag<HTMLDivElement>(onDrop, shouldHandleFileDrag)
 
   // 粘贴上传文件
   const onPaste = useCallback(

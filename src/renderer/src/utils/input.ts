@@ -5,8 +5,16 @@ import type { FileMetadata } from '@renderer/types'
 
 const logger = loggerService.withContext('Utils:Input')
 
-export const getTextFromDropEvent = async (e: React.DragEvent<HTMLDivElement>): Promise<string> => {
-  return e.dataTransfer.getData('text')
+export const hasFileDropData = (dataTransfer: DataTransfer): boolean => {
+  if (dataTransfer.files.length > 0) {
+    return true
+  }
+
+  if (Array.from(dataTransfer.types).some((type) => type === 'Files' || type === 'codefiles')) {
+    return true
+  }
+
+  return Array.from(dataTransfer.items).some((item) => item.kind === 'file' || item.type === 'codefiles')
 }
 
 export const getFilesFromDropEvent = async (e: React.DragEvent<HTMLDivElement>): Promise<FileMetadata[]> => {
