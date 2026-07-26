@@ -2,6 +2,7 @@ import type { MCPServer, MCPTool } from '@types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@main/services/mcp/getMCPServersFromRedux', () => ({
+  fetchMCPServersFromRedux: vi.fn(),
   getMCPServersFromRedux: vi.fn()
 }))
 
@@ -11,7 +12,9 @@ vi.mock('@main/services/WindowService', () => ({
   }
 }))
 
-import { getMCPServersFromRedux } from '@main/services/mcp/getMCPServersFromRedux'
+import fs from 'node:fs/promises'
+
+import { fetchMCPServersFromRedux, getMCPServersFromRedux } from '@main/services/mcp/getMCPServersFromRedux'
 import mcpService from '@main/services/MCPService'
 
 const baseInputSchema: { type: 'object'; properties: Record<string, unknown>; required: string[] } = {
@@ -71,5 +74,52 @@ describe('MCPService.listAllActiveServerTools', () => {
 
     expect(listToolsSpy).toHaveBeenCalledTimes(2)
     expect(tools.map((tool) => tool.name)).toEqual(['enabled_tool', 'beta_tool'])
+  })
+})
+
+describe('MCPService.removeServer OAuth cleanup', () => {
+  const server: MCPServer = {
+    id: 'alpha',
+    name: 'Alpha',
+    isActive: true,
+    baseUrl: 'https://mcp.example.com'
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('deletes the token file when no other server shares the baseUrl', async () => {
+    vi.mocked(fetchMCPServersFromRedux).mockResolvedValue([])
+    const unlinkSpy = vi.spyOn(fs, 'unlink').mockResolvedValue(undefined)
+
+    await mcpService.removeServer({} as Electron.IpcMainInvokeEvent, server)
+
+    expect(unlinkSpy).toHaveBeenCalledTimes(1)
+    expect(String(unlinkSpy.mock.calls[0][0])).toContain('_oauth.json')
+  })
+
+  it('keeps the token file while another server still uses the baseUrl', async () => {
+    vi.mocked(fetchMCPServersFromRedux).mockResolvedValue([
+      { id: 'beta', name: 'Beta', isActive: true, baseUrl: server.baseUrl } as MCPServer
+    ])
+    const unlinkSpy = vi.spyOn(fs, 'unlink').mockResolvedValue(undefined)
+
+    await mcpService.removeServer({} as Electron.IpcMainInvokeEvent, server)
+
+    expect(unlinkSpy).not.toHaveBeenCalled()
+  })
+
+  it('skips token deletion when the server list cannot be read', async () => {
+    vi.mocked(fetchMCPServersFromRedux).mockRejectedValue(new Error('store unreachable'))
+    const unlinkSpy = vi.spyOn(fs, 'unlink').mockResolvedValue(undefined)
+
+    await mcpService.removeServer({} as Electron.IpcMainInvokeEvent, server)
+
+    expect(unlinkSpy).not.toHaveBeenCalled()
   })
 })

@@ -58,7 +58,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { CacheService } from './CacheService'
 import DxtService from './DxtService'
-import { getMCPServersFromRedux } from './mcp/getMCPServersFromRedux'
+import { fetchMCPServersFromRedux, getMCPServersFromRedux } from './mcp/getMCPServersFromRedux'
 import { CallBackServer } from './mcp/oauth/callback'
 import { McpOAuthClientProvider } from './mcp/oauth/provider'
 import { ServerLogBuffer } from './mcp/ServerLogBuffer'
@@ -788,9 +788,11 @@ class McpService {
     // Cleanup OAuth token file for this server, but only if no other server
     // entry still points at the same baseUrl (shared OAuth storage key is
     // md5(baseUrl), so unlinking prematurely would break the remaining entry).
+    // Uses the throwing fetch: if the store can't be read we must skip the
+    // deletion rather than mistake "unknown" for "not in use".
     if (server.baseUrl) {
       try {
-        const remainingServers = await getMCPServersFromRedux()
+        const remainingServers = await fetchMCPServersFromRedux()
         const baseUrlStillInUse = remainingServers.some((s) => s.id !== server.id && s.baseUrl === server.baseUrl)
         if (!baseUrlStillInUse) {
           const serverUrlHash = crypto.createHash('md5').update(server.baseUrl).digest('hex')
