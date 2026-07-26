@@ -594,16 +594,18 @@ function isUnsupported(provider: Provider): boolean {
 // === Public API ===
 
 export async function listModels(provider: Provider, abortSignal?: AbortSignal): Promise<Model[]> {
-  try {
-    if (isUnsupported(provider)) {
-      logger.warn('Provider does not support model listing via listModels', { providerId: provider.id })
-      return []
-    }
+  if (isUnsupported(provider)) {
+    logger.warn('Provider does not support model listing via listModels', { providerId: provider.id })
+    return []
+  }
 
+  try {
     const fetcher = fetchers.find((f) => f.match(provider))!
     return await fetcher.fetch(provider, abortSignal)
   } catch (error) {
+    // Rethrow after logging: swallowing here would render auth failures (e.g. a
+    // missing Anthropic OAuth token) as a silently empty model list in the UI.
     logger.error('Error listing models:', error as Error, { providerId: provider.id })
-    return []
+    throw error
   }
 }

@@ -584,20 +584,21 @@ describe('listModels', () => {
       expect(request.headers).not.toHaveProperty('x-api-key')
     })
 
-    it('should skip the Anthropic model request when the OAuth access token is missing', async () => {
+    it('should reject when the OAuth access token is missing so the UI can surface it', async () => {
       mockAnthropicGetAccessToken.mockResolvedValueOnce(null)
 
-      const models = await listModels(
-        makeProvider({
-          id: 'anthropic',
-          type: 'anthropic' as any,
-          apiHost: 'https://api.anthropic.com/v1',
-          apiKey: '',
-          authType: 'oauth'
-        })
-      )
+      await expect(
+        listModels(
+          makeProvider({
+            id: 'anthropic',
+            type: 'anthropic' as any,
+            apiHost: 'https://api.anthropic.com/v1',
+            apiKey: '',
+            authType: 'oauth'
+          })
+        )
+      ).rejects.toThrow('Anthropic OAuth access token is missing')
 
-      expect(models).toEqual([])
       expect(mockAnthropicGetAccessToken).toHaveBeenCalledTimes(1)
       expect(mockGetFromApi).not.toHaveBeenCalled()
     })
@@ -1007,10 +1008,9 @@ describe('listModels', () => {
   })
 
   describe('Error handling', () => {
-    it('should return empty on network error', async () => {
+    it('should reject on network error so the UI can surface it', async () => {
       mockGetFromApi.mockRejectedValue(new Error('ECONNREFUSED'))
-      const models = await listModels(makeProvider({ id: 'openai' }))
-      expect(models).toEqual([])
+      await expect(listModels(makeProvider({ id: 'openai' }))).rejects.toThrow('ECONNREFUSED')
     })
   })
 })
