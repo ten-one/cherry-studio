@@ -844,10 +844,20 @@ describe('model utils', () => {
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-fable-5-20260101' }))).toBe(true)
       })
 
+      it('detects Sonnet 5 and its minor versions (Sonnet joins the boundary at major 5)', () => {
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-5' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-5-0' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-5.1' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'anthropic.claude-sonnet-5-v1:0' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'anthropic/claude-sonnet-5' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-5-20260301' }))).toBe(true)
+      })
+
       it('handles case insensitivity', () => {
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'CLAUDE-OPUS-4-7' }))).toBe(true)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'Claude-Opus-4.7' }))).toBe(true)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'CLAUDE-OPUS-5' }))).toBe(true)
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'CLAUDE-SONNET-5' }))).toBe(true)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'Claude-Fable-5' }))).toBe(true)
       })
 
@@ -857,10 +867,11 @@ describe('model utils', () => {
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-opus-4-6' }))).toBe(false)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-opus-4-5' }))).toBe(false)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-opus-4-20250514' }))).toBe(false)
+        // Sonnet only qualifies from major 5 onward — 4.x Sonnets still accept sampling params.
+        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-4-6' }))).toBe(false)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-4-7' }))).toBe(false)
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-haiku-4-7' }))).toBe(false)
-        // Only Opus and Fable qualify — Sonnet/Haiku never do, regardless of version.
-        expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-sonnet-5' }))).toBe(false)
+        // Haiku never qualifies, regardless of version.
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-haiku-5' }))).toBe(false)
         // Fable only qualifies from major 5 onward.
         expect(isSupportAdaptiveThinkingClaudeModel(createModel({ id: 'claude-fable-4' }))).toBe(false)
@@ -875,26 +886,34 @@ describe('model utils', () => {
         const opus47 = createModel({ id: 'claude-opus-4-7' })
         const opus48 = createModel({ id: 'claude-opus-4-8' })
         const opus5 = createModel({ id: 'claude-opus-5' })
+        const sonnet5 = createModel({ id: 'claude-sonnet-5' })
         const fable5 = createModel({ id: 'claude-fable-5' })
         const opus46 = createModel({ id: 'claude-opus-4-6' })
+        const sonnet46 = createModel({ id: 'claude-sonnet-4-6' })
 
         expect(isClaudeModelRejectsTemperature(opus47)).toBe(true)
         expect(isClaudeModelRejectsTemperature(opus48)).toBe(true)
         expect(isClaudeModelRejectsTemperature(opus5)).toBe(true)
+        expect(isClaudeModelRejectsTemperature(sonnet5)).toBe(true)
         expect(isClaudeModelRejectsTemperature(fable5)).toBe(true)
         expect(isClaudeModelRejectsTemperature(opus46)).toBe(false)
+        expect(isClaudeModelRejectsTemperature(sonnet46)).toBe(false)
 
         expect(isClaudeModelRejectsTopP(opus47)).toBe(true)
         expect(isClaudeModelRejectsTopP(opus48)).toBe(true)
         expect(isClaudeModelRejectsTopP(opus5)).toBe(true)
+        expect(isClaudeModelRejectsTopP(sonnet5)).toBe(true)
         expect(isClaudeModelRejectsTopP(fable5)).toBe(true)
         expect(isClaudeModelRejectsTopP(opus46)).toBe(false)
+        expect(isClaudeModelRejectsTopP(sonnet46)).toBe(false)
 
         expect(isClaudeModelRejectsTopK(opus47)).toBe(true)
         expect(isClaudeModelRejectsTopK(opus48)).toBe(true)
         expect(isClaudeModelRejectsTopK(opus5)).toBe(true)
+        expect(isClaudeModelRejectsTopK(sonnet5)).toBe(true)
         expect(isClaudeModelRejectsTopK(fable5)).toBe(true)
         expect(isClaudeModelRejectsTopK(opus46)).toBe(false)
+        expect(isClaudeModelRejectsTopK(sonnet46)).toBe(false)
       })
     })
   })

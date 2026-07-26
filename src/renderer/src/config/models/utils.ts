@@ -434,16 +434,18 @@ export function isClaude46SeriesModel(model: Model | undefined | null): boolean 
 /**
  * Detect the Claude version boundary shared by several behavior checks (adaptive thinking
  * support, and rejection of temperature / top-p / top-k sampling). It is the single source
- * of truth for "Opus 4.7+ or Fable 5+", so each consumer can diverge from it later if a
- * specific API rule changes.
+ * of truth for "Opus 4.7+, Sonnet 5+, or Fable 5+", so each consumer can diverge from it
+ * later if a specific API rule changes.
  *
  * Recognizes the usual id shapes:
- * - Direct API:  claude-opus-4-7, claude-opus-4.7, claude-opus-5, claude-fable-5
+ * - Direct API:  claude-opus-4-7, claude-opus-4.7, claude-opus-5, claude-sonnet-5, claude-fable-5
  * - AWS Bedrock: anthropic.claude-opus-4-7-v1, anthropic.claude-fable-5-v1
  * - Provider / Vertex prefixes: anthropic/claude-opus-4-7
  *
  * Version rules (a missing minor counts as 0, so `claude-opus-5` is treated as 5.0):
  * - Opus qualifies when major.minor >= 4.7 — i.e. 4.7+, every 5.x, and any later major.
+ * - Sonnet qualifies when major >= 5: Sonnet 5 removed budget_tokens and rejects
+ *   non-default sampling parameters, matching Opus 4.7+; Sonnet 4.6 still accepts them.
  * - Fable qualifies for every version: the Fable line started at 5 with the newer behavior.
  *
  * Date-stamped base ids such as `claude-opus-4-20250514` must NOT be read as 4.<date>.
@@ -451,7 +453,7 @@ export function isClaude46SeriesModel(model: Model | undefined | null): boolean 
  * trailing-suffix group instead of being parsed as the minor version.
  *
  * @param model - The model to check
- * @returns true if the model is Claude Opus 4.7+ or Fable 5+
+ * @returns true if the model is Claude Opus 4.7+, Sonnet 5+, or Fable 5+
  */
 function isClaudeOpus47OrNewerModel(model: Model | undefined | null): boolean {
   if (!model) {
@@ -460,7 +462,9 @@ function isClaudeOpus47OrNewerModel(model: Model | undefined | null): boolean {
   const modelId = getLowerBaseModelName(model.id, '/')
   // major is required; minor is optional and capped at two digits so date suffixes
   // (e.g. -20250514) fall into the trailing-suffix group rather than being read as a minor.
-  const match = modelId.match(/^(?:anthropic\.)?claude-(opus|fable)-(\d+)(?:[.-](\d{1,2}))?(?:[@\-:][\w\-:]+)?$/i)
+  const match = modelId.match(
+    /^(?:anthropic\.)?claude-(opus|sonnet|fable)-(\d+)(?:[.-](\d{1,2}))?(?:[@\-:][\w\-:]+)?$/i
+  )
   if (!match) {
     return false
   }
@@ -468,6 +472,9 @@ function isClaudeOpus47OrNewerModel(model: Model | undefined | null): boolean {
   const major = Number(match[2])
   const minor = match[3] ? Number(match[3]) : 0
   if (family === 'fable') {
+    return major >= 5
+  }
+  if (family === 'sonnet') {
     return major >= 5
   }
   // Opus: major.minor must be >= 4.7
