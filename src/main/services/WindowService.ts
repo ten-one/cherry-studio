@@ -16,7 +16,7 @@ import iconPath from '../../../build/icon.png?asset'
 import { titleBarOverlayDark, titleBarOverlayLight } from '../config'
 import { configManager } from './ConfigManager'
 import { contextMenu } from './ContextMenu'
-import { isSafeExternalUrl } from './security'
+import { isDevServerUrl, isSafeExternalUrl } from './security'
 import { initSessionUserAgent } from './WebviewService'
 
 // const logger = loggerService.withContext('WindowService')
@@ -260,7 +260,9 @@ export class WindowService {
     })
 
     mainWindow.webContents.on('will-navigate', (event, url) => {
-      if (url.includes('localhost:517')) {
+      // Only dev-server reloads may navigate in-window, and only in development;
+      // production loads from file:// and never legitimately hits localhost:517x.
+      if (is.dev && isDevServerUrl(url)) {
         return
       }
 

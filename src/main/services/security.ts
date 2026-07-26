@@ -59,6 +59,27 @@ export function isSafeExternalUrl(url: string): boolean {
   }
 }
 
+/**
+ * Check whether a URL points at the local electron-vite dev server
+ * (http://localhost:517x). Parses the URL and matches host and port exactly,
+ * so pages cannot smuggle the marker into a path or query string the way a
+ * substring test would allow (e.g. https://evil.com/?x=localhost:5173).
+ */
+export function isDevServerUrl(url: string): boolean {
+  try {
+    const { protocol, hostname, port } = new URL(url)
+    if (protocol !== 'http:') {
+      return false
+    }
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return false
+    }
+    return /^517\d$/.test(port)
+  } catch {
+    return false
+  }
+}
+
 function isFileOpenEditorUrl(parsed: URL, rawUrl: string): boolean {
   // Reject userinfo in any form to foil `zed://file@evil/path`-style tricks
   // where "file" ends up as the username and the real host is attacker-chosen.

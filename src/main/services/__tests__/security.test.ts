@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isSafeExternalUrl } from '../security'
+import { isDevServerUrl, isSafeExternalUrl } from '../security'
 
 describe('isSafeExternalUrl', () => {
   it('allows http URLs', () => {
@@ -77,5 +77,33 @@ describe('isSafeExternalUrl', () => {
     expect(isSafeExternalUrl('HTTP://example.com')).toBe(true)
     expect(isSafeExternalUrl('HTTPS://example.com')).toBe(true)
     expect(isSafeExternalUrl('FILE:///etc/passwd')).toBe(false)
+  })
+})
+
+describe('isDevServerUrl', () => {
+  it('allows the electron-vite dev server on localhost:517x', () => {
+    expect(isDevServerUrl('http://localhost:5173/')).toBe(true)
+    expect(isDevServerUrl('http://localhost:5174/selectionToolbar.html')).toBe(true)
+    expect(isDevServerUrl('http://127.0.0.1:5173/index.html#/settings')).toBe(true)
+  })
+
+  it('rejects URLs that only mention the dev server in path or query', () => {
+    expect(isDevServerUrl('https://evil.com/?redirect=localhost:5173')).toBe(false)
+    expect(isDevServerUrl('https://evil.com/localhost:5173')).toBe(false)
+    expect(isDevServerUrl('http://localhost:5173.evil.com/')).toBe(false)
+  })
+
+  it('rejects non-dev ports, hosts and protocols', () => {
+    expect(isDevServerUrl('http://localhost:5183/')).toBe(false)
+    expect(isDevServerUrl('http://localhost:51730/')).toBe(false)
+    expect(isDevServerUrl('http://localhost/')).toBe(false)
+    expect(isDevServerUrl('http://dev.localhost:5173/')).toBe(false)
+    expect(isDevServerUrl('https://localhost:5173/')).toBe(false)
+    expect(isDevServerUrl('file:///etc/passwd')).toBe(false)
+  })
+
+  it('rejects malformed input', () => {
+    expect(isDevServerUrl('')).toBe(false)
+    expect(isDevServerUrl('localhost:5173')).toBe(false)
   })
 })
